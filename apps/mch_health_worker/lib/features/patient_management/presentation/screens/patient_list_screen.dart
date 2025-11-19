@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
 import 'patient_registration_screen.dart';
+import 'patient_detail_screen.dart';
 
 /// Patient List Screen - Shows all registered patients with search and filter
 /// IMPROVED VERSION with UX fixes based on clinical workflow
@@ -374,9 +375,13 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
           onSelected: (value) {
             switch (value) {
               case 'view':
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('View details for ${patient.clientName} - Coming soon'),
+                // ✅ FIXED: Navigate to patient detail screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PatientDetailScreen(
+                      patientId: patient.id,
+                    ),
                   ),
                 );
                 break;
@@ -427,10 +432,14 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
             ),
           ],
         ),
+        // ✅ FIXED: Navigate to patient detail screen on tap
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Patient details for ${patient.clientName} - Coming soon'),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PatientDetailScreen(
+                patientId: patient.id,
+              ),
             ),
           );
         },
