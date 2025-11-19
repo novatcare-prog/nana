@@ -1,0 +1,33 @@
+# Environment variables
+.env
+**/.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Build artifacts from apps
+apps/*/build/
+packages/*/build/
+
+# Flutter/Dart
+.dart_tool/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Generated code
+**/*.g.dart
+**/*.freezed.dart
+**/*.gr.dart
+
+# Coverage
+coverage/
+
+# Hive
+*.hive
+*.lock
