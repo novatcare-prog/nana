@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:uuid/uuid.dart'; 
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/providers/facility_providers.dart';
 
-/// Patient Registration Screen - 4 Steps
-/// Based on MOH MCH Handbook 2020
 class PatientRegistrationScreen extends ConsumerStatefulWidget {
   const PatientRegistrationScreen({super.key});
 
@@ -16,7 +15,15 @@ class PatientRegistrationScreen extends ConsumerStatefulWidget {
 
 class _PatientRegistrationScreenState
     extends ConsumerState<PatientRegistrationScreen> {
-  final _formKey = GlobalKey<FormState>();
+  
+  // FIXED: Instead of one key, we need one for each step
+  final List<GlobalKey<FormState>> _formKeys = [
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+  ];
+
   int _currentStep = 0;
   bool _isSubmitting = false;
 
@@ -92,27 +99,14 @@ class _PatientRegistrationScreenState
   }
 
   Future<void> _handleSubmit() async {
-    // Final validation before submission
-    if (_formKey.currentState!.validate()) {
-      // Double check Dates
-      if (_lmp == null || _edd == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select LMP and EDD dates'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // Double check Facility Provider
+    // Only validate the final step's form key here
+    if (_formKeys[3].currentState!.validate()) {
+      
       final selectedFacility = ref.read(selectedFacilityProvider);
-      if (selectedFacility == null) {
-         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ No facility selected. Please return to Step 1.'),
-            backgroundColor: Colors.red,
-          ),
+      
+      if (selectedFacility == null || selectedFacility.id == null || selectedFacility.id!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('❌ Error: Facility ID missing. Restart process.')),
         );
         return;
       }
@@ -123,8 +117,9 @@ class _PatientRegistrationScreenState
 
       try {
         final profile = MaternalProfile(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          facilityId: selectedFacility.id,
+          id: const Uuid().v4(), // Generate UUID
+          
+          facilityId: selectedFacility.id!,
           kmhflCode: _kmhflCodeController.text,
           facilityName: _facilityNameController.text,
           ancNumber: _ancNumberController.text,
@@ -188,11 +183,9 @@ class _PatientRegistrationScreenState
           updatedAt: DateTime.now(),
         );
 
-        // Use Supabase provider
         final createProfile = ref.read(createMaternalProfileProvider);
         await createProfile(profile);
 
-        // Invalidate providers to refresh data
         ref.invalidate(maternalProfilesProvider);
         ref.invalidate(statisticsProvider);
 
@@ -201,7 +194,6 @@ class _PatientRegistrationScreenState
             const SnackBar(
               content: Text('✅ Patient registered successfully!'),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
             ),
           );
           Navigator.pop(context);
@@ -212,7 +204,6 @@ class _PatientRegistrationScreenState
             SnackBar(
               content: Text('❌ Error: ${e.toString()}'),
               backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -232,93 +223,102 @@ class _PatientRegistrationScreenState
       appBar: AppBar(
         title: const Text('Register New Patient'),
       ),
-      body: Form(
-        key: _formKey,
-        child: Stepper(
-          currentStep: _currentStep,
-          onStepContinue: () {
-            // --- VALIDATION LOGIC ---
-            
-            // Step 1 Checks
-            if (_currentStep == 0) {
-              // 1. Check if facility is selected in Provider
-              if (ref.read(selectedFacilityProvider) == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('⚠️ Please select a facility before continuing'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-                return;
-              }
-              // 2. Check ANC Number
-              if (_ancNumberController.text.isEmpty) {
-                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('⚠️ Please enter ANC Number')),
-                );
-                return;
-              }
-            }
+      // Removed the global Form widget here. We wrap individual steps instead.
+      body: Stepper(
+        currentStep: _currentStep,
+        onStepContinue: () {
+          // --- FIXED VALIDATION LOGIC ---
+          
+          // 1. Validate ONLY the current step's fields
+          if (!_formKeys[_currentStep].currentState!.validate()) {
+            return; // Stop if the current step is invalid
+          }
 
-            // Proceed if validation passes
-            if (_currentStep < 3) {
-              setState(() {
-                _currentStep++;
-              });
-            } else {
-              _handleSubmit();
+          // 2. Extra Logic for Step 0 (Facility)
+          if (_currentStep == 0) {
+            if (ref.read(selectedFacilityProvider) == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('⚠️ Please select a facility'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              return;
             }
-          },
-          onStepCancel: () {
-            if (_currentStep > 0) {
-              setState(() {
-                _currentStep--;
-              });
-            } else {
-              Navigator.pop(context);
+          }
+
+          // 3. Extra Logic for Step 2 (Dates)
+          // We check this here because Dates are not FormFields
+          if (_currentStep == 2) {
+             if (_lmp == null || _edd == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('⚠️ Please select LMP and EDD dates'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              return;
             }
-          },
-          controlsBuilder: (context, details) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Row(
+          }
+
+          // 4. Move Next or Submit
+          if (_currentStep < 3) {
+            setState(() {
+              _currentStep++;
+            });
+          } else {
+            _handleSubmit();
+          }
+        },
+        onStepCancel: () {
+          if (_currentStep > 0) {
+            setState(() {
+              _currentStep--;
+            });
+          } else {
+            Navigator.pop(context);
+          }
+        },
+        controlsBuilder: (context, details) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _isSubmitting ? null : details.onStepContinue,
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(_currentStep == 3 ? 'Submit' : 'Continue'),
+                ),
+                const SizedBox(width: 12),
+                TextButton(
+                  onPressed: _isSubmitting ? null : details.onStepCancel,
+                  child: Text(_currentStep == 0 ? 'Cancel' : 'Back'),
+                ),
+              ],
+            ),
+          );
+        },
+        steps: [
+          // Step 1: Facility Information
+          Step(
+            title: const Text('Facility Information'),
+            content: Form(
+              key: _formKeys[0], // <--- Key for Step 1
+              child: Column(
                 children: [
-                  ElevatedButton(
-                    onPressed: _isSubmitting ? null : details.onStepContinue,
-                    child: _isSubmitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(_currentStep == 3 ? 'Submit' : 'Continue'),
-                  ),
-                  const SizedBox(width: 12),
-                  TextButton(
-                    onPressed: _isSubmitting ? null : details.onStepCancel,
-                    child: Text(_currentStep == 0 ? 'Cancel' : 'Back'),
-                  ),
-                ],
-              ),
-            );
-          },
-          steps: [
-            // Step 1: Facility Information
-            Step(
-              title: const Text('Facility Information'),
-              content: Column(
-                children: [
-                  // Facility Selector Dropdown
                   Consumer(
                     builder: (context, ref, child) {
                       final facilitiesAsync = ref.watch(facilitiesProvider);
-                      // Watch the selected facility to keep the dropdown in sync
                       final selectedFacility = ref.watch(selectedFacilityProvider);
 
                       return facilitiesAsync.when(
                         data: (facilities) {
                           return DropdownButtonFormField<String>(
-                            // Binds the visual value to the provider (Single Source of Truth)
                             value: selectedFacility?.id, 
                             decoration: const InputDecoration(
                               labelText: 'Select Facility *',
@@ -335,8 +335,6 @@ class _PatientRegistrationScreenState
                               if (value != null) {
                                 final facility = facilities.firstWhere((f) => f.id == value);
                                 ref.read(selectedFacilityProvider.notifier).state = facility;
-                                
-                                // Auto-fill facility details
                                 _kmhflCodeController.text = facility.kmhflCode;
                                 _facilityNameController.text = facility.name;
                               }
@@ -345,44 +343,33 @@ class _PatientRegistrationScreenState
                           );
                         },
                         loading: () => const Center(child: CircularProgressIndicator()),
-                        error: (error, stack) => Text('Error loading facilities: $error'),
+                        error: (error, stack) => Text('Error: $error'),
                       );
                     },
                   ),
-                  
                   const SizedBox(height: 16),
-
-                  // KMHFL Code Field (Auto-filled, Read-only)
                   TextFormField(
                     controller: _kmhflCodeController,
                     readOnly: true,
                     decoration: const InputDecoration(
                       labelText: 'KMHFL Code',
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.qr_code),
                       filled: true,
                       fillColor: Colors.black12,
                     ),
                   ),
-                  
                   const SizedBox(height: 16),
-
-                  // Facility Name Field (Auto-filled, Read-only)
                   TextFormField(
                     controller: _facilityNameController,
                     readOnly: true,
                     decoration: const InputDecoration(
                       labelText: 'Facility Name',
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.business),
                       filled: true,
                       fillColor: Colors.black12, 
                     ),
                   ),
-
                   const SizedBox(height: 16),
-                  
-                  // ANC Number
                   TextFormField(
                     controller: _ancNumberController,
                     decoration: const InputDecoration(
@@ -392,10 +379,7 @@ class _PatientRegistrationScreenState
                     validator: (value) =>
                         value?.isEmpty ?? true ? 'Required' : null,
                   ),
-                  
                   const SizedBox(height: 16),
-                  
-                  // PNC Number
                   TextFormField(
                     controller: _pncNumberController,
                     decoration: const InputDecoration(
@@ -405,14 +389,17 @@ class _PatientRegistrationScreenState
                   ),
                 ],
               ),
-              isActive: _currentStep >= 0,
-              state: _currentStep > 0 ? StepState.complete : StepState.indexed,
             ),
+            isActive: _currentStep >= 0,
+            state: _currentStep > 0 ? StepState.complete : StepState.indexed,
+          ),
 
-            // Step 2: Personal Information
-            Step(
-              title: const Text('Personal Information'),
-              content: Column(
+          // Step 2: Personal Information
+          Step(
+            title: const Text('Personal Information'),
+            content: Form(
+              key: _formKeys[1], // <--- Key for Step 2
+              child: Column(
                 children: [
                   TextFormField(
                     controller: _clientNameController,
@@ -501,14 +488,17 @@ class _PatientRegistrationScreenState
                   ),
                 ],
               ),
-              isActive: _currentStep >= 1,
-              state: _currentStep > 1 ? StepState.complete : StepState.indexed,
             ),
+            isActive: _currentStep >= 1,
+            state: _currentStep > 1 ? StepState.complete : StepState.indexed,
+          ),
 
-            // Step 3: Obstetric Data
-            Step(
-              title: const Text('Obstetric Data'),
-              content: Column(
+          // Step 3: Obstetric Data
+          Step(
+            title: const Text('Obstetric Data'),
+            content: Form(
+              key: _formKeys[2], // <--- Key for Step 3
+              child: Column(
                 children: [
                   Row(
                     children: [
@@ -629,14 +619,17 @@ class _PatientRegistrationScreenState
                   ),
                 ],
               ),
-              isActive: _currentStep >= 2,
-              state: _currentStep > 2 ? StepState.complete : StepState.indexed,
             ),
+            isActive: _currentStep >= 2,
+            state: _currentStep > 2 ? StepState.complete : StepState.indexed,
+          ),
 
-            // Step 4: Medical History
-            Step(
-              title: const Text('Medical History'),
-              content: Column(
+          // Step 4: Medical History
+          Step(
+            title: const Text('Medical History'),
+            content: Form(
+              key: _formKeys[3], // <--- Key for Step 4
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
@@ -771,10 +764,10 @@ class _PatientRegistrationScreenState
                   ),
                 ],
               ),
-              isActive: _currentStep >= 3,
             ),
-          ],
-        ),
+            isActive: _currentStep >= 3,
+          ),
+        ],
       ),
     );
   }

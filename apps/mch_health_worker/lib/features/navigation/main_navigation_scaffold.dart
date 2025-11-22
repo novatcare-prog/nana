@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mch_core/mch_core.dart';
+import '../../core/providers/auth_providers.dart';
+import '../../core/providers/facility_providers.dart';
 import '../patient_management/presentation/screens/patient_list_screen.dart';
 import '../patient_management/presentation/screens/dashboard_screen.dart';
+import '../patient_management/presentation/screens/schedule_screen.dart';
 
 /// Main Navigation Scaffold with Adaptive Layout
 /// - Phone: Bottom Navigation Bar
@@ -47,13 +51,13 @@ class _MainNavigationScaffoldState
   Widget _getPage(int index) {
     switch (index) {
       case 0:
-        return DashboardScreen(drawer: _buildDrawer());  // ← Change this
+        return DashboardScreen(drawer: _buildDrawer());
       case 1:
         return PatientListScreen(drawer: _buildDrawer());
       case 2:
-        return SchedulePage(drawer: _buildDrawer());
+        return ScheduleScreen(drawer: _buildDrawer());
       default:
-        return DashboardScreen(drawer: _buildDrawer());  // ← And this
+        return DashboardScreen(drawer: _buildDrawer());
     }
   }
 
@@ -71,7 +75,7 @@ class _MainNavigationScaffoldState
           children: [
             // Navigation Rail (Left Side)
             NavigationRail(
-              extended: screenWidth >= 800, // Extend labels on larger screens
+              extended: screenWidth >= 800,
               selectedIndex: _selectedIndex,
               onDestinationSelected: _onDestinationSelected,
               labelType: screenWidth >= 800
@@ -108,35 +112,14 @@ class _MainNavigationScaffoldState
     }
   }
 
-  // Helper method to wrap pages with drawer for mobile
-  Widget _wrapWithDrawer(Widget page) {
-    return Scaffold(
-      drawer: _buildDrawer(),
-      body: page,
-    );
-  }
-
   // ========== DRAWER WIDGET ==========
   Widget _buildDrawer() {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // Drawer Header with User Info
-          const UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
-              color: Color(0xFF0D9488),
-            ),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 40, color: Color(0xFF0D9488)),
-            ),
-            accountName: Text(
-              'Dr. Jane Kamau',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            accountEmail: Text('Kiambu County Hospital'),
-          ),
+          // Drawer Header with REAL User Info
+          _UserProfileHeader(),
           
           // My Facility
           ListTile(
@@ -144,9 +127,8 @@ class _MainNavigationScaffoldState
             title: const Text('My Facility'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to facility details
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('My Facility')),
+                const SnackBar(content: Text('My Facility - Coming soon')),
               );
             },
           ),
@@ -157,9 +139,8 @@ class _MainNavigationScaffoldState
             title: const Text('Staff Management'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to staff management
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Staff Management')),
+                const SnackBar(content: Text('Staff Management - Coming soon')),
               );
             },
           ),
@@ -170,9 +151,8 @@ class _MainNavigationScaffoldState
             title: const Text('Stock & Inventory'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to stock management
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Stock & Inventory')),
+                const SnackBar(content: Text('Stock & Inventory - Coming soon')),
               );
             },
           ),
@@ -185,9 +165,8 @@ class _MainNavigationScaffoldState
             title: const Text('Reports & Analytics'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to reports
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reports & Analytics')),
+                const SnackBar(content: Text('Reports & Analytics - Coming soon')),
               );
             },
           ),
@@ -198,9 +177,8 @@ class _MainNavigationScaffoldState
             title: const Text('MOH Guidelines'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to guidelines
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('MOH Guidelines')),
+                const SnackBar(content: Text('MOH Guidelines - Coming soon')),
               );
             },
           ),
@@ -224,9 +202,8 @@ class _MainNavigationScaffoldState
             ),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to notifications
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications')),
+                const SnackBar(content: Text('Notifications - Coming soon')),
               );
             },
           ),
@@ -237,9 +214,8 @@ class _MainNavigationScaffoldState
             title: const Text('Settings'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to settings
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings')),
+                const SnackBar(content: Text('Settings - Coming soon')),
               );
             },
           ),
@@ -250,9 +226,8 @@ class _MainNavigationScaffoldState
             title: const Text('Help & Support'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to help
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Help & Support')),
+                const SnackBar(content: Text('Help & Support - Coming soon')),
               );
             },
           ),
@@ -279,125 +254,155 @@ class _MainNavigationScaffoldState
           
           const Divider(),
           
-          // Logout
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
-            onTap: () {
-              Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Implement logout logic
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Logged out successfully')),
-                        );
-                      },
-                      child: const Text('Logout', style: TextStyle(color: Colors.red)),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          // Logout with REAL functionality
+          _LogoutTile(),
         ],
       ),
+    );
+  }
+}
+
+// ========== USER PROFILE HEADER WIDGET ==========
+class _UserProfileHeader extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(currentUserProfileProvider);
+    final facilityAsync = ref.watch(userFacilityProvider);
+
+    return profileAsync.when(
+      data: (profile) {
+        if (profile == null) {
+          return const UserAccountsDrawerHeader(
+            decoration: BoxDecoration(color: Color(0xFF0D9488)),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person, size: 40, color: Color(0xFF0D9488)),
+            ),
+            accountName: Text('Loading...'),
+            accountEmail: Text(''),
+          );
+        }
+
+        return UserAccountsDrawerHeader(
+          decoration: const BoxDecoration(color: Color(0xFF0D9488)),
+          currentAccountPicture: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: Text(
+              profile.fullName.substring(0, 1).toUpperCase(),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0D9488),
+              ),
+            ),
+          ),
+          accountName: Text(
+            profile.fullName,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          accountEmail: facilityAsync.when(
+            data: (facility) => Text(facility?.name ?? 'No facility assigned'),
+            loading: () => const Text('Loading facility...'),
+            error: (_, __) => const Text('Error loading facility'),
+          ),
+          otherAccountsPictures: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Edit Profile - Coming soon')),
+                );
+              },
+            ),
+          ],
+        );
+      },
+      loading: () => const UserAccountsDrawerHeader(
+        decoration: BoxDecoration(color: Color(0xFF0D9488)),
+        currentAccountPicture: CircleAvatar(
+          backgroundColor: Colors.white,
+          child: CircularProgressIndicator(),
+        ),
+        accountName: Text('Loading...'),
+        accountEmail: Text(''),
+      ),
+      error: (error, stack) => UserAccountsDrawerHeader(
+        decoration: const BoxDecoration(color: Color(0xFF0D9488)),
+        currentAccountPicture: const CircleAvatar(
+          backgroundColor: Colors.white,
+          child: Icon(Icons.error, size: 40, color: Colors.red),
+        ),
+        accountName: const Text('Error'),
+        accountEmail: Text('$error'),
+      ),
+    );
+  }
+}
+
+// ========== USER FACILITY PROVIDER ==========
+final userFacilityProvider = FutureProvider<Facility?>((ref) async {
+  final profile = await ref.watch(currentUserProfileProvider.future);
+  if (profile?.facilityId == null) return null;
+
+  final facilities = await ref.watch(facilitiesProvider.future);
+  return facilities.firstWhere(
+    (f) => f.id == profile!.facilityId,
+    orElse: () => Facility(
+      id: '',
+      kmhflCode: '',
+      name: 'Unknown Facility',
+      county: '',
+    ),
+  );
+});
+
+// ========== LOGOUT TILE WIDGET ==========
+class _LogoutTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListTile(
+      leading: const Icon(Icons.logout, color: Colors.red),
+      title: const Text('Logout', style: TextStyle(color: Colors.red)),
+      onTap: () {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Logout'),
+            content: const Text('Are you sure you want to logout?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Perform logout
+                  final authActions = ref.read(authActionsProvider);
+                  await authActions.signOut();
+                  
+                  if (context.mounted) {
+                    Navigator.pop(context); // Close dialog
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✓ Logged out successfully'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Logout', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 // ========== PLACEHOLDER PAGES ==========
-// TODO: Replace these with actual page implementations
-
-class DashboardPage extends StatelessWidget {
-  final Widget? drawer;
-  
-  const DashboardPage({super.key, this.drawer});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: drawer,
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.dashboard, size: 100, color: Colors.blue[200]),
-            const SizedBox(height: 16),
-            const Text(
-              'Dashboard Page',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text('Coming soon...'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PatientsPage extends StatelessWidget {
-  final Widget? drawer;
-  
-  const PatientsPage({super.key, this.drawer});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: drawer,
-      appBar: AppBar(
-        title: const Text('Patients'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // TODO: Implement search
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.people, size: 100, color: Colors.green[200]),
-            const SizedBox(height: 16),
-            const Text(
-              'Patients Page',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text('Patient list will appear here'),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Navigate to patient registration
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Navigate to Register New Patient')),
-          );
-        },
-        icon: const Icon(Icons.person_add),
-        label: const Text('New Patient'),
-      ),
-    );
-  }
-}
 
 class SchedulePage extends StatelessWidget {
   final Widget? drawer;
@@ -425,91 +430,6 @@ class SchedulePage extends StatelessWidget {
             const Text('Appointments calendar will appear here'),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class MorePage extends StatelessWidget {
-  const MorePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('More'),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ),
-      ),
-      body: ListView(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.assessment),
-            title: const Text('Reports'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // TODO: Navigate to reports
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // TODO: Navigate to settings
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.help),
-            title: const Text('Help & Support'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // TODO: Navigate to help
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('About'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // TODO: Show about dialog
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
-            onTap: () {
-              // TODO: Implement logout
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Implement logout logic
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Logout'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
       ),
     );
   }

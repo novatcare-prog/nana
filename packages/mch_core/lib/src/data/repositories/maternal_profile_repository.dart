@@ -25,19 +25,28 @@ class SupabaseMaternalProfileRepository {
   }
 
   /// Create a new maternal profile
-  Future<MaternalProfile> createProfile(MaternalProfile profile) async {
-    try {
-      final response = await _supabase
-          .from('maternal_profiles')
-          .insert(profile.toJson()) // Use the model's toJson
-          .select()
-          .single();
+Future<MaternalProfile> createProfile(MaternalProfile profile) async {
+  try {
+    final json = profile.toJson();
+    
+    // Remove id field - let database generate UUID
+    json.remove('id');
+    
+    // Also remove created_at and updated_at - let database handle these
+    json.remove('created_at');
+    json.remove('updated_at');
+    
+    final response = await _supabase
+        .from('maternal_profiles')
+        .insert(json)
+        .select()
+        .single();
 
-      return MaternalProfile.fromJson(response);
-    } catch (e) {
-      throw Exception('Failed to create profile: $e');
-    }
+    return MaternalProfile.fromJson(response);
+  } catch (e) {
+    throw Exception('Failed to create profile: $e');
   }
+}
 
   /// Get all maternal profiles
   Future<List<MaternalProfile>> getAllProfiles() async {
@@ -76,7 +85,7 @@ class SupabaseMaternalProfileRepository {
       final response = await _supabase
           .from('maternal_profiles')
           .update(profile.toJson())
-          .eq('id', profile.id)
+          .eq('id', profile.id!)
           .select()
           .single();
 

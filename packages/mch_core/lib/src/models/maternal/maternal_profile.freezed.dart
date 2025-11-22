@@ -20,53 +20,83 @@ MaternalProfile _$MaternalProfileFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MaternalProfile {
-// ✅ FIX: 'required' has been REMOVED from all fields with @Default
-  String get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'facility_id')
   String get facilityId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'kmhfl_code')
   String get kmhflCode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'facility_name')
   String get facilityName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'anc_number')
   String get ancNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'pnc_number')
   String? get pncNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'client_name')
   String get clientName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id_number')
   String? get idNumber => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
   String? get telephone => throw _privateConstructorUsedError;
   String? get county => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sub_county')
   String? get subCounty => throw _privateConstructorUsedError;
   String? get ward => throw _privateConstructorUsedError;
   String? get village => throw _privateConstructorUsedError;
   int get gravida => throw _privateConstructorUsedError;
   int get parity => throw _privateConstructorUsedError;
+  @JsonKey(name: 'height_cm')
   double get heightCm => throw _privateConstructorUsedError;
-  double get weightKg =>
-      throw _privateConstructorUsedError; // ✅ FIX: Made dates nullable to prevent the 'Null' crash
+  @JsonKey(name: 'weight_kg')
+  double get weightKg => throw _privateConstructorUsedError;
   DateTime? get lmp => throw _privateConstructorUsedError;
   DateTime? get edd => throw _privateConstructorUsedError;
+  @JsonKey(name: 'gestation_at_first_visit')
   int? get gestationAtFirstVisit => throw _privateConstructorUsedError;
+  @JsonKey(name: 'blood_group')
   BloodGroup? get bloodGroup => throw _privateConstructorUsedError;
   bool? get diabetes => throw _privateConstructorUsedError;
   bool? get hypertension => throw _privateConstructorUsedError;
   bool? get tuberculosis => throw _privateConstructorUsedError;
+  @JsonKey(name: 'blood_transfusion')
   bool? get bloodTransfusion => throw _privateConstructorUsedError;
+  @JsonKey(name: 'drug_allergy')
   bool? get drugAllergy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'allergy_details')
   String? get allergyDetails => throw _privateConstructorUsedError;
+  @JsonKey(name: 'previous_cs')
   bool? get previousCs => throw _privateConstructorUsedError;
+  @JsonKey(name: 'previous_cs_count')
   int? get previousCsCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bleeding_history')
   bool? get bleedingHistory => throw _privateConstructorUsedError;
   int? get stillbirths => throw _privateConstructorUsedError;
+  @JsonKey(name: 'neonatal_deaths')
   int? get neonatalDeaths => throw _privateConstructorUsedError;
+  @JsonKey(name: 'fgm_done')
   bool? get fgmDone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'hiv_result')
   HivTestResult? get hivResult => throw _privateConstructorUsedError;
+  @JsonKey(name: 'tested_for_syphilis')
   bool? get testedForSyphilis => throw _privateConstructorUsedError;
+  @JsonKey(name: 'syphilis_result')
   HivTestResult? get syphilisResult => throw _privateConstructorUsedError;
+  @JsonKey(name: 'tested_for_hepatitis_b')
   bool? get testedForHepatitisB => throw _privateConstructorUsedError;
+  @JsonKey(name: 'hepatitis_b_result')
   HivTestResult? get hepatitisBResult => throw _privateConstructorUsedError;
+  @JsonKey(name: 'partner_tested_for_hiv')
   bool? get partnerTestedForHiv => throw _privateConstructorUsedError;
+  @JsonKey(name: 'partner_hiv_status')
   HivTestResult? get partnerHivStatus => throw _privateConstructorUsedError;
+  @JsonKey(name: 'next_of_kin_name')
   String? get nextOfKinName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'next_of_kin_relationship')
   String? get nextOfKinRelationship => throw _privateConstructorUsedError;
+  @JsonKey(name: 'next_of_kin_phone')
   String? get nextOfKinPhone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this MaternalProfile to a JSON map.
@@ -86,52 +116,52 @@ abstract class $MaternalProfileCopyWith<$Res> {
       _$MaternalProfileCopyWithImpl<$Res, MaternalProfile>;
   @useResult
   $Res call(
-      {String id,
-      String facilityId,
-      String kmhflCode,
-      String facilityName,
-      String ancNumber,
-      String? pncNumber,
-      String clientName,
-      String? idNumber,
+      {String? id,
+      @JsonKey(name: 'facility_id') String facilityId,
+      @JsonKey(name: 'kmhfl_code') String kmhflCode,
+      @JsonKey(name: 'facility_name') String facilityName,
+      @JsonKey(name: 'anc_number') String ancNumber,
+      @JsonKey(name: 'pnc_number') String? pncNumber,
+      @JsonKey(name: 'client_name') String clientName,
+      @JsonKey(name: 'id_number') String? idNumber,
       int age,
       String? telephone,
       String? county,
-      String? subCounty,
+      @JsonKey(name: 'sub_county') String? subCounty,
       String? ward,
       String? village,
       int gravida,
       int parity,
-      double heightCm,
-      double weightKg,
+      @JsonKey(name: 'height_cm') double heightCm,
+      @JsonKey(name: 'weight_kg') double weightKg,
       DateTime? lmp,
       DateTime? edd,
-      int? gestationAtFirstVisit,
-      BloodGroup? bloodGroup,
+      @JsonKey(name: 'gestation_at_first_visit') int? gestationAtFirstVisit,
+      @JsonKey(name: 'blood_group') BloodGroup? bloodGroup,
       bool? diabetes,
       bool? hypertension,
       bool? tuberculosis,
-      bool? bloodTransfusion,
-      bool? drugAllergy,
-      String? allergyDetails,
-      bool? previousCs,
-      int? previousCsCount,
-      bool? bleedingHistory,
+      @JsonKey(name: 'blood_transfusion') bool? bloodTransfusion,
+      @JsonKey(name: 'drug_allergy') bool? drugAllergy,
+      @JsonKey(name: 'allergy_details') String? allergyDetails,
+      @JsonKey(name: 'previous_cs') bool? previousCs,
+      @JsonKey(name: 'previous_cs_count') int? previousCsCount,
+      @JsonKey(name: 'bleeding_history') bool? bleedingHistory,
       int? stillbirths,
-      int? neonatalDeaths,
-      bool? fgmDone,
-      HivTestResult? hivResult,
-      bool? testedForSyphilis,
-      HivTestResult? syphilisResult,
-      bool? testedForHepatitisB,
-      HivTestResult? hepatitisBResult,
-      bool? partnerTestedForHiv,
-      HivTestResult? partnerHivStatus,
-      String? nextOfKinName,
-      String? nextOfKinRelationship,
-      String? nextOfKinPhone,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      @JsonKey(name: 'neonatal_deaths') int? neonatalDeaths,
+      @JsonKey(name: 'fgm_done') bool? fgmDone,
+      @JsonKey(name: 'hiv_result') HivTestResult? hivResult,
+      @JsonKey(name: 'tested_for_syphilis') bool? testedForSyphilis,
+      @JsonKey(name: 'syphilis_result') HivTestResult? syphilisResult,
+      @JsonKey(name: 'tested_for_hepatitis_b') bool? testedForHepatitisB,
+      @JsonKey(name: 'hepatitis_b_result') HivTestResult? hepatitisBResult,
+      @JsonKey(name: 'partner_tested_for_hiv') bool? partnerTestedForHiv,
+      @JsonKey(name: 'partner_hiv_status') HivTestResult? partnerHivStatus,
+      @JsonKey(name: 'next_of_kin_name') String? nextOfKinName,
+      @JsonKey(name: 'next_of_kin_relationship') String? nextOfKinRelationship,
+      @JsonKey(name: 'next_of_kin_phone') String? nextOfKinPhone,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -149,7 +179,7 @@ class _$MaternalProfileCopyWithImpl<$Res, $Val extends MaternalProfile>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? facilityId = null,
     Object? kmhflCode = null,
     Object? facilityName = null,
@@ -197,10 +227,10 @@ class _$MaternalProfileCopyWithImpl<$Res, $Val extends MaternalProfile>
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       facilityId: null == facilityId
           ? _value.facilityId
           : facilityId // ignore: cast_nullable_to_non_nullable
@@ -394,52 +424,52 @@ abstract class _$$MaternalProfileImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String facilityId,
-      String kmhflCode,
-      String facilityName,
-      String ancNumber,
-      String? pncNumber,
-      String clientName,
-      String? idNumber,
+      {String? id,
+      @JsonKey(name: 'facility_id') String facilityId,
+      @JsonKey(name: 'kmhfl_code') String kmhflCode,
+      @JsonKey(name: 'facility_name') String facilityName,
+      @JsonKey(name: 'anc_number') String ancNumber,
+      @JsonKey(name: 'pnc_number') String? pncNumber,
+      @JsonKey(name: 'client_name') String clientName,
+      @JsonKey(name: 'id_number') String? idNumber,
       int age,
       String? telephone,
       String? county,
-      String? subCounty,
+      @JsonKey(name: 'sub_county') String? subCounty,
       String? ward,
       String? village,
       int gravida,
       int parity,
-      double heightCm,
-      double weightKg,
+      @JsonKey(name: 'height_cm') double heightCm,
+      @JsonKey(name: 'weight_kg') double weightKg,
       DateTime? lmp,
       DateTime? edd,
-      int? gestationAtFirstVisit,
-      BloodGroup? bloodGroup,
+      @JsonKey(name: 'gestation_at_first_visit') int? gestationAtFirstVisit,
+      @JsonKey(name: 'blood_group') BloodGroup? bloodGroup,
       bool? diabetes,
       bool? hypertension,
       bool? tuberculosis,
-      bool? bloodTransfusion,
-      bool? drugAllergy,
-      String? allergyDetails,
-      bool? previousCs,
-      int? previousCsCount,
-      bool? bleedingHistory,
+      @JsonKey(name: 'blood_transfusion') bool? bloodTransfusion,
+      @JsonKey(name: 'drug_allergy') bool? drugAllergy,
+      @JsonKey(name: 'allergy_details') String? allergyDetails,
+      @JsonKey(name: 'previous_cs') bool? previousCs,
+      @JsonKey(name: 'previous_cs_count') int? previousCsCount,
+      @JsonKey(name: 'bleeding_history') bool? bleedingHistory,
       int? stillbirths,
-      int? neonatalDeaths,
-      bool? fgmDone,
-      HivTestResult? hivResult,
-      bool? testedForSyphilis,
-      HivTestResult? syphilisResult,
-      bool? testedForHepatitisB,
-      HivTestResult? hepatitisBResult,
-      bool? partnerTestedForHiv,
-      HivTestResult? partnerHivStatus,
-      String? nextOfKinName,
-      String? nextOfKinRelationship,
-      String? nextOfKinPhone,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      @JsonKey(name: 'neonatal_deaths') int? neonatalDeaths,
+      @JsonKey(name: 'fgm_done') bool? fgmDone,
+      @JsonKey(name: 'hiv_result') HivTestResult? hivResult,
+      @JsonKey(name: 'tested_for_syphilis') bool? testedForSyphilis,
+      @JsonKey(name: 'syphilis_result') HivTestResult? syphilisResult,
+      @JsonKey(name: 'tested_for_hepatitis_b') bool? testedForHepatitisB,
+      @JsonKey(name: 'hepatitis_b_result') HivTestResult? hepatitisBResult,
+      @JsonKey(name: 'partner_tested_for_hiv') bool? partnerTestedForHiv,
+      @JsonKey(name: 'partner_hiv_status') HivTestResult? partnerHivStatus,
+      @JsonKey(name: 'next_of_kin_name') String? nextOfKinName,
+      @JsonKey(name: 'next_of_kin_relationship') String? nextOfKinRelationship,
+      @JsonKey(name: 'next_of_kin_phone') String? nextOfKinPhone,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -455,7 +485,7 @@ class __$$MaternalProfileImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? facilityId = null,
     Object? kmhflCode = null,
     Object? facilityName = null,
@@ -503,10 +533,10 @@ class __$$MaternalProfileImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
   }) {
     return _then(_$MaternalProfileImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       facilityId: null == facilityId
           ? _value.facilityId
           : facilityId // ignore: cast_nullable_to_non_nullable
@@ -696,77 +726,78 @@ class __$$MaternalProfileImplCopyWithImpl<$Res>
 class _$MaternalProfileImpl implements _MaternalProfile {
   const _$MaternalProfileImpl(
       {this.id = '',
-      this.facilityId = '',
-      this.kmhflCode = '',
-      this.facilityName = '',
-      this.ancNumber = '',
-      this.pncNumber,
-      this.clientName = '',
-      this.idNumber,
+      @JsonKey(name: 'facility_id') required this.facilityId,
+      @JsonKey(name: 'kmhfl_code') this.kmhflCode = '',
+      @JsonKey(name: 'facility_name') this.facilityName = '',
+      @JsonKey(name: 'anc_number') this.ancNumber = '',
+      @JsonKey(name: 'pnc_number') this.pncNumber,
+      @JsonKey(name: 'client_name') this.clientName = '',
+      @JsonKey(name: 'id_number') this.idNumber,
       this.age = 0,
       this.telephone,
       this.county,
-      this.subCounty,
+      @JsonKey(name: 'sub_county') this.subCounty,
       this.ward,
       this.village,
       this.gravida = 0,
       this.parity = 0,
-      this.heightCm = 0.0,
-      this.weightKg = 0.0,
+      @JsonKey(name: 'height_cm') this.heightCm = 0.0,
+      @JsonKey(name: 'weight_kg') this.weightKg = 0.0,
       this.lmp,
       this.edd,
-      this.gestationAtFirstVisit,
-      this.bloodGroup,
+      @JsonKey(name: 'gestation_at_first_visit') this.gestationAtFirstVisit,
+      @JsonKey(name: 'blood_group') this.bloodGroup,
       this.diabetes,
       this.hypertension,
       this.tuberculosis,
-      this.bloodTransfusion,
-      this.drugAllergy,
-      this.allergyDetails,
-      this.previousCs,
-      this.previousCsCount,
-      this.bleedingHistory,
+      @JsonKey(name: 'blood_transfusion') this.bloodTransfusion,
+      @JsonKey(name: 'drug_allergy') this.drugAllergy,
+      @JsonKey(name: 'allergy_details') this.allergyDetails,
+      @JsonKey(name: 'previous_cs') this.previousCs,
+      @JsonKey(name: 'previous_cs_count') this.previousCsCount,
+      @JsonKey(name: 'bleeding_history') this.bleedingHistory,
       this.stillbirths,
-      this.neonatalDeaths,
-      this.fgmDone,
-      this.hivResult,
-      this.testedForSyphilis,
-      this.syphilisResult,
-      this.testedForHepatitisB,
-      this.hepatitisBResult,
-      this.partnerTestedForHiv,
-      this.partnerHivStatus,
-      this.nextOfKinName,
-      this.nextOfKinRelationship,
-      this.nextOfKinPhone,
-      this.createdAt,
-      this.updatedAt});
+      @JsonKey(name: 'neonatal_deaths') this.neonatalDeaths,
+      @JsonKey(name: 'fgm_done') this.fgmDone,
+      @JsonKey(name: 'hiv_result') this.hivResult,
+      @JsonKey(name: 'tested_for_syphilis') this.testedForSyphilis,
+      @JsonKey(name: 'syphilis_result') this.syphilisResult,
+      @JsonKey(name: 'tested_for_hepatitis_b') this.testedForHepatitisB,
+      @JsonKey(name: 'hepatitis_b_result') this.hepatitisBResult,
+      @JsonKey(name: 'partner_tested_for_hiv') this.partnerTestedForHiv,
+      @JsonKey(name: 'partner_hiv_status') this.partnerHivStatus,
+      @JsonKey(name: 'next_of_kin_name') this.nextOfKinName,
+      @JsonKey(name: 'next_of_kin_relationship') this.nextOfKinRelationship,
+      @JsonKey(name: 'next_of_kin_phone') this.nextOfKinPhone,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt});
 
   factory _$MaternalProfileImpl.fromJson(Map<String, dynamic> json) =>
       _$$MaternalProfileImplFromJson(json);
 
-// ✅ FIX: 'required' has been REMOVED from all fields with @Default
   @override
   @JsonKey()
-  final String id;
+  final String? id;
   @override
-  @JsonKey()
+  @JsonKey(name: 'facility_id')
   final String facilityId;
   @override
-  @JsonKey()
+  @JsonKey(name: 'kmhfl_code')
   final String kmhflCode;
   @override
-  @JsonKey()
+  @JsonKey(name: 'facility_name')
   final String facilityName;
   @override
-  @JsonKey()
+  @JsonKey(name: 'anc_number')
   final String ancNumber;
   @override
+  @JsonKey(name: 'pnc_number')
   final String? pncNumber;
   @override
-  @JsonKey()
+  @JsonKey(name: 'client_name')
   final String clientName;
   @override
+  @JsonKey(name: 'id_number')
   final String? idNumber;
   @override
   @JsonKey()
@@ -776,6 +807,7 @@ class _$MaternalProfileImpl implements _MaternalProfile {
   @override
   final String? county;
   @override
+  @JsonKey(name: 'sub_county')
   final String? subCounty;
   @override
   final String? ward;
@@ -788,19 +820,20 @@ class _$MaternalProfileImpl implements _MaternalProfile {
   @JsonKey()
   final int parity;
   @override
-  @JsonKey()
+  @JsonKey(name: 'height_cm')
   final double heightCm;
   @override
-  @JsonKey()
+  @JsonKey(name: 'weight_kg')
   final double weightKg;
-// ✅ FIX: Made dates nullable to prevent the 'Null' crash
   @override
   final DateTime? lmp;
   @override
   final DateTime? edd;
   @override
+  @JsonKey(name: 'gestation_at_first_visit')
   final int? gestationAtFirstVisit;
   @override
+  @JsonKey(name: 'blood_group')
   final BloodGroup? bloodGroup;
   @override
   final bool? diabetes;
@@ -809,46 +842,66 @@ class _$MaternalProfileImpl implements _MaternalProfile {
   @override
   final bool? tuberculosis;
   @override
+  @JsonKey(name: 'blood_transfusion')
   final bool? bloodTransfusion;
   @override
+  @JsonKey(name: 'drug_allergy')
   final bool? drugAllergy;
   @override
+  @JsonKey(name: 'allergy_details')
   final String? allergyDetails;
   @override
+  @JsonKey(name: 'previous_cs')
   final bool? previousCs;
   @override
+  @JsonKey(name: 'previous_cs_count')
   final int? previousCsCount;
   @override
+  @JsonKey(name: 'bleeding_history')
   final bool? bleedingHistory;
   @override
   final int? stillbirths;
   @override
+  @JsonKey(name: 'neonatal_deaths')
   final int? neonatalDeaths;
   @override
+  @JsonKey(name: 'fgm_done')
   final bool? fgmDone;
   @override
+  @JsonKey(name: 'hiv_result')
   final HivTestResult? hivResult;
   @override
+  @JsonKey(name: 'tested_for_syphilis')
   final bool? testedForSyphilis;
   @override
+  @JsonKey(name: 'syphilis_result')
   final HivTestResult? syphilisResult;
   @override
+  @JsonKey(name: 'tested_for_hepatitis_b')
   final bool? testedForHepatitisB;
   @override
+  @JsonKey(name: 'hepatitis_b_result')
   final HivTestResult? hepatitisBResult;
   @override
+  @JsonKey(name: 'partner_tested_for_hiv')
   final bool? partnerTestedForHiv;
   @override
+  @JsonKey(name: 'partner_hiv_status')
   final HivTestResult? partnerHivStatus;
   @override
+  @JsonKey(name: 'next_of_kin_name')
   final String? nextOfKinName;
   @override
+  @JsonKey(name: 'next_of_kin_relationship')
   final String? nextOfKinRelationship;
   @override
+  @JsonKey(name: 'next_of_kin_phone')
   final String? nextOfKinPhone;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -1016,72 +1069,83 @@ class _$MaternalProfileImpl implements _MaternalProfile {
 
 abstract class _MaternalProfile implements MaternalProfile {
   const factory _MaternalProfile(
-      {final String id,
-      final String facilityId,
-      final String kmhflCode,
-      final String facilityName,
-      final String ancNumber,
-      final String? pncNumber,
-      final String clientName,
-      final String? idNumber,
+      {final String? id,
+      @JsonKey(name: 'facility_id') required final String facilityId,
+      @JsonKey(name: 'kmhfl_code') final String kmhflCode,
+      @JsonKey(name: 'facility_name') final String facilityName,
+      @JsonKey(name: 'anc_number') final String ancNumber,
+      @JsonKey(name: 'pnc_number') final String? pncNumber,
+      @JsonKey(name: 'client_name') final String clientName,
+      @JsonKey(name: 'id_number') final String? idNumber,
       final int age,
       final String? telephone,
       final String? county,
-      final String? subCounty,
+      @JsonKey(name: 'sub_county') final String? subCounty,
       final String? ward,
       final String? village,
       final int gravida,
       final int parity,
-      final double heightCm,
-      final double weightKg,
+      @JsonKey(name: 'height_cm') final double heightCm,
+      @JsonKey(name: 'weight_kg') final double weightKg,
       final DateTime? lmp,
       final DateTime? edd,
+      @JsonKey(name: 'gestation_at_first_visit')
       final int? gestationAtFirstVisit,
-      final BloodGroup? bloodGroup,
+      @JsonKey(name: 'blood_group') final BloodGroup? bloodGroup,
       final bool? diabetes,
       final bool? hypertension,
       final bool? tuberculosis,
-      final bool? bloodTransfusion,
-      final bool? drugAllergy,
-      final String? allergyDetails,
-      final bool? previousCs,
-      final int? previousCsCount,
-      final bool? bleedingHistory,
+      @JsonKey(name: 'blood_transfusion') final bool? bloodTransfusion,
+      @JsonKey(name: 'drug_allergy') final bool? drugAllergy,
+      @JsonKey(name: 'allergy_details') final String? allergyDetails,
+      @JsonKey(name: 'previous_cs') final bool? previousCs,
+      @JsonKey(name: 'previous_cs_count') final int? previousCsCount,
+      @JsonKey(name: 'bleeding_history') final bool? bleedingHistory,
       final int? stillbirths,
-      final int? neonatalDeaths,
-      final bool? fgmDone,
-      final HivTestResult? hivResult,
-      final bool? testedForSyphilis,
-      final HivTestResult? syphilisResult,
-      final bool? testedForHepatitisB,
+      @JsonKey(name: 'neonatal_deaths') final int? neonatalDeaths,
+      @JsonKey(name: 'fgm_done') final bool? fgmDone,
+      @JsonKey(name: 'hiv_result') final HivTestResult? hivResult,
+      @JsonKey(name: 'tested_for_syphilis') final bool? testedForSyphilis,
+      @JsonKey(name: 'syphilis_result') final HivTestResult? syphilisResult,
+      @JsonKey(name: 'tested_for_hepatitis_b') final bool? testedForHepatitisB,
+      @JsonKey(name: 'hepatitis_b_result')
       final HivTestResult? hepatitisBResult,
-      final bool? partnerTestedForHiv,
+      @JsonKey(name: 'partner_tested_for_hiv') final bool? partnerTestedForHiv,
+      @JsonKey(name: 'partner_hiv_status')
       final HivTestResult? partnerHivStatus,
-      final String? nextOfKinName,
+      @JsonKey(name: 'next_of_kin_name') final String? nextOfKinName,
+      @JsonKey(name: 'next_of_kin_relationship')
       final String? nextOfKinRelationship,
-      final String? nextOfKinPhone,
-      final DateTime? createdAt,
+      @JsonKey(name: 'next_of_kin_phone') final String? nextOfKinPhone,
+      @JsonKey(name: 'created_at') final DateTime? createdAt,
+      @JsonKey(name: 'updated_at')
       final DateTime? updatedAt}) = _$MaternalProfileImpl;
 
   factory _MaternalProfile.fromJson(Map<String, dynamic> json) =
       _$MaternalProfileImpl.fromJson;
 
-// ✅ FIX: 'required' has been REMOVED from all fields with @Default
   @override
-  String get id;
+  String? get id;
   @override
+  @JsonKey(name: 'facility_id')
   String get facilityId;
   @override
+  @JsonKey(name: 'kmhfl_code')
   String get kmhflCode;
   @override
+  @JsonKey(name: 'facility_name')
   String get facilityName;
   @override
+  @JsonKey(name: 'anc_number')
   String get ancNumber;
   @override
+  @JsonKey(name: 'pnc_number')
   String? get pncNumber;
   @override
+  @JsonKey(name: 'client_name')
   String get clientName;
   @override
+  @JsonKey(name: 'id_number')
   String? get idNumber;
   @override
   int get age;
@@ -1090,6 +1154,7 @@ abstract class _MaternalProfile implements MaternalProfile {
   @override
   String? get county;
   @override
+  @JsonKey(name: 'sub_county')
   String? get subCounty;
   @override
   String? get ward;
@@ -1100,16 +1165,20 @@ abstract class _MaternalProfile implements MaternalProfile {
   @override
   int get parity;
   @override
+  @JsonKey(name: 'height_cm')
   double get heightCm;
   @override
-  double get weightKg; // ✅ FIX: Made dates nullable to prevent the 'Null' crash
+  @JsonKey(name: 'weight_kg')
+  double get weightKg;
   @override
   DateTime? get lmp;
   @override
   DateTime? get edd;
   @override
+  @JsonKey(name: 'gestation_at_first_visit')
   int? get gestationAtFirstVisit;
   @override
+  @JsonKey(name: 'blood_group')
   BloodGroup? get bloodGroup;
   @override
   bool? get diabetes;
@@ -1118,46 +1187,66 @@ abstract class _MaternalProfile implements MaternalProfile {
   @override
   bool? get tuberculosis;
   @override
+  @JsonKey(name: 'blood_transfusion')
   bool? get bloodTransfusion;
   @override
+  @JsonKey(name: 'drug_allergy')
   bool? get drugAllergy;
   @override
+  @JsonKey(name: 'allergy_details')
   String? get allergyDetails;
   @override
+  @JsonKey(name: 'previous_cs')
   bool? get previousCs;
   @override
+  @JsonKey(name: 'previous_cs_count')
   int? get previousCsCount;
   @override
+  @JsonKey(name: 'bleeding_history')
   bool? get bleedingHistory;
   @override
   int? get stillbirths;
   @override
+  @JsonKey(name: 'neonatal_deaths')
   int? get neonatalDeaths;
   @override
+  @JsonKey(name: 'fgm_done')
   bool? get fgmDone;
   @override
+  @JsonKey(name: 'hiv_result')
   HivTestResult? get hivResult;
   @override
+  @JsonKey(name: 'tested_for_syphilis')
   bool? get testedForSyphilis;
   @override
+  @JsonKey(name: 'syphilis_result')
   HivTestResult? get syphilisResult;
   @override
+  @JsonKey(name: 'tested_for_hepatitis_b')
   bool? get testedForHepatitisB;
   @override
+  @JsonKey(name: 'hepatitis_b_result')
   HivTestResult? get hepatitisBResult;
   @override
+  @JsonKey(name: 'partner_tested_for_hiv')
   bool? get partnerTestedForHiv;
   @override
+  @JsonKey(name: 'partner_hiv_status')
   HivTestResult? get partnerHivStatus;
   @override
+  @JsonKey(name: 'next_of_kin_name')
   String? get nextOfKinName;
   @override
+  @JsonKey(name: 'next_of_kin_relationship')
   String? get nextOfKinRelationship;
   @override
+  @JsonKey(name: 'next_of_kin_phone')
   String? get nextOfKinPhone;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of MaternalProfile

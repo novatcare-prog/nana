@@ -429,7 +429,7 @@ class DashboardScreen extends ConsumerWidget {
             context,
             MaterialPageRoute(
               builder: (context) => PatientDetailScreen(
-                patientId: patient.id,
+                patientId: patient.id!,
               ),
             ),
           );

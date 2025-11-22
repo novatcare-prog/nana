@@ -109,7 +109,7 @@ final updateMaternalProfileProvider = Provider<Future<MaternalProfile> Function(
   return (profile) async {
     final result = await repository.updateProfile(profile);
     ref.invalidate(maternalProfilesProvider);
-    ref.invalidate(maternalProfileByIdProvider(profile.id));
+    ref.invalidate(maternalProfileByIdProvider(profile.id!));
     ref.invalidate(highRiskProfilesProvider);
     ref.invalidate(profilesDueSoonProvider);
     ref.invalidate(statisticsProvider);

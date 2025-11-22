@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
 import 'anc_visit_history_screen.dart';
-
+import 'patient_edit_screen.dart';
+import 'lab_results_history_screen.dart';
+import '../../presentation/screens/immunization_malaria_screen.dart';
+import '../../presentation/screens/nutrition_tracking_screen.dart';
 /// Patient Detail Screen with Tabbed Interface
 /// Design: Profile | Medical History | Lab Results | Visits
 class PatientDetailScreen extends ConsumerStatefulWidget {
@@ -51,10 +54,18 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Edit feature coming soon!')),
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PatientEditScreen(profile: patient),
+                    ),
                   );
+                  
+                  // If edit was successful, refresh the page
+                  if (result == true) {
+                    ref.invalidate(maternalProfilesProvider);
+                  }
                 },
                 tooltip: 'Edit Patient',
               ),
@@ -372,56 +383,107 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
                   ),
               ],
             ),
+            const SizedBox(height: 24),
+
+// Immunization & Malaria Button
+ElevatedButton.icon(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ImmunizationMalariaScreen(
+          patientId: widget.patientId,
+          patient: patient,
+        ),
+      ),
+    );
+  },
+  icon: const Icon(Icons.vaccines),
+  label: const Text('View Immunization & Malaria'),
+  style: ElevatedButton.styleFrom(
+    minimumSize: const Size(double.infinity, 48),
+  ),
+),
+const SizedBox(height: 12),
+
+// Nutrition Button
+ElevatedButton.icon(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NutritionTrackingScreen(
+          patientId: widget.patientId,
+          patient: patient,
+        ),
+      ),
+    );
+  },
+  icon: const Icon(Icons.restaurant),
+  label: const Text('View Nutrition Tracking'),
+  style: ElevatedButton.styleFrom(
+    minimumSize: const Size(double.infinity, 48),
+  ),
+),
         ],
       ),
     );
   }
 
   /// Lab Results Tab
-  Widget _buildLabResultsTab(MaternalProfile patient) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.science_outlined,
-              size: 64,
-              color: Colors.grey[400],
+Widget _buildLabResultsTab(MaternalProfile patient) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.science_outlined,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Lab Results',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[700],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Lab Results',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'View and manage laboratory test results',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Lab results feature coming soon',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LabResultsHistoryScreen(
+                    patientId: widget.patientId,
+                    patient: patient,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.science),
+            label: const Text('View Lab Results'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(200, 48),
             ),
-            const SizedBox(height: 24),
-            OutlinedButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Lab results feature coming soon')),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Lab Result'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   /// Visits Tab
   Widget _buildVisitsTab(MaternalProfile patient) {

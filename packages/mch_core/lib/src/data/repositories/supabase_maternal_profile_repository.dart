@@ -74,7 +74,7 @@ class SupabaseMaternalProfileRepository {
       final response = await _supabase
           .from('maternal_profiles') // Correct table
           .update(profile.toJson())
-          .eq('id', profile.id)
+          .eq('id', profile.id!)
           .select()
           .single();
 

@@ -58,15 +58,16 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: Color.fromARGB(255, 7, 0, 0)),
           decoration: InputDecoration(
             hintText: 'Search patients...',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-            border: InputBorder.none,
-            prefixIcon: const Icon(Icons.search, color: Colors.white),
+            hintStyle: TextStyle(color: const Color.fromARGB(255, 4, 104, 186).withOpacity(0.7)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(22), // Rounded corners
+      borderSide: BorderSide(width: 1, color: Color(0xFF2196F3))),
+            prefixIcon: const Icon(Icons.search, color: Color(0xFF2196F3)),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.clear, color: Colors.white),
+                    icon: const Icon(Icons.clear, color: Color.fromARGB(255, 45, 4, 169)),
                     onPressed: () {
                       _searchController.clear();
                       setState(() {
@@ -380,7 +381,7 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => PatientDetailScreen(
-                      patientId: patient.id,
+                      patientId: patient.id!,
                     ),
                   ),
                 );
@@ -438,7 +439,7 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => PatientDetailScreen(
-                patientId: patient.id,
+                patientId: patient.id!,
               ),
             ),
           );

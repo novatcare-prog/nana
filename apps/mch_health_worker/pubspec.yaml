@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.4.9
+  intl: ^0.19.0
   mch_core:
     path: ../../packages/mch_core
   
@@ -26,6 +27,7 @@ dependencies:
   
   # Environment variables
   flutter_dotenv: ^5.1.0
+  uuid: ^4.5.2
   
   # REMOVED FOR NOW - we'll add back when needed:
   # flutter_secure_storage: ^9.0.0
