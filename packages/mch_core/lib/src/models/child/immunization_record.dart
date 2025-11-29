@@ -17,46 +17,58 @@ part 'immunization_record.g.dart';
 @freezed
 class ImmunizationRecord with _$ImmunizationRecord {
   const factory ImmunizationRecord({
-    required String id,
-    required String childId,
-    required ImmunizationType vaccineType,
-    required DateTime dateGiven,
-    required int ageInWeeks, // Child's age when vaccine given
+    @JsonKey(name: 'id') String? id,
+    @JsonKey(name: 'child_profile_id') required String childId,
+    @JsonKey(name: 'vaccine_type') required ImmunizationType vaccineType,
+    @JsonKey(name: 'vaccine_name') String? vaccineName,
+    @JsonKey(name: 'date_given') required DateTime dateGiven,
+    @JsonKey(name: 'age_in_weeks') required int ageInWeeks, // Child's age when vaccine given
+    @JsonKey(name: 'age_at_vaccination_months') int? ageAtVaccinationMonths,
+    @JsonKey(name: 'age_at_vaccination_weeks') int? ageAtVaccinationWeeks,
     
     // Dose Information
-    int? doseNumber, // 1st, 2nd, 3rd dose
-    String? dosage, // e.g., "0.05ml", "0.5ml", "2 drops"
-    String? administrationRoute, // Oral, IM, Intradermal, Subcutaneous
-    String? administrationSite, // Left forearm, Right thigh, etc.
+    @JsonKey(name: 'dose_number') int? doseNumber, // 1st, 2nd, 3rd dose
+    @JsonKey(name: 'dosage') String? dosage, // e.g., "0.05ml", "0.5ml", "2 drops"
+    @JsonKey(name: 'route') String? administrationRoute, // Oral, IM, Intradermal, Subcutaneous
+    @JsonKey(name: 'site') String? administrationSite, // Left forearm, Right thigh, etc.
     
     // Vaccine Details
-    String? batchNumber,
-    String? manufacturer,
-    DateTime? manufactureDate,
-    DateTime? expiryDate,
+    @JsonKey(name: 'batch_number') String? batchNumber,
+    @JsonKey(name: 'manufacturer') String? manufacturer,
+    @JsonKey(name: 'manufacture_date') DateTime? manufactureDate,
+    @JsonKey(name: 'expiry_date') DateTime? expiryDate,
+    
+    // Location
+    @JsonKey(name: 'health_facility') String? healthFacilityName,
     
     // BCG Specific
-    bool? bcgScarChecked,
-    bool? bcgScarPresent,
-    DateTime? bcgScarCheckDate,
+    @JsonKey(name: 'bcg_scar_checked') bool? bcgScarChecked,
+    @JsonKey(name: 'bcg_scar_present') bool? bcgScarPresent,
+    @JsonKey(name: 'bcg_scar_check_date') DateTime? bcgScarCheckDate,
     
     // Administration
-    String? givenBy, // Health worker name
-    String? healthFacilityName,
+    @JsonKey(name: 'administered_by') String? givenBy, // Health worker name
     
     // AEFI (Adverse Events Following Immunization)
-    bool? adverseEventReported,
-    String? adverseEventDescription,
-    DateTime? adverseEventDate,
+    @JsonKey(name: 'adverse_reaction') @Default(false) bool adverseEventReported,
+    @JsonKey(name: 'reaction_details') String? adverseEventDescription,
+    @JsonKey(name: 'reaction_severity') String? reactionSeverity,
+    @JsonKey(name: 'reaction_reported') @Default(false) bool reactionReportedToAuthority,
+    
+    // Schedule Status
+    @JsonKey(name: 'given_on_schedule') @Default(true) bool givenOnSchedule,
+    @JsonKey(name: 'reason_for_delay') String? reasonForDelay,
+    @JsonKey(name: 'catch_up_dose') @Default(false) bool catchUpDose,
     
     // Next Due
-    DateTime? nextDoseDate,
+    @JsonKey(name: 'next_dose_due_date') DateTime? nextDoseDate,
+    @JsonKey(name: 'next_vaccine_due') String? nextVaccineDue,
     
     // Notes
-    String? notes,
+    @JsonKey(name: 'notes') String? notes,
     
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _ImmunizationRecord;
 
   factory ImmunizationRecord.fromJson(Map<String, dynamic> json) =>

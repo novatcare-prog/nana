@@ -20,20 +20,33 @@ VitaminARecord _$VitaminARecordFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$VitaminARecord {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'child_profile_id')
   String get childId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'date_given')
   DateTime get dateGiven => throw _privateConstructorUsedError;
-  int get ageInMonths => throw _privateConstructorUsedError; // Dosage
+  @JsonKey(name: 'age_in_months')
+  int get ageInMonths => throw _privateConstructorUsedError;
+  @JsonKey(name: 'dose_number')
+  int? get doseNumber => throw _privateConstructorUsedError; // Dosage
+  @JsonKey(name: 'dosage_iu')
   int get dosageIU => throw _privateConstructorUsedError; // 100,000 or 200,000
 // Administration
+  @JsonKey(name: 'given_by')
   String? get givenBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'health_facility')
   String? get healthFacilityName =>
       throw _privateConstructorUsedError; // Next Due
+  @JsonKey(name: 'next_dose_due_date')
   DateTime? get nextDoseDate =>
       throw _privateConstructorUsedError; // 6 months later
 // Notes
+  @JsonKey(name: 'notes')
   String? get notes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this VitaminARecord to a JSON map.
@@ -53,17 +66,18 @@ abstract class $VitaminARecordCopyWith<$Res> {
       _$VitaminARecordCopyWithImpl<$Res, VitaminARecord>;
   @useResult
   $Res call(
-      {String id,
-      String childId,
-      DateTime dateGiven,
-      int ageInMonths,
-      int dosageIU,
-      String? givenBy,
-      String? healthFacilityName,
-      DateTime? nextDoseDate,
-      String? notes,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'child_profile_id') String childId,
+      @JsonKey(name: 'date_given') DateTime dateGiven,
+      @JsonKey(name: 'age_in_months') int ageInMonths,
+      @JsonKey(name: 'dose_number') int? doseNumber,
+      @JsonKey(name: 'dosage_iu') int dosageIU,
+      @JsonKey(name: 'given_by') String? givenBy,
+      @JsonKey(name: 'health_facility') String? healthFacilityName,
+      @JsonKey(name: 'next_dose_due_date') DateTime? nextDoseDate,
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -81,10 +95,11 @@ class _$VitaminARecordCopyWithImpl<$Res, $Val extends VitaminARecord>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? childId = null,
     Object? dateGiven = null,
     Object? ageInMonths = null,
+    Object? doseNumber = freezed,
     Object? dosageIU = null,
     Object? givenBy = freezed,
     Object? healthFacilityName = freezed,
@@ -94,10 +109,10 @@ class _$VitaminARecordCopyWithImpl<$Res, $Val extends VitaminARecord>
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       childId: null == childId
           ? _value.childId
           : childId // ignore: cast_nullable_to_non_nullable
@@ -110,6 +125,10 @@ class _$VitaminARecordCopyWithImpl<$Res, $Val extends VitaminARecord>
           ? _value.ageInMonths
           : ageInMonths // ignore: cast_nullable_to_non_nullable
               as int,
+      doseNumber: freezed == doseNumber
+          ? _value.doseNumber
+          : doseNumber // ignore: cast_nullable_to_non_nullable
+              as int?,
       dosageIU: null == dosageIU
           ? _value.dosageIU
           : dosageIU // ignore: cast_nullable_to_non_nullable
@@ -151,17 +170,18 @@ abstract class _$$VitaminARecordImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String childId,
-      DateTime dateGiven,
-      int ageInMonths,
-      int dosageIU,
-      String? givenBy,
-      String? healthFacilityName,
-      DateTime? nextDoseDate,
-      String? notes,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'child_profile_id') String childId,
+      @JsonKey(name: 'date_given') DateTime dateGiven,
+      @JsonKey(name: 'age_in_months') int ageInMonths,
+      @JsonKey(name: 'dose_number') int? doseNumber,
+      @JsonKey(name: 'dosage_iu') int dosageIU,
+      @JsonKey(name: 'given_by') String? givenBy,
+      @JsonKey(name: 'health_facility') String? healthFacilityName,
+      @JsonKey(name: 'next_dose_due_date') DateTime? nextDoseDate,
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -177,10 +197,11 @@ class __$$VitaminARecordImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? childId = null,
     Object? dateGiven = null,
     Object? ageInMonths = null,
+    Object? doseNumber = freezed,
     Object? dosageIU = null,
     Object? givenBy = freezed,
     Object? healthFacilityName = freezed,
@@ -190,10 +211,10 @@ class __$$VitaminARecordImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
   }) {
     return _then(_$VitaminARecordImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       childId: null == childId
           ? _value.childId
           : childId // ignore: cast_nullable_to_non_nullable
@@ -206,6 +227,10 @@ class __$$VitaminARecordImplCopyWithImpl<$Res>
           ? _value.ageInMonths
           : ageInMonths // ignore: cast_nullable_to_non_nullable
               as int,
+      doseNumber: freezed == doseNumber
+          ? _value.doseNumber
+          : doseNumber // ignore: cast_nullable_to_non_nullable
+              as int?,
       dosageIU: null == dosageIU
           ? _value.dosageIU
           : dosageIU // ignore: cast_nullable_to_non_nullable
@@ -242,53 +267,68 @@ class __$$VitaminARecordImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$VitaminARecordImpl implements _VitaminARecord {
   const _$VitaminARecordImpl(
-      {required this.id,
-      required this.childId,
-      required this.dateGiven,
-      required this.ageInMonths,
-      required this.dosageIU,
-      this.givenBy,
-      this.healthFacilityName,
-      this.nextDoseDate,
-      this.notes,
-      this.createdAt,
-      this.updatedAt});
+      {@JsonKey(name: 'id') this.id,
+      @JsonKey(name: 'child_profile_id') required this.childId,
+      @JsonKey(name: 'date_given') required this.dateGiven,
+      @JsonKey(name: 'age_in_months') required this.ageInMonths,
+      @JsonKey(name: 'dose_number') this.doseNumber,
+      @JsonKey(name: 'dosage_iu') required this.dosageIU,
+      @JsonKey(name: 'given_by') this.givenBy,
+      @JsonKey(name: 'health_facility') this.healthFacilityName,
+      @JsonKey(name: 'next_dose_due_date') this.nextDoseDate,
+      @JsonKey(name: 'notes') this.notes,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt});
 
   factory _$VitaminARecordImpl.fromJson(Map<String, dynamic> json) =>
       _$$VitaminARecordImplFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'id')
+  final String? id;
   @override
+  @JsonKey(name: 'child_profile_id')
   final String childId;
   @override
+  @JsonKey(name: 'date_given')
   final DateTime dateGiven;
   @override
+  @JsonKey(name: 'age_in_months')
   final int ageInMonths;
+  @override
+  @JsonKey(name: 'dose_number')
+  final int? doseNumber;
 // Dosage
   @override
+  @JsonKey(name: 'dosage_iu')
   final int dosageIU;
 // 100,000 or 200,000
 // Administration
   @override
+  @JsonKey(name: 'given_by')
   final String? givenBy;
   @override
+  @JsonKey(name: 'health_facility')
   final String? healthFacilityName;
 // Next Due
   @override
+  @JsonKey(name: 'next_dose_due_date')
   final DateTime? nextDoseDate;
 // 6 months later
 // Notes
   @override
+  @JsonKey(name: 'notes')
   final String? notes;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'VitaminARecord(id: $id, childId: $childId, dateGiven: $dateGiven, ageInMonths: $ageInMonths, dosageIU: $dosageIU, givenBy: $givenBy, healthFacilityName: $healthFacilityName, nextDoseDate: $nextDoseDate, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'VitaminARecord(id: $id, childId: $childId, dateGiven: $dateGiven, ageInMonths: $ageInMonths, doseNumber: $doseNumber, dosageIU: $dosageIU, givenBy: $givenBy, healthFacilityName: $healthFacilityName, nextDoseDate: $nextDoseDate, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -302,6 +342,8 @@ class _$VitaminARecordImpl implements _VitaminARecord {
                 other.dateGiven == dateGiven) &&
             (identical(other.ageInMonths, ageInMonths) ||
                 other.ageInMonths == ageInMonths) &&
+            (identical(other.doseNumber, doseNumber) ||
+                other.doseNumber == doseNumber) &&
             (identical(other.dosageIU, dosageIU) ||
                 other.dosageIU == dosageIU) &&
             (identical(other.givenBy, givenBy) || other.givenBy == givenBy) &&
@@ -324,6 +366,7 @@ class _$VitaminARecordImpl implements _VitaminARecord {
       childId,
       dateGiven,
       ageInMonths,
+      doseNumber,
       dosageIU,
       givenBy,
       healthFacilityName,
@@ -351,44 +394,60 @@ class _$VitaminARecordImpl implements _VitaminARecord {
 
 abstract class _VitaminARecord implements VitaminARecord {
   const factory _VitaminARecord(
-      {required final String id,
-      required final String childId,
-      required final DateTime dateGiven,
-      required final int ageInMonths,
-      required final int dosageIU,
-      final String? givenBy,
-      final String? healthFacilityName,
-      final DateTime? nextDoseDate,
-      final String? notes,
-      final DateTime? createdAt,
-      final DateTime? updatedAt}) = _$VitaminARecordImpl;
+          {@JsonKey(name: 'id') final String? id,
+          @JsonKey(name: 'child_profile_id') required final String childId,
+          @JsonKey(name: 'date_given') required final DateTime dateGiven,
+          @JsonKey(name: 'age_in_months') required final int ageInMonths,
+          @JsonKey(name: 'dose_number') final int? doseNumber,
+          @JsonKey(name: 'dosage_iu') required final int dosageIU,
+          @JsonKey(name: 'given_by') final String? givenBy,
+          @JsonKey(name: 'health_facility') final String? healthFacilityName,
+          @JsonKey(name: 'next_dose_due_date') final DateTime? nextDoseDate,
+          @JsonKey(name: 'notes') final String? notes,
+          @JsonKey(name: 'created_at') final DateTime? createdAt,
+          @JsonKey(name: 'updated_at') final DateTime? updatedAt}) =
+      _$VitaminARecordImpl;
 
   factory _VitaminARecord.fromJson(Map<String, dynamic> json) =
       _$VitaminARecordImpl.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'id')
+  String? get id;
   @override
+  @JsonKey(name: 'child_profile_id')
   String get childId;
   @override
+  @JsonKey(name: 'date_given')
   DateTime get dateGiven;
   @override
-  int get ageInMonths; // Dosage
+  @JsonKey(name: 'age_in_months')
+  int get ageInMonths;
   @override
+  @JsonKey(name: 'dose_number')
+  int? get doseNumber; // Dosage
+  @override
+  @JsonKey(name: 'dosage_iu')
   int get dosageIU; // 100,000 or 200,000
 // Administration
   @override
+  @JsonKey(name: 'given_by')
   String? get givenBy;
   @override
+  @JsonKey(name: 'health_facility')
   String? get healthFacilityName; // Next Due
   @override
+  @JsonKey(name: 'next_dose_due_date')
   DateTime? get nextDoseDate; // 6 months later
 // Notes
   @override
+  @JsonKey(name: 'notes')
   String? get notes;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of VitaminARecord

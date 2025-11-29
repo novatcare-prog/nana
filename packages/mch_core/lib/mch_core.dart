@@ -34,3 +34,23 @@ export 'src/models/maternal/nutrition_record.dart';
 //nutrition & muac repository export
 export 'src/data/repositories/nutrition_repository.dart';
 export 'src/data/repositories/muac_repository.dart';
+
+// Childbirth
+export 'src/models/maternal/childbirth_record.dart';
+export 'src/models/child/child_profile.dart';
+export 'src/data/repositories/childbirth_repositories.dart';
+
+// Child Health - Growth Monitoring
+export 'src/models/child/growth_record.dart';
+export 'src/data/repositories/growth_record_repository.dart';
+
+// Child Immunizations
+export 'src/models/child/immunization_record.dart';
+export 'src/data/repositories/child_immunization_repository.dart';
+export 'src/enums/immunization_type.dart';
+
+// Child Health - Vitamin A & Deworming
+export 'src/models/child/vitamin_a_record.dart';
+export 'src/models/child/deworming_record.dart';
+export 'src/data/repositories/vitamin_a_repository.dart';
+export 'src/data/repositories/deworming_repository.dart';

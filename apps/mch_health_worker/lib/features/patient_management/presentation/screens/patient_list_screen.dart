@@ -4,6 +4,7 @@ import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
 import 'patient_registration_screen.dart';
 import 'patient_detail_screen.dart';
+import '/../../core/widgets/offline_indicator.dart';
 
 /// Patient List Screen - Shows all registered patients with search and filter
 /// IMPROVED VERSION with UX fixes based on clinical workflow
@@ -84,27 +85,31 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: () => ref.invalidate(maternalProfilesProvider),
-          ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            tooltip: 'Filter patients',
-            onSelected: (value) {
-              setState(() {
-                _filterBy = value;
-              });
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'All', child: Text('All Patients')),
-              const PopupMenuItem(value: 'High Risk', child: Text('High Risk')),
-              const PopupMenuItem(value: 'Due Soon', child: Text('Due Soon')),
-              const PopupMenuItem(value: 'Active', child: Text('Active')),
-            ],
-          ),
-        ],
+  const OfflineIndicator(),
+  const SizedBox(width: 8),
+  const SyncButton(),
+  const SizedBox(width: 8),
+  IconButton(
+    icon: const Icon(Icons.refresh),
+    tooltip: 'Refresh',
+    onPressed: () => ref.invalidate(maternalProfilesProvider),
+  ),
+  PopupMenuButton<String>(
+    icon: const Icon(Icons.filter_list),
+    tooltip: 'Filter patients',
+    onSelected: (value) {
+      setState(() {
+        _filterBy = value;
+      });
+    },
+    itemBuilder: (context) => [
+      const PopupMenuItem(value: 'All', child: Text('All Patients')),
+      const PopupMenuItem(value: 'High Risk', child: Text('High Risk')),
+      const PopupMenuItem(value: 'Due Soon', child: Text('Due Soon')),
+      const PopupMenuItem(value: 'Active', child: Text('Active')),
+    ],
+  ),
+],
       ),
       body: profilesAsync.when(
         data: (profiles) {

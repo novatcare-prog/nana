@@ -20,42 +20,84 @@ GrowthRecord _$GrowthRecordFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GrowthRecord {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'child_profile_id')
   String get childId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'visit_date')
   DateTime get measurementDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'age_in_months')
   int get ageInMonths =>
       throw _privateConstructorUsedError; // Weight Measurement
+  @JsonKey(name: 'weight_kg')
   double get weightKg => throw _privateConstructorUsedError;
-  String? get weightForAgeZScore =>
-      throw _privateConstructorUsedError; // +3, +2, +1, -1, -2, -3
+  @JsonKey(name: 'weight_for_age_z_score')
+  double? get weightForAgeZScore => throw _privateConstructorUsedError;
+  @JsonKey(name: 'weight_interpretation')
   String? get weightInterpretation =>
-      throw _privateConstructorUsedError; // Good, Danger, Very Dangerous
-// Length/Height Measurement
-  double get lengthHeightCm => throw _privateConstructorUsedError;
-  bool? get measuredLying =>
-      throw _privateConstructorUsedError; // True = length (lying), False = height (standing)
-  String? get heightForAgeZScore =>
-      throw _privateConstructorUsedError; // +3, +2, +1, -1, -2, -3
+      throw _privateConstructorUsedError; // Length/Height Measurement
+  @JsonKey(name: 'length_cm')
+  double? get lengthCm =>
+      throw _privateConstructorUsedError; // For < 2 years (lying)
+  @JsonKey(name: 'height_cm')
+  double? get heightCm =>
+      throw _privateConstructorUsedError; // For >= 2 years (standing)
+  @JsonKey(name: 'measured_lying')
+  bool? get measuredLying => throw _privateConstructorUsedError;
+  @JsonKey(name: 'height_for_age_z_score')
+  double? get heightForAgeZScore => throw _privateConstructorUsedError;
+  @JsonKey(name: 'height_interpretation')
   String? get heightInterpretation =>
-      throw _privateConstructorUsedError; // Good, Dangerous
-// MUAC (Mid-Upper Arm Circumference) - for children 6-59 months
+      throw _privateConstructorUsedError; // Additional Z-scores
+  @JsonKey(name: 'weight_for_height_z_score')
+  double? get weightForHeightZScore => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bmi_for_age_z_score')
+  double? get bmiForAgeZScore =>
+      throw _privateConstructorUsedError; // MUAC (Mid-Upper Arm Circumference)
+  @JsonKey(name: 'muac_cm')
   double? get muacCm => throw _privateConstructorUsedError;
+  @JsonKey(name: 'muac_interpretation')
   String? get muacInterpretation =>
+      throw _privateConstructorUsedError; // Head Circumference
+  @JsonKey(name: 'head_circumference_cm')
+  double? get headCircumferenceCm =>
       throw _privateConstructorUsedError; // Edema (for malnutrition screening)
-  bool? get edemaPresent => throw _privateConstructorUsedError;
-  String? get edemaGrade => throw _privateConstructorUsedError; // +, ++, +++
-// Nutritional Status
-  String? get nutritionalStatus =>
-      throw _privateConstructorUsedError; // Well-nourished, Moderate malnutrition, Severe malnutrition
+  @JsonKey(name: 'edema_present')
+  bool get edemaPresent => throw _privateConstructorUsedError;
+  @JsonKey(name: 'edema_grade')
+  String? get edemaGrade =>
+      throw _privateConstructorUsedError; // Nutritional Status
+  @JsonKey(name: 'nutritional_status')
+  String? get nutritionalStatus => throw _privateConstructorUsedError;
+  @JsonKey(name: 'growth_assessment')
+  String? get growthAssessment => throw _privateConstructorUsedError;
+  @JsonKey(name: 'referred_for_nutrition')
   bool? get referredForNutrition =>
       throw _privateConstructorUsedError; // Counseling Given
+  @JsonKey(name: 'feeding_counseling_given')
   bool? get feedingCounselingGiven => throw _privateConstructorUsedError;
+  @JsonKey(name: 'feeding_recommendations')
   String? get feedingRecommendations =>
       throw _privateConstructorUsedError; // Clinical Notes
+  @JsonKey(name: 'concerns')
+  String? get concerns => throw _privateConstructorUsedError;
+  @JsonKey(name: 'interventions')
+  String? get interventions => throw _privateConstructorUsedError;
+  @JsonKey(name: 'next_visit_date')
+  DateTime? get nextVisitDate =>
+      throw _privateConstructorUsedError; // Health Worker Info
+  @JsonKey(name: 'recorded_by')
+  String? get recordedBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'health_facility')
+  String? get healthFacility =>
+      throw _privateConstructorUsedError; // Legacy/Additional fields
+  @JsonKey(name: 'notes')
   String? get notes => throw _privateConstructorUsedError;
-  String? get measuredBy => throw _privateConstructorUsedError; // Next Visit
-  DateTime? get nextVisitDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'measured_by')
+  String? get measuredBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this GrowthRecord to a JSON map.
@@ -75,30 +117,39 @@ abstract class $GrowthRecordCopyWith<$Res> {
       _$GrowthRecordCopyWithImpl<$Res, GrowthRecord>;
   @useResult
   $Res call(
-      {String id,
-      String childId,
-      DateTime measurementDate,
-      int ageInMonths,
-      double weightKg,
-      String? weightForAgeZScore,
-      String? weightInterpretation,
-      double lengthHeightCm,
-      bool? measuredLying,
-      String? heightForAgeZScore,
-      String? heightInterpretation,
-      double? muacCm,
-      String? muacInterpretation,
-      bool? edemaPresent,
-      String? edemaGrade,
-      String? nutritionalStatus,
-      bool? referredForNutrition,
-      bool? feedingCounselingGiven,
-      String? feedingRecommendations,
-      String? notes,
-      String? measuredBy,
-      DateTime? nextVisitDate,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'child_profile_id') String childId,
+      @JsonKey(name: 'visit_date') DateTime measurementDate,
+      @JsonKey(name: 'age_in_months') int ageInMonths,
+      @JsonKey(name: 'weight_kg') double weightKg,
+      @JsonKey(name: 'weight_for_age_z_score') double? weightForAgeZScore,
+      @JsonKey(name: 'weight_interpretation') String? weightInterpretation,
+      @JsonKey(name: 'length_cm') double? lengthCm,
+      @JsonKey(name: 'height_cm') double? heightCm,
+      @JsonKey(name: 'measured_lying') bool? measuredLying,
+      @JsonKey(name: 'height_for_age_z_score') double? heightForAgeZScore,
+      @JsonKey(name: 'height_interpretation') String? heightInterpretation,
+      @JsonKey(name: 'weight_for_height_z_score') double? weightForHeightZScore,
+      @JsonKey(name: 'bmi_for_age_z_score') double? bmiForAgeZScore,
+      @JsonKey(name: 'muac_cm') double? muacCm,
+      @JsonKey(name: 'muac_interpretation') String? muacInterpretation,
+      @JsonKey(name: 'head_circumference_cm') double? headCircumferenceCm,
+      @JsonKey(name: 'edema_present') bool edemaPresent,
+      @JsonKey(name: 'edema_grade') String? edemaGrade,
+      @JsonKey(name: 'nutritional_status') String? nutritionalStatus,
+      @JsonKey(name: 'growth_assessment') String? growthAssessment,
+      @JsonKey(name: 'referred_for_nutrition') bool? referredForNutrition,
+      @JsonKey(name: 'feeding_counseling_given') bool? feedingCounselingGiven,
+      @JsonKey(name: 'feeding_recommendations') String? feedingRecommendations,
+      @JsonKey(name: 'concerns') String? concerns,
+      @JsonKey(name: 'interventions') String? interventions,
+      @JsonKey(name: 'next_visit_date') DateTime? nextVisitDate,
+      @JsonKey(name: 'recorded_by') String? recordedBy,
+      @JsonKey(name: 'health_facility') String? healthFacility,
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'measured_by') String? measuredBy,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -116,36 +167,45 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? childId = null,
     Object? measurementDate = null,
     Object? ageInMonths = null,
     Object? weightKg = null,
     Object? weightForAgeZScore = freezed,
     Object? weightInterpretation = freezed,
-    Object? lengthHeightCm = null,
+    Object? lengthCm = freezed,
+    Object? heightCm = freezed,
     Object? measuredLying = freezed,
     Object? heightForAgeZScore = freezed,
     Object? heightInterpretation = freezed,
+    Object? weightForHeightZScore = freezed,
+    Object? bmiForAgeZScore = freezed,
     Object? muacCm = freezed,
     Object? muacInterpretation = freezed,
-    Object? edemaPresent = freezed,
+    Object? headCircumferenceCm = freezed,
+    Object? edemaPresent = null,
     Object? edemaGrade = freezed,
     Object? nutritionalStatus = freezed,
+    Object? growthAssessment = freezed,
     Object? referredForNutrition = freezed,
     Object? feedingCounselingGiven = freezed,
     Object? feedingRecommendations = freezed,
+    Object? concerns = freezed,
+    Object? interventions = freezed,
+    Object? nextVisitDate = freezed,
+    Object? recordedBy = freezed,
+    Object? healthFacility = freezed,
     Object? notes = freezed,
     Object? measuredBy = freezed,
-    Object? nextVisitDate = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       childId: null == childId
           ? _value.childId
           : childId // ignore: cast_nullable_to_non_nullable
@@ -165,15 +225,19 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
       weightForAgeZScore: freezed == weightForAgeZScore
           ? _value.weightForAgeZScore
           : weightForAgeZScore // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as double?,
       weightInterpretation: freezed == weightInterpretation
           ? _value.weightInterpretation
           : weightInterpretation // ignore: cast_nullable_to_non_nullable
               as String?,
-      lengthHeightCm: null == lengthHeightCm
-          ? _value.lengthHeightCm
-          : lengthHeightCm // ignore: cast_nullable_to_non_nullable
-              as double,
+      lengthCm: freezed == lengthCm
+          ? _value.lengthCm
+          : lengthCm // ignore: cast_nullable_to_non_nullable
+              as double?,
+      heightCm: freezed == heightCm
+          ? _value.heightCm
+          : heightCm // ignore: cast_nullable_to_non_nullable
+              as double?,
       measuredLying: freezed == measuredLying
           ? _value.measuredLying
           : measuredLying // ignore: cast_nullable_to_non_nullable
@@ -181,11 +245,19 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
       heightForAgeZScore: freezed == heightForAgeZScore
           ? _value.heightForAgeZScore
           : heightForAgeZScore // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as double?,
       heightInterpretation: freezed == heightInterpretation
           ? _value.heightInterpretation
           : heightInterpretation // ignore: cast_nullable_to_non_nullable
               as String?,
+      weightForHeightZScore: freezed == weightForHeightZScore
+          ? _value.weightForHeightZScore
+          : weightForHeightZScore // ignore: cast_nullable_to_non_nullable
+              as double?,
+      bmiForAgeZScore: freezed == bmiForAgeZScore
+          ? _value.bmiForAgeZScore
+          : bmiForAgeZScore // ignore: cast_nullable_to_non_nullable
+              as double?,
       muacCm: freezed == muacCm
           ? _value.muacCm
           : muacCm // ignore: cast_nullable_to_non_nullable
@@ -194,10 +266,14 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
           ? _value.muacInterpretation
           : muacInterpretation // ignore: cast_nullable_to_non_nullable
               as String?,
-      edemaPresent: freezed == edemaPresent
+      headCircumferenceCm: freezed == headCircumferenceCm
+          ? _value.headCircumferenceCm
+          : headCircumferenceCm // ignore: cast_nullable_to_non_nullable
+              as double?,
+      edemaPresent: null == edemaPresent
           ? _value.edemaPresent
           : edemaPresent // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       edemaGrade: freezed == edemaGrade
           ? _value.edemaGrade
           : edemaGrade // ignore: cast_nullable_to_non_nullable
@@ -205,6 +281,10 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
       nutritionalStatus: freezed == nutritionalStatus
           ? _value.nutritionalStatus
           : nutritionalStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      growthAssessment: freezed == growthAssessment
+          ? _value.growthAssessment
+          : growthAssessment // ignore: cast_nullable_to_non_nullable
               as String?,
       referredForNutrition: freezed == referredForNutrition
           ? _value.referredForNutrition
@@ -218,6 +298,26 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
           ? _value.feedingRecommendations
           : feedingRecommendations // ignore: cast_nullable_to_non_nullable
               as String?,
+      concerns: freezed == concerns
+          ? _value.concerns
+          : concerns // ignore: cast_nullable_to_non_nullable
+              as String?,
+      interventions: freezed == interventions
+          ? _value.interventions
+          : interventions // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nextVisitDate: freezed == nextVisitDate
+          ? _value.nextVisitDate
+          : nextVisitDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      recordedBy: freezed == recordedBy
+          ? _value.recordedBy
+          : recordedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      healthFacility: freezed == healthFacility
+          ? _value.healthFacility
+          : healthFacility // ignore: cast_nullable_to_non_nullable
+              as String?,
       notes: freezed == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
@@ -226,10 +326,6 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
           ? _value.measuredBy
           : measuredBy // ignore: cast_nullable_to_non_nullable
               as String?,
-      nextVisitDate: freezed == nextVisitDate
-          ? _value.nextVisitDate
-          : nextVisitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -251,30 +347,39 @@ abstract class _$$GrowthRecordImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String childId,
-      DateTime measurementDate,
-      int ageInMonths,
-      double weightKg,
-      String? weightForAgeZScore,
-      String? weightInterpretation,
-      double lengthHeightCm,
-      bool? measuredLying,
-      String? heightForAgeZScore,
-      String? heightInterpretation,
-      double? muacCm,
-      String? muacInterpretation,
-      bool? edemaPresent,
-      String? edemaGrade,
-      String? nutritionalStatus,
-      bool? referredForNutrition,
-      bool? feedingCounselingGiven,
-      String? feedingRecommendations,
-      String? notes,
-      String? measuredBy,
-      DateTime? nextVisitDate,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'child_profile_id') String childId,
+      @JsonKey(name: 'visit_date') DateTime measurementDate,
+      @JsonKey(name: 'age_in_months') int ageInMonths,
+      @JsonKey(name: 'weight_kg') double weightKg,
+      @JsonKey(name: 'weight_for_age_z_score') double? weightForAgeZScore,
+      @JsonKey(name: 'weight_interpretation') String? weightInterpretation,
+      @JsonKey(name: 'length_cm') double? lengthCm,
+      @JsonKey(name: 'height_cm') double? heightCm,
+      @JsonKey(name: 'measured_lying') bool? measuredLying,
+      @JsonKey(name: 'height_for_age_z_score') double? heightForAgeZScore,
+      @JsonKey(name: 'height_interpretation') String? heightInterpretation,
+      @JsonKey(name: 'weight_for_height_z_score') double? weightForHeightZScore,
+      @JsonKey(name: 'bmi_for_age_z_score') double? bmiForAgeZScore,
+      @JsonKey(name: 'muac_cm') double? muacCm,
+      @JsonKey(name: 'muac_interpretation') String? muacInterpretation,
+      @JsonKey(name: 'head_circumference_cm') double? headCircumferenceCm,
+      @JsonKey(name: 'edema_present') bool edemaPresent,
+      @JsonKey(name: 'edema_grade') String? edemaGrade,
+      @JsonKey(name: 'nutritional_status') String? nutritionalStatus,
+      @JsonKey(name: 'growth_assessment') String? growthAssessment,
+      @JsonKey(name: 'referred_for_nutrition') bool? referredForNutrition,
+      @JsonKey(name: 'feeding_counseling_given') bool? feedingCounselingGiven,
+      @JsonKey(name: 'feeding_recommendations') String? feedingRecommendations,
+      @JsonKey(name: 'concerns') String? concerns,
+      @JsonKey(name: 'interventions') String? interventions,
+      @JsonKey(name: 'next_visit_date') DateTime? nextVisitDate,
+      @JsonKey(name: 'recorded_by') String? recordedBy,
+      @JsonKey(name: 'health_facility') String? healthFacility,
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'measured_by') String? measuredBy,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -290,36 +395,45 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? childId = null,
     Object? measurementDate = null,
     Object? ageInMonths = null,
     Object? weightKg = null,
     Object? weightForAgeZScore = freezed,
     Object? weightInterpretation = freezed,
-    Object? lengthHeightCm = null,
+    Object? lengthCm = freezed,
+    Object? heightCm = freezed,
     Object? measuredLying = freezed,
     Object? heightForAgeZScore = freezed,
     Object? heightInterpretation = freezed,
+    Object? weightForHeightZScore = freezed,
+    Object? bmiForAgeZScore = freezed,
     Object? muacCm = freezed,
     Object? muacInterpretation = freezed,
-    Object? edemaPresent = freezed,
+    Object? headCircumferenceCm = freezed,
+    Object? edemaPresent = null,
     Object? edemaGrade = freezed,
     Object? nutritionalStatus = freezed,
+    Object? growthAssessment = freezed,
     Object? referredForNutrition = freezed,
     Object? feedingCounselingGiven = freezed,
     Object? feedingRecommendations = freezed,
+    Object? concerns = freezed,
+    Object? interventions = freezed,
+    Object? nextVisitDate = freezed,
+    Object? recordedBy = freezed,
+    Object? healthFacility = freezed,
     Object? notes = freezed,
     Object? measuredBy = freezed,
-    Object? nextVisitDate = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_$GrowthRecordImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       childId: null == childId
           ? _value.childId
           : childId // ignore: cast_nullable_to_non_nullable
@@ -339,15 +453,19 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
       weightForAgeZScore: freezed == weightForAgeZScore
           ? _value.weightForAgeZScore
           : weightForAgeZScore // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as double?,
       weightInterpretation: freezed == weightInterpretation
           ? _value.weightInterpretation
           : weightInterpretation // ignore: cast_nullable_to_non_nullable
               as String?,
-      lengthHeightCm: null == lengthHeightCm
-          ? _value.lengthHeightCm
-          : lengthHeightCm // ignore: cast_nullable_to_non_nullable
-              as double,
+      lengthCm: freezed == lengthCm
+          ? _value.lengthCm
+          : lengthCm // ignore: cast_nullable_to_non_nullable
+              as double?,
+      heightCm: freezed == heightCm
+          ? _value.heightCm
+          : heightCm // ignore: cast_nullable_to_non_nullable
+              as double?,
       measuredLying: freezed == measuredLying
           ? _value.measuredLying
           : measuredLying // ignore: cast_nullable_to_non_nullable
@@ -355,11 +473,19 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
       heightForAgeZScore: freezed == heightForAgeZScore
           ? _value.heightForAgeZScore
           : heightForAgeZScore // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as double?,
       heightInterpretation: freezed == heightInterpretation
           ? _value.heightInterpretation
           : heightInterpretation // ignore: cast_nullable_to_non_nullable
               as String?,
+      weightForHeightZScore: freezed == weightForHeightZScore
+          ? _value.weightForHeightZScore
+          : weightForHeightZScore // ignore: cast_nullable_to_non_nullable
+              as double?,
+      bmiForAgeZScore: freezed == bmiForAgeZScore
+          ? _value.bmiForAgeZScore
+          : bmiForAgeZScore // ignore: cast_nullable_to_non_nullable
+              as double?,
       muacCm: freezed == muacCm
           ? _value.muacCm
           : muacCm // ignore: cast_nullable_to_non_nullable
@@ -368,10 +494,14 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
           ? _value.muacInterpretation
           : muacInterpretation // ignore: cast_nullable_to_non_nullable
               as String?,
-      edemaPresent: freezed == edemaPresent
+      headCircumferenceCm: freezed == headCircumferenceCm
+          ? _value.headCircumferenceCm
+          : headCircumferenceCm // ignore: cast_nullable_to_non_nullable
+              as double?,
+      edemaPresent: null == edemaPresent
           ? _value.edemaPresent
           : edemaPresent // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       edemaGrade: freezed == edemaGrade
           ? _value.edemaGrade
           : edemaGrade // ignore: cast_nullable_to_non_nullable
@@ -379,6 +509,10 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
       nutritionalStatus: freezed == nutritionalStatus
           ? _value.nutritionalStatus
           : nutritionalStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      growthAssessment: freezed == growthAssessment
+          ? _value.growthAssessment
+          : growthAssessment // ignore: cast_nullable_to_non_nullable
               as String?,
       referredForNutrition: freezed == referredForNutrition
           ? _value.referredForNutrition
@@ -392,6 +526,26 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
           ? _value.feedingRecommendations
           : feedingRecommendations // ignore: cast_nullable_to_non_nullable
               as String?,
+      concerns: freezed == concerns
+          ? _value.concerns
+          : concerns // ignore: cast_nullable_to_non_nullable
+              as String?,
+      interventions: freezed == interventions
+          ? _value.interventions
+          : interventions // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nextVisitDate: freezed == nextVisitDate
+          ? _value.nextVisitDate
+          : nextVisitDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      recordedBy: freezed == recordedBy
+          ? _value.recordedBy
+          : recordedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      healthFacility: freezed == healthFacility
+          ? _value.healthFacility
+          : healthFacility // ignore: cast_nullable_to_non_nullable
+              as String?,
       notes: freezed == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
@@ -400,10 +554,6 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
           ? _value.measuredBy
           : measuredBy // ignore: cast_nullable_to_non_nullable
               as String?,
-      nextVisitDate: freezed == nextVisitDate
-          ? _value.nextVisitDate
-          : nextVisitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -420,101 +570,159 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$GrowthRecordImpl implements _GrowthRecord {
   const _$GrowthRecordImpl(
-      {required this.id,
-      required this.childId,
-      required this.measurementDate,
-      required this.ageInMonths,
-      required this.weightKg,
-      this.weightForAgeZScore,
-      this.weightInterpretation,
-      required this.lengthHeightCm,
-      this.measuredLying,
-      this.heightForAgeZScore,
-      this.heightInterpretation,
-      this.muacCm,
-      this.muacInterpretation,
-      this.edemaPresent,
-      this.edemaGrade,
-      this.nutritionalStatus,
-      this.referredForNutrition,
-      this.feedingCounselingGiven,
-      this.feedingRecommendations,
-      this.notes,
-      this.measuredBy,
-      this.nextVisitDate,
-      this.createdAt,
-      this.updatedAt});
+      {@JsonKey(name: 'id') this.id,
+      @JsonKey(name: 'child_profile_id') required this.childId,
+      @JsonKey(name: 'visit_date') required this.measurementDate,
+      @JsonKey(name: 'age_in_months') required this.ageInMonths,
+      @JsonKey(name: 'weight_kg') required this.weightKg,
+      @JsonKey(name: 'weight_for_age_z_score') this.weightForAgeZScore,
+      @JsonKey(name: 'weight_interpretation') this.weightInterpretation,
+      @JsonKey(name: 'length_cm') this.lengthCm,
+      @JsonKey(name: 'height_cm') this.heightCm,
+      @JsonKey(name: 'measured_lying') this.measuredLying,
+      @JsonKey(name: 'height_for_age_z_score') this.heightForAgeZScore,
+      @JsonKey(name: 'height_interpretation') this.heightInterpretation,
+      @JsonKey(name: 'weight_for_height_z_score') this.weightForHeightZScore,
+      @JsonKey(name: 'bmi_for_age_z_score') this.bmiForAgeZScore,
+      @JsonKey(name: 'muac_cm') this.muacCm,
+      @JsonKey(name: 'muac_interpretation') this.muacInterpretation,
+      @JsonKey(name: 'head_circumference_cm') this.headCircumferenceCm,
+      @JsonKey(name: 'edema_present') this.edemaPresent = false,
+      @JsonKey(name: 'edema_grade') this.edemaGrade,
+      @JsonKey(name: 'nutritional_status') this.nutritionalStatus,
+      @JsonKey(name: 'growth_assessment') this.growthAssessment,
+      @JsonKey(name: 'referred_for_nutrition') this.referredForNutrition,
+      @JsonKey(name: 'feeding_counseling_given') this.feedingCounselingGiven,
+      @JsonKey(name: 'feeding_recommendations') this.feedingRecommendations,
+      @JsonKey(name: 'concerns') this.concerns,
+      @JsonKey(name: 'interventions') this.interventions,
+      @JsonKey(name: 'next_visit_date') this.nextVisitDate,
+      @JsonKey(name: 'recorded_by') this.recordedBy,
+      @JsonKey(name: 'health_facility') this.healthFacility,
+      @JsonKey(name: 'notes') this.notes,
+      @JsonKey(name: 'measured_by') this.measuredBy,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt});
 
   factory _$GrowthRecordImpl.fromJson(Map<String, dynamic> json) =>
       _$$GrowthRecordImplFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'id')
+  final String? id;
   @override
+  @JsonKey(name: 'child_profile_id')
   final String childId;
   @override
+  @JsonKey(name: 'visit_date')
   final DateTime measurementDate;
   @override
+  @JsonKey(name: 'age_in_months')
   final int ageInMonths;
 // Weight Measurement
   @override
+  @JsonKey(name: 'weight_kg')
   final double weightKg;
   @override
-  final String? weightForAgeZScore;
-// +3, +2, +1, -1, -2, -3
+  @JsonKey(name: 'weight_for_age_z_score')
+  final double? weightForAgeZScore;
   @override
+  @JsonKey(name: 'weight_interpretation')
   final String? weightInterpretation;
-// Good, Danger, Very Dangerous
 // Length/Height Measurement
   @override
-  final double lengthHeightCm;
+  @JsonKey(name: 'length_cm')
+  final double? lengthCm;
+// For < 2 years (lying)
   @override
+  @JsonKey(name: 'height_cm')
+  final double? heightCm;
+// For >= 2 years (standing)
+  @override
+  @JsonKey(name: 'measured_lying')
   final bool? measuredLying;
-// True = length (lying), False = height (standing)
   @override
-  final String? heightForAgeZScore;
-// +3, +2, +1, -1, -2, -3
+  @JsonKey(name: 'height_for_age_z_score')
+  final double? heightForAgeZScore;
   @override
+  @JsonKey(name: 'height_interpretation')
   final String? heightInterpretation;
-// Good, Dangerous
-// MUAC (Mid-Upper Arm Circumference) - for children 6-59 months
+// Additional Z-scores
   @override
+  @JsonKey(name: 'weight_for_height_z_score')
+  final double? weightForHeightZScore;
+  @override
+  @JsonKey(name: 'bmi_for_age_z_score')
+  final double? bmiForAgeZScore;
+// MUAC (Mid-Upper Arm Circumference)
+  @override
+  @JsonKey(name: 'muac_cm')
   final double? muacCm;
   @override
+  @JsonKey(name: 'muac_interpretation')
   final String? muacInterpretation;
+// Head Circumference
+  @override
+  @JsonKey(name: 'head_circumference_cm')
+  final double? headCircumferenceCm;
 // Edema (for malnutrition screening)
   @override
-  final bool? edemaPresent;
+  @JsonKey(name: 'edema_present')
+  final bool edemaPresent;
   @override
+  @JsonKey(name: 'edema_grade')
   final String? edemaGrade;
-// +, ++, +++
 // Nutritional Status
   @override
+  @JsonKey(name: 'nutritional_status')
   final String? nutritionalStatus;
-// Well-nourished, Moderate malnutrition, Severe malnutrition
   @override
+  @JsonKey(name: 'growth_assessment')
+  final String? growthAssessment;
+  @override
+  @JsonKey(name: 'referred_for_nutrition')
   final bool? referredForNutrition;
 // Counseling Given
   @override
+  @JsonKey(name: 'feeding_counseling_given')
   final bool? feedingCounselingGiven;
   @override
+  @JsonKey(name: 'feeding_recommendations')
   final String? feedingRecommendations;
 // Clinical Notes
   @override
+  @JsonKey(name: 'concerns')
+  final String? concerns;
+  @override
+  @JsonKey(name: 'interventions')
+  final String? interventions;
+  @override
+  @JsonKey(name: 'next_visit_date')
+  final DateTime? nextVisitDate;
+// Health Worker Info
+  @override
+  @JsonKey(name: 'recorded_by')
+  final String? recordedBy;
+  @override
+  @JsonKey(name: 'health_facility')
+  final String? healthFacility;
+// Legacy/Additional fields
+  @override
+  @JsonKey(name: 'notes')
   final String? notes;
   @override
+  @JsonKey(name: 'measured_by')
   final String? measuredBy;
-// Next Visit
   @override
-  final DateTime? nextVisitDate;
-  @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'GrowthRecord(id: $id, childId: $childId, measurementDate: $measurementDate, ageInMonths: $ageInMonths, weightKg: $weightKg, weightForAgeZScore: $weightForAgeZScore, weightInterpretation: $weightInterpretation, lengthHeightCm: $lengthHeightCm, measuredLying: $measuredLying, heightForAgeZScore: $heightForAgeZScore, heightInterpretation: $heightInterpretation, muacCm: $muacCm, muacInterpretation: $muacInterpretation, edemaPresent: $edemaPresent, edemaGrade: $edemaGrade, nutritionalStatus: $nutritionalStatus, referredForNutrition: $referredForNutrition, feedingCounselingGiven: $feedingCounselingGiven, feedingRecommendations: $feedingRecommendations, notes: $notes, measuredBy: $measuredBy, nextVisitDate: $nextVisitDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'GrowthRecord(id: $id, childId: $childId, measurementDate: $measurementDate, ageInMonths: $ageInMonths, weightKg: $weightKg, weightForAgeZScore: $weightForAgeZScore, weightInterpretation: $weightInterpretation, lengthCm: $lengthCm, heightCm: $heightCm, measuredLying: $measuredLying, heightForAgeZScore: $heightForAgeZScore, heightInterpretation: $heightInterpretation, weightForHeightZScore: $weightForHeightZScore, bmiForAgeZScore: $bmiForAgeZScore, muacCm: $muacCm, muacInterpretation: $muacInterpretation, headCircumferenceCm: $headCircumferenceCm, edemaPresent: $edemaPresent, edemaGrade: $edemaGrade, nutritionalStatus: $nutritionalStatus, growthAssessment: $growthAssessment, referredForNutrition: $referredForNutrition, feedingCounselingGiven: $feedingCounselingGiven, feedingRecommendations: $feedingRecommendations, concerns: $concerns, interventions: $interventions, nextVisitDate: $nextVisitDate, recordedBy: $recordedBy, healthFacility: $healthFacility, notes: $notes, measuredBy: $measuredBy, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -534,34 +742,52 @@ class _$GrowthRecordImpl implements _GrowthRecord {
                 other.weightForAgeZScore == weightForAgeZScore) &&
             (identical(other.weightInterpretation, weightInterpretation) ||
                 other.weightInterpretation == weightInterpretation) &&
-            (identical(other.lengthHeightCm, lengthHeightCm) ||
-                other.lengthHeightCm == lengthHeightCm) &&
+            (identical(other.lengthCm, lengthCm) ||
+                other.lengthCm == lengthCm) &&
+            (identical(other.heightCm, heightCm) ||
+                other.heightCm == heightCm) &&
             (identical(other.measuredLying, measuredLying) ||
                 other.measuredLying == measuredLying) &&
             (identical(other.heightForAgeZScore, heightForAgeZScore) ||
                 other.heightForAgeZScore == heightForAgeZScore) &&
             (identical(other.heightInterpretation, heightInterpretation) ||
                 other.heightInterpretation == heightInterpretation) &&
+            (identical(other.weightForHeightZScore, weightForHeightZScore) ||
+                other.weightForHeightZScore == weightForHeightZScore) &&
+            (identical(other.bmiForAgeZScore, bmiForAgeZScore) ||
+                other.bmiForAgeZScore == bmiForAgeZScore) &&
             (identical(other.muacCm, muacCm) || other.muacCm == muacCm) &&
             (identical(other.muacInterpretation, muacInterpretation) ||
                 other.muacInterpretation == muacInterpretation) &&
+            (identical(other.headCircumferenceCm, headCircumferenceCm) ||
+                other.headCircumferenceCm == headCircumferenceCm) &&
             (identical(other.edemaPresent, edemaPresent) ||
                 other.edemaPresent == edemaPresent) &&
             (identical(other.edemaGrade, edemaGrade) ||
                 other.edemaGrade == edemaGrade) &&
             (identical(other.nutritionalStatus, nutritionalStatus) ||
                 other.nutritionalStatus == nutritionalStatus) &&
+            (identical(other.growthAssessment, growthAssessment) ||
+                other.growthAssessment == growthAssessment) &&
             (identical(other.referredForNutrition, referredForNutrition) ||
                 other.referredForNutrition == referredForNutrition) &&
             (identical(other.feedingCounselingGiven, feedingCounselingGiven) ||
                 other.feedingCounselingGiven == feedingCounselingGiven) &&
             (identical(other.feedingRecommendations, feedingRecommendations) ||
                 other.feedingRecommendations == feedingRecommendations) &&
+            (identical(other.concerns, concerns) ||
+                other.concerns == concerns) &&
+            (identical(other.interventions, interventions) ||
+                other.interventions == interventions) &&
+            (identical(other.nextVisitDate, nextVisitDate) ||
+                other.nextVisitDate == nextVisitDate) &&
+            (identical(other.recordedBy, recordedBy) ||
+                other.recordedBy == recordedBy) &&
+            (identical(other.healthFacility, healthFacility) ||
+                other.healthFacility == healthFacility) &&
             (identical(other.notes, notes) || other.notes == notes) &&
             (identical(other.measuredBy, measuredBy) ||
                 other.measuredBy == measuredBy) &&
-            (identical(other.nextVisitDate, nextVisitDate) ||
-                other.nextVisitDate == nextVisitDate) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -579,21 +805,30 @@ class _$GrowthRecordImpl implements _GrowthRecord {
         weightKg,
         weightForAgeZScore,
         weightInterpretation,
-        lengthHeightCm,
+        lengthCm,
+        heightCm,
         measuredLying,
         heightForAgeZScore,
         heightInterpretation,
+        weightForHeightZScore,
+        bmiForAgeZScore,
         muacCm,
         muacInterpretation,
+        headCircumferenceCm,
         edemaPresent,
         edemaGrade,
         nutritionalStatus,
+        growthAssessment,
         referredForNutrition,
         feedingCounselingGiven,
         feedingRecommendations,
+        concerns,
+        interventions,
+        nextVisitDate,
+        recordedBy,
+        healthFacility,
         notes,
         measuredBy,
-        nextVisitDate,
         createdAt,
         updatedAt
       ]);
@@ -616,85 +851,147 @@ class _$GrowthRecordImpl implements _GrowthRecord {
 
 abstract class _GrowthRecord implements GrowthRecord {
   const factory _GrowthRecord(
-      {required final String id,
-      required final String childId,
-      required final DateTime measurementDate,
-      required final int ageInMonths,
-      required final double weightKg,
-      final String? weightForAgeZScore,
+      {@JsonKey(name: 'id') final String? id,
+      @JsonKey(name: 'child_profile_id') required final String childId,
+      @JsonKey(name: 'visit_date') required final DateTime measurementDate,
+      @JsonKey(name: 'age_in_months') required final int ageInMonths,
+      @JsonKey(name: 'weight_kg') required final double weightKg,
+      @JsonKey(name: 'weight_for_age_z_score') final double? weightForAgeZScore,
+      @JsonKey(name: 'weight_interpretation')
       final String? weightInterpretation,
-      required final double lengthHeightCm,
-      final bool? measuredLying,
-      final String? heightForAgeZScore,
+      @JsonKey(name: 'length_cm') final double? lengthCm,
+      @JsonKey(name: 'height_cm') final double? heightCm,
+      @JsonKey(name: 'measured_lying') final bool? measuredLying,
+      @JsonKey(name: 'height_for_age_z_score') final double? heightForAgeZScore,
+      @JsonKey(name: 'height_interpretation')
       final String? heightInterpretation,
-      final double? muacCm,
-      final String? muacInterpretation,
-      final bool? edemaPresent,
-      final String? edemaGrade,
-      final String? nutritionalStatus,
-      final bool? referredForNutrition,
+      @JsonKey(name: 'weight_for_height_z_score')
+      final double? weightForHeightZScore,
+      @JsonKey(name: 'bmi_for_age_z_score') final double? bmiForAgeZScore,
+      @JsonKey(name: 'muac_cm') final double? muacCm,
+      @JsonKey(name: 'muac_interpretation') final String? muacInterpretation,
+      @JsonKey(name: 'head_circumference_cm') final double? headCircumferenceCm,
+      @JsonKey(name: 'edema_present') final bool edemaPresent,
+      @JsonKey(name: 'edema_grade') final String? edemaGrade,
+      @JsonKey(name: 'nutritional_status') final String? nutritionalStatus,
+      @JsonKey(name: 'growth_assessment') final String? growthAssessment,
+      @JsonKey(name: 'referred_for_nutrition') final bool? referredForNutrition,
+      @JsonKey(name: 'feeding_counseling_given')
       final bool? feedingCounselingGiven,
+      @JsonKey(name: 'feeding_recommendations')
       final String? feedingRecommendations,
-      final String? notes,
-      final String? measuredBy,
-      final DateTime? nextVisitDate,
-      final DateTime? createdAt,
+      @JsonKey(name: 'concerns') final String? concerns,
+      @JsonKey(name: 'interventions') final String? interventions,
+      @JsonKey(name: 'next_visit_date') final DateTime? nextVisitDate,
+      @JsonKey(name: 'recorded_by') final String? recordedBy,
+      @JsonKey(name: 'health_facility') final String? healthFacility,
+      @JsonKey(name: 'notes') final String? notes,
+      @JsonKey(name: 'measured_by') final String? measuredBy,
+      @JsonKey(name: 'created_at') final DateTime? createdAt,
+      @JsonKey(name: 'updated_at')
       final DateTime? updatedAt}) = _$GrowthRecordImpl;
 
   factory _GrowthRecord.fromJson(Map<String, dynamic> json) =
       _$GrowthRecordImpl.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'id')
+  String? get id;
   @override
+  @JsonKey(name: 'child_profile_id')
   String get childId;
   @override
+  @JsonKey(name: 'visit_date')
   DateTime get measurementDate;
   @override
+  @JsonKey(name: 'age_in_months')
   int get ageInMonths; // Weight Measurement
   @override
+  @JsonKey(name: 'weight_kg')
   double get weightKg;
   @override
-  String? get weightForAgeZScore; // +3, +2, +1, -1, -2, -3
+  @JsonKey(name: 'weight_for_age_z_score')
+  double? get weightForAgeZScore;
   @override
-  String? get weightInterpretation; // Good, Danger, Very Dangerous
-// Length/Height Measurement
+  @JsonKey(name: 'weight_interpretation')
+  String? get weightInterpretation; // Length/Height Measurement
   @override
-  double get lengthHeightCm;
+  @JsonKey(name: 'length_cm')
+  double? get lengthCm; // For < 2 years (lying)
   @override
-  bool? get measuredLying; // True = length (lying), False = height (standing)
+  @JsonKey(name: 'height_cm')
+  double? get heightCm; // For >= 2 years (standing)
   @override
-  String? get heightForAgeZScore; // +3, +2, +1, -1, -2, -3
+  @JsonKey(name: 'measured_lying')
+  bool? get measuredLying;
   @override
-  String? get heightInterpretation; // Good, Dangerous
-// MUAC (Mid-Upper Arm Circumference) - for children 6-59 months
+  @JsonKey(name: 'height_for_age_z_score')
+  double? get heightForAgeZScore;
   @override
+  @JsonKey(name: 'height_interpretation')
+  String? get heightInterpretation; // Additional Z-scores
+  @override
+  @JsonKey(name: 'weight_for_height_z_score')
+  double? get weightForHeightZScore;
+  @override
+  @JsonKey(name: 'bmi_for_age_z_score')
+  double? get bmiForAgeZScore; // MUAC (Mid-Upper Arm Circumference)
+  @override
+  @JsonKey(name: 'muac_cm')
   double? get muacCm;
   @override
-  String? get muacInterpretation; // Edema (for malnutrition screening)
+  @JsonKey(name: 'muac_interpretation')
+  String? get muacInterpretation; // Head Circumference
   @override
-  bool? get edemaPresent;
+  @JsonKey(name: 'head_circumference_cm')
+  double? get headCircumferenceCm; // Edema (for malnutrition screening)
   @override
-  String? get edemaGrade; // +, ++, +++
-// Nutritional Status
+  @JsonKey(name: 'edema_present')
+  bool get edemaPresent;
   @override
-  String?
-      get nutritionalStatus; // Well-nourished, Moderate malnutrition, Severe malnutrition
+  @JsonKey(name: 'edema_grade')
+  String? get edemaGrade; // Nutritional Status
   @override
+  @JsonKey(name: 'nutritional_status')
+  String? get nutritionalStatus;
+  @override
+  @JsonKey(name: 'growth_assessment')
+  String? get growthAssessment;
+  @override
+  @JsonKey(name: 'referred_for_nutrition')
   bool? get referredForNutrition; // Counseling Given
   @override
+  @JsonKey(name: 'feeding_counseling_given')
   bool? get feedingCounselingGiven;
   @override
+  @JsonKey(name: 'feeding_recommendations')
   String? get feedingRecommendations; // Clinical Notes
   @override
+  @JsonKey(name: 'concerns')
+  String? get concerns;
+  @override
+  @JsonKey(name: 'interventions')
+  String? get interventions;
+  @override
+  @JsonKey(name: 'next_visit_date')
+  DateTime? get nextVisitDate; // Health Worker Info
+  @override
+  @JsonKey(name: 'recorded_by')
+  String? get recordedBy;
+  @override
+  @JsonKey(name: 'health_facility')
+  String? get healthFacility; // Legacy/Additional fields
+  @override
+  @JsonKey(name: 'notes')
   String? get notes;
   @override
-  String? get measuredBy; // Next Visit
+  @JsonKey(name: 'measured_by')
+  String? get measuredBy;
   @override
-  DateTime? get nextVisitDate;
-  @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of GrowthRecord

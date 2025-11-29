@@ -20,22 +20,39 @@ DewormingRecord _$DewormingRecordFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DewormingRecord {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'child_profile_id')
   String get childId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'date_given')
   DateTime get dateGiven => throw _privateConstructorUsedError;
-  int get ageInMonths => throw _privateConstructorUsedError; // Dosage
-  String get dosage => throw _privateConstructorUsedError; // "200mg" or "400mg"
-  String get tabletCount =>
-      throw _privateConstructorUsedError; // "Half tablet" or "One tablet"
+  @JsonKey(name: 'age_in_months')
+  int get ageInMonths => throw _privateConstructorUsedError;
+  @JsonKey(name: 'dose_number')
+  int? get doseNumber => throw _privateConstructorUsedError; // Drug Information
+  @JsonKey(name: 'drug_name')
+  String get drugName =>
+      throw _privateConstructorUsedError; // Albendazole or Mebendazole
+  @JsonKey(name: 'dosage')
+  String get dosage => throw _privateConstructorUsedError; // "400mg" or "500mg"
 // Administration
+  @JsonKey(name: 'given_by')
   String? get givenBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'health_facility')
   String? get healthFacilityName =>
+      throw _privateConstructorUsedError; // Side Effects
+  @JsonKey(name: 'side_effects_reported')
+  bool get sideEffectsReported => throw _privateConstructorUsedError;
+  @JsonKey(name: 'side_effects_description')
+  String? get sideEffectsDescription =>
       throw _privateConstructorUsedError; // Next Due
-  DateTime? get nextDoseDate =>
-      throw _privateConstructorUsedError; // 6 months later
-// Notes
+  @JsonKey(name: 'next_dose_due_date')
+  DateTime? get nextDoseDate => throw _privateConstructorUsedError; // Notes
+  @JsonKey(name: 'notes')
   String? get notes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this DewormingRecord to a JSON map.
@@ -55,18 +72,21 @@ abstract class $DewormingRecordCopyWith<$Res> {
       _$DewormingRecordCopyWithImpl<$Res, DewormingRecord>;
   @useResult
   $Res call(
-      {String id,
-      String childId,
-      DateTime dateGiven,
-      int ageInMonths,
-      String dosage,
-      String tabletCount,
-      String? givenBy,
-      String? healthFacilityName,
-      DateTime? nextDoseDate,
-      String? notes,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'child_profile_id') String childId,
+      @JsonKey(name: 'date_given') DateTime dateGiven,
+      @JsonKey(name: 'age_in_months') int ageInMonths,
+      @JsonKey(name: 'dose_number') int? doseNumber,
+      @JsonKey(name: 'drug_name') String drugName,
+      @JsonKey(name: 'dosage') String dosage,
+      @JsonKey(name: 'given_by') String? givenBy,
+      @JsonKey(name: 'health_facility') String? healthFacilityName,
+      @JsonKey(name: 'side_effects_reported') bool sideEffectsReported,
+      @JsonKey(name: 'side_effects_description') String? sideEffectsDescription,
+      @JsonKey(name: 'next_dose_due_date') DateTime? nextDoseDate,
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -84,24 +104,27 @@ class _$DewormingRecordCopyWithImpl<$Res, $Val extends DewormingRecord>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? childId = null,
     Object? dateGiven = null,
     Object? ageInMonths = null,
+    Object? doseNumber = freezed,
+    Object? drugName = null,
     Object? dosage = null,
-    Object? tabletCount = null,
     Object? givenBy = freezed,
     Object? healthFacilityName = freezed,
+    Object? sideEffectsReported = null,
+    Object? sideEffectsDescription = freezed,
     Object? nextDoseDate = freezed,
     Object? notes = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       childId: null == childId
           ? _value.childId
           : childId // ignore: cast_nullable_to_non_nullable
@@ -114,13 +137,17 @@ class _$DewormingRecordCopyWithImpl<$Res, $Val extends DewormingRecord>
           ? _value.ageInMonths
           : ageInMonths // ignore: cast_nullable_to_non_nullable
               as int,
+      doseNumber: freezed == doseNumber
+          ? _value.doseNumber
+          : doseNumber // ignore: cast_nullable_to_non_nullable
+              as int?,
+      drugName: null == drugName
+          ? _value.drugName
+          : drugName // ignore: cast_nullable_to_non_nullable
+              as String,
       dosage: null == dosage
           ? _value.dosage
           : dosage // ignore: cast_nullable_to_non_nullable
-              as String,
-      tabletCount: null == tabletCount
-          ? _value.tabletCount
-          : tabletCount // ignore: cast_nullable_to_non_nullable
               as String,
       givenBy: freezed == givenBy
           ? _value.givenBy
@@ -129,6 +156,14 @@ class _$DewormingRecordCopyWithImpl<$Res, $Val extends DewormingRecord>
       healthFacilityName: freezed == healthFacilityName
           ? _value.healthFacilityName
           : healthFacilityName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sideEffectsReported: null == sideEffectsReported
+          ? _value.sideEffectsReported
+          : sideEffectsReported // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sideEffectsDescription: freezed == sideEffectsDescription
+          ? _value.sideEffectsDescription
+          : sideEffectsDescription // ignore: cast_nullable_to_non_nullable
               as String?,
       nextDoseDate: freezed == nextDoseDate
           ? _value.nextDoseDate
@@ -159,18 +194,21 @@ abstract class _$$DewormingRecordImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String childId,
-      DateTime dateGiven,
-      int ageInMonths,
-      String dosage,
-      String tabletCount,
-      String? givenBy,
-      String? healthFacilityName,
-      DateTime? nextDoseDate,
-      String? notes,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'child_profile_id') String childId,
+      @JsonKey(name: 'date_given') DateTime dateGiven,
+      @JsonKey(name: 'age_in_months') int ageInMonths,
+      @JsonKey(name: 'dose_number') int? doseNumber,
+      @JsonKey(name: 'drug_name') String drugName,
+      @JsonKey(name: 'dosage') String dosage,
+      @JsonKey(name: 'given_by') String? givenBy,
+      @JsonKey(name: 'health_facility') String? healthFacilityName,
+      @JsonKey(name: 'side_effects_reported') bool sideEffectsReported,
+      @JsonKey(name: 'side_effects_description') String? sideEffectsDescription,
+      @JsonKey(name: 'next_dose_due_date') DateTime? nextDoseDate,
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -186,24 +224,27 @@ class __$$DewormingRecordImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? childId = null,
     Object? dateGiven = null,
     Object? ageInMonths = null,
+    Object? doseNumber = freezed,
+    Object? drugName = null,
     Object? dosage = null,
-    Object? tabletCount = null,
     Object? givenBy = freezed,
     Object? healthFacilityName = freezed,
+    Object? sideEffectsReported = null,
+    Object? sideEffectsDescription = freezed,
     Object? nextDoseDate = freezed,
     Object? notes = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
     return _then(_$DewormingRecordImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       childId: null == childId
           ? _value.childId
           : childId // ignore: cast_nullable_to_non_nullable
@@ -216,13 +257,17 @@ class __$$DewormingRecordImplCopyWithImpl<$Res>
           ? _value.ageInMonths
           : ageInMonths // ignore: cast_nullable_to_non_nullable
               as int,
+      doseNumber: freezed == doseNumber
+          ? _value.doseNumber
+          : doseNumber // ignore: cast_nullable_to_non_nullable
+              as int?,
+      drugName: null == drugName
+          ? _value.drugName
+          : drugName // ignore: cast_nullable_to_non_nullable
+              as String,
       dosage: null == dosage
           ? _value.dosage
           : dosage // ignore: cast_nullable_to_non_nullable
-              as String,
-      tabletCount: null == tabletCount
-          ? _value.tabletCount
-          : tabletCount // ignore: cast_nullable_to_non_nullable
               as String,
       givenBy: freezed == givenBy
           ? _value.givenBy
@@ -231,6 +276,14 @@ class __$$DewormingRecordImplCopyWithImpl<$Res>
       healthFacilityName: freezed == healthFacilityName
           ? _value.healthFacilityName
           : healthFacilityName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sideEffectsReported: null == sideEffectsReported
+          ? _value.sideEffectsReported
+          : sideEffectsReported // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sideEffectsDescription: freezed == sideEffectsDescription
+          ? _value.sideEffectsDescription
+          : sideEffectsDescription // ignore: cast_nullable_to_non_nullable
               as String?,
       nextDoseDate: freezed == nextDoseDate
           ? _value.nextDoseDate
@@ -256,57 +309,81 @@ class __$$DewormingRecordImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DewormingRecordImpl implements _DewormingRecord {
   const _$DewormingRecordImpl(
-      {required this.id,
-      required this.childId,
-      required this.dateGiven,
-      required this.ageInMonths,
-      required this.dosage,
-      required this.tabletCount,
-      this.givenBy,
-      this.healthFacilityName,
-      this.nextDoseDate,
-      this.notes,
-      this.createdAt,
-      this.updatedAt});
+      {@JsonKey(name: 'id') this.id,
+      @JsonKey(name: 'child_profile_id') required this.childId,
+      @JsonKey(name: 'date_given') required this.dateGiven,
+      @JsonKey(name: 'age_in_months') required this.ageInMonths,
+      @JsonKey(name: 'dose_number') this.doseNumber,
+      @JsonKey(name: 'drug_name') required this.drugName,
+      @JsonKey(name: 'dosage') required this.dosage,
+      @JsonKey(name: 'given_by') this.givenBy,
+      @JsonKey(name: 'health_facility') this.healthFacilityName,
+      @JsonKey(name: 'side_effects_reported') this.sideEffectsReported = false,
+      @JsonKey(name: 'side_effects_description') this.sideEffectsDescription,
+      @JsonKey(name: 'next_dose_due_date') this.nextDoseDate,
+      @JsonKey(name: 'notes') this.notes,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt});
 
   factory _$DewormingRecordImpl.fromJson(Map<String, dynamic> json) =>
       _$$DewormingRecordImplFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'id')
+  final String? id;
   @override
+  @JsonKey(name: 'child_profile_id')
   final String childId;
   @override
+  @JsonKey(name: 'date_given')
   final DateTime dateGiven;
   @override
+  @JsonKey(name: 'age_in_months')
   final int ageInMonths;
-// Dosage
   @override
+  @JsonKey(name: 'dose_number')
+  final int? doseNumber;
+// Drug Information
+  @override
+  @JsonKey(name: 'drug_name')
+  final String drugName;
+// Albendazole or Mebendazole
+  @override
+  @JsonKey(name: 'dosage')
   final String dosage;
-// "200mg" or "400mg"
-  @override
-  final String tabletCount;
-// "Half tablet" or "One tablet"
+// "400mg" or "500mg"
 // Administration
   @override
+  @JsonKey(name: 'given_by')
   final String? givenBy;
   @override
+  @JsonKey(name: 'health_facility')
   final String? healthFacilityName;
+// Side Effects
+  @override
+  @JsonKey(name: 'side_effects_reported')
+  final bool sideEffectsReported;
+  @override
+  @JsonKey(name: 'side_effects_description')
+  final String? sideEffectsDescription;
 // Next Due
   @override
+  @JsonKey(name: 'next_dose_due_date')
   final DateTime? nextDoseDate;
-// 6 months later
 // Notes
   @override
+  @JsonKey(name: 'notes')
   final String? notes;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'DewormingRecord(id: $id, childId: $childId, dateGiven: $dateGiven, ageInMonths: $ageInMonths, dosage: $dosage, tabletCount: $tabletCount, givenBy: $givenBy, healthFacilityName: $healthFacilityName, nextDoseDate: $nextDoseDate, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DewormingRecord(id: $id, childId: $childId, dateGiven: $dateGiven, ageInMonths: $ageInMonths, doseNumber: $doseNumber, drugName: $drugName, dosage: $dosage, givenBy: $givenBy, healthFacilityName: $healthFacilityName, sideEffectsReported: $sideEffectsReported, sideEffectsDescription: $sideEffectsDescription, nextDoseDate: $nextDoseDate, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -320,12 +397,18 @@ class _$DewormingRecordImpl implements _DewormingRecord {
                 other.dateGiven == dateGiven) &&
             (identical(other.ageInMonths, ageInMonths) ||
                 other.ageInMonths == ageInMonths) &&
+            (identical(other.doseNumber, doseNumber) ||
+                other.doseNumber == doseNumber) &&
+            (identical(other.drugName, drugName) ||
+                other.drugName == drugName) &&
             (identical(other.dosage, dosage) || other.dosage == dosage) &&
-            (identical(other.tabletCount, tabletCount) ||
-                other.tabletCount == tabletCount) &&
             (identical(other.givenBy, givenBy) || other.givenBy == givenBy) &&
             (identical(other.healthFacilityName, healthFacilityName) ||
                 other.healthFacilityName == healthFacilityName) &&
+            (identical(other.sideEffectsReported, sideEffectsReported) ||
+                other.sideEffectsReported == sideEffectsReported) &&
+            (identical(other.sideEffectsDescription, sideEffectsDescription) ||
+                other.sideEffectsDescription == sideEffectsDescription) &&
             (identical(other.nextDoseDate, nextDoseDate) ||
                 other.nextDoseDate == nextDoseDate) &&
             (identical(other.notes, notes) || other.notes == notes) &&
@@ -343,10 +426,13 @@ class _$DewormingRecordImpl implements _DewormingRecord {
       childId,
       dateGiven,
       ageInMonths,
+      doseNumber,
+      drugName,
       dosage,
-      tabletCount,
       givenBy,
       healthFacilityName,
+      sideEffectsReported,
+      sideEffectsDescription,
       nextDoseDate,
       notes,
       createdAt,
@@ -371,47 +457,72 @@ class _$DewormingRecordImpl implements _DewormingRecord {
 
 abstract class _DewormingRecord implements DewormingRecord {
   const factory _DewormingRecord(
-      {required final String id,
-      required final String childId,
-      required final DateTime dateGiven,
-      required final int ageInMonths,
-      required final String dosage,
-      required final String tabletCount,
-      final String? givenBy,
-      final String? healthFacilityName,
-      final DateTime? nextDoseDate,
-      final String? notes,
-      final DateTime? createdAt,
+      {@JsonKey(name: 'id') final String? id,
+      @JsonKey(name: 'child_profile_id') required final String childId,
+      @JsonKey(name: 'date_given') required final DateTime dateGiven,
+      @JsonKey(name: 'age_in_months') required final int ageInMonths,
+      @JsonKey(name: 'dose_number') final int? doseNumber,
+      @JsonKey(name: 'drug_name') required final String drugName,
+      @JsonKey(name: 'dosage') required final String dosage,
+      @JsonKey(name: 'given_by') final String? givenBy,
+      @JsonKey(name: 'health_facility') final String? healthFacilityName,
+      @JsonKey(name: 'side_effects_reported') final bool sideEffectsReported,
+      @JsonKey(name: 'side_effects_description')
+      final String? sideEffectsDescription,
+      @JsonKey(name: 'next_dose_due_date') final DateTime? nextDoseDate,
+      @JsonKey(name: 'notes') final String? notes,
+      @JsonKey(name: 'created_at') final DateTime? createdAt,
+      @JsonKey(name: 'updated_at')
       final DateTime? updatedAt}) = _$DewormingRecordImpl;
 
   factory _DewormingRecord.fromJson(Map<String, dynamic> json) =
       _$DewormingRecordImpl.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'id')
+  String? get id;
   @override
+  @JsonKey(name: 'child_profile_id')
   String get childId;
   @override
+  @JsonKey(name: 'date_given')
   DateTime get dateGiven;
   @override
-  int get ageInMonths; // Dosage
+  @JsonKey(name: 'age_in_months')
+  int get ageInMonths;
   @override
-  String get dosage; // "200mg" or "400mg"
+  @JsonKey(name: 'dose_number')
+  int? get doseNumber; // Drug Information
   @override
-  String get tabletCount; // "Half tablet" or "One tablet"
+  @JsonKey(name: 'drug_name')
+  String get drugName; // Albendazole or Mebendazole
+  @override
+  @JsonKey(name: 'dosage')
+  String get dosage; // "400mg" or "500mg"
 // Administration
   @override
+  @JsonKey(name: 'given_by')
   String? get givenBy;
   @override
-  String? get healthFacilityName; // Next Due
+  @JsonKey(name: 'health_facility')
+  String? get healthFacilityName; // Side Effects
   @override
-  DateTime? get nextDoseDate; // 6 months later
-// Notes
+  @JsonKey(name: 'side_effects_reported')
+  bool get sideEffectsReported;
   @override
+  @JsonKey(name: 'side_effects_description')
+  String? get sideEffectsDescription; // Next Due
+  @override
+  @JsonKey(name: 'next_dose_due_date')
+  DateTime? get nextDoseDate; // Notes
+  @override
+  @JsonKey(name: 'notes')
   String? get notes;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of DewormingRecord

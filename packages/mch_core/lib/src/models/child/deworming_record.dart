@@ -3,33 +3,38 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'deworming_record.freezed.dart';
 part 'deworming_record.g.dart';
 
-/// Deworming Record - MCH Handbook Page 35
-/// Schedule: Every 6 months from 12 months (1 year) to 59 months (5 years)
-/// Dosage: Albendazole 200mg (half tablet) for 1-2 years, 400mg (one tablet) for 2+ years
+/// Deworming - MCH Handbook Page 38
+/// Schedule: Every 6 months from 12 months to 59 months
+/// Drugs: Albendazole 400mg or Mebendazole 500mg
 @freezed
 class DewormingRecord with _$DewormingRecord {
   const factory DewormingRecord({
-    required String id,
-    required String childId,
-    required DateTime dateGiven,
-    required int ageInMonths,
+    @JsonKey(name: 'id') String? id,
+    @JsonKey(name: 'child_profile_id') required String childId,
+    @JsonKey(name: 'date_given') required DateTime dateGiven,
+    @JsonKey(name: 'age_in_months') required int ageInMonths,
+    @JsonKey(name: 'dose_number') int? doseNumber,
     
-    // Dosage
-    required String dosage, // "200mg" or "400mg"
-    required String tabletCount, // "Half tablet" or "One tablet"
+    // Drug Information
+    @JsonKey(name: 'drug_name') required String drugName, // Albendazole or Mebendazole
+    @JsonKey(name: 'dosage') required String dosage, // "400mg" or "500mg"
     
     // Administration
-    String? givenBy,
-    String? healthFacilityName,
+    @JsonKey(name: 'given_by') String? givenBy,
+    @JsonKey(name: 'health_facility') String? healthFacilityName,
+    
+    // Side Effects
+    @JsonKey(name: 'side_effects_reported') @Default(false) bool sideEffectsReported,
+    @JsonKey(name: 'side_effects_description') String? sideEffectsDescription,
     
     // Next Due
-    DateTime? nextDoseDate, // 6 months later
+    @JsonKey(name: 'next_dose_due_date') DateTime? nextDoseDate,
     
     // Notes
-    String? notes,
+    @JsonKey(name: 'notes') String? notes,
     
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _DewormingRecord;
 
   factory DewormingRecord.fromJson(Map<String, dynamic> json) =>

@@ -6,6 +6,7 @@ import 'core/providers/auth_providers.dart';
 import 'features/patient_management/presentation/screens/login_screen.dart';
 import 'features/patient_management/presentation/screens/dashboard_screen.dart';
 import 'features/navigation/main_navigation_scaffold.dart';
+import 'core/services/hive_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,8 @@ void main() async {
     url: 'https://fhdscavlgrgbotfxoxxw.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZHNjYXZsZ3JnYm90ZnhveHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTAzMzYsImV4cCI6MjA3ODc4NjMzNn0.V-_3cJMQ_iA7bmETwxr-7p2RImhqQ3pJ7Xw5H7O2mi4',
   );
+   // Initialize Hive for offline storage
+  await HiveService.initAll();
 
   runApp(
     const ProviderScope(

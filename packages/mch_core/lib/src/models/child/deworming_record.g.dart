@@ -9,39 +9,45 @@ part of 'deworming_record.dart';
 _$DewormingRecordImpl _$$DewormingRecordImplFromJson(
         Map<String, dynamic> json) =>
     _$DewormingRecordImpl(
-      id: json['id'] as String,
-      childId: json['childId'] as String,
-      dateGiven: DateTime.parse(json['dateGiven'] as String),
-      ageInMonths: (json['ageInMonths'] as num).toInt(),
+      id: json['id'] as String?,
+      childId: json['child_profile_id'] as String,
+      dateGiven: DateTime.parse(json['date_given'] as String),
+      ageInMonths: (json['age_in_months'] as num).toInt(),
+      doseNumber: (json['dose_number'] as num?)?.toInt(),
+      drugName: json['drug_name'] as String,
       dosage: json['dosage'] as String,
-      tabletCount: json['tabletCount'] as String,
-      givenBy: json['givenBy'] as String?,
-      healthFacilityName: json['healthFacilityName'] as String?,
-      nextDoseDate: json['nextDoseDate'] == null
+      givenBy: json['given_by'] as String?,
+      healthFacilityName: json['health_facility'] as String?,
+      sideEffectsReported: json['side_effects_reported'] as bool? ?? false,
+      sideEffectsDescription: json['side_effects_description'] as String?,
+      nextDoseDate: json['next_dose_due_date'] == null
           ? null
-          : DateTime.parse(json['nextDoseDate'] as String),
+          : DateTime.parse(json['next_dose_due_date'] as String),
       notes: json['notes'] as String?,
-      createdAt: json['createdAt'] == null
+      createdAt: json['created_at'] == null
           ? null
-          : DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
           ? null
-          : DateTime.parse(json['updatedAt'] as String),
+          : DateTime.parse(json['updated_at'] as String),
     );
 
 Map<String, dynamic> _$$DewormingRecordImplToJson(
         _$DewormingRecordImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'childId': instance.childId,
-      'dateGiven': instance.dateGiven.toIso8601String(),
-      'ageInMonths': instance.ageInMonths,
+      'child_profile_id': instance.childId,
+      'date_given': instance.dateGiven.toIso8601String(),
+      'age_in_months': instance.ageInMonths,
+      'dose_number': instance.doseNumber,
+      'drug_name': instance.drugName,
       'dosage': instance.dosage,
-      'tabletCount': instance.tabletCount,
-      'givenBy': instance.givenBy,
-      'healthFacilityName': instance.healthFacilityName,
-      'nextDoseDate': instance.nextDoseDate?.toIso8601String(),
+      'given_by': instance.givenBy,
+      'health_facility': instance.healthFacilityName,
+      'side_effects_reported': instance.sideEffectsReported,
+      'side_effects_description': instance.sideEffectsDescription,
+      'next_dose_due_date': instance.nextDoseDate?.toIso8601String(),
       'notes': instance.notes,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };

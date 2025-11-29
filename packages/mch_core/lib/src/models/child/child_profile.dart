@@ -7,116 +7,116 @@ part 'child_profile.g.dart';
 @freezed
 class ChildProfile with _$ChildProfile {
   const factory ChildProfile({
-    required String id,
-    required String maternalProfileId, // Link to mother
+    @JsonKey(name: 'id') required String id,
+    @JsonKey(name: 'maternal_profile_id') required String maternalProfileId,
     
     // A. Particulars of the Child
-    required String childName,
-    required String sex, // Male, Female
-    required DateTime dateOfBirth,
-    required DateTime dateFirstSeen,
+    @JsonKey(name: 'child_name') required String childName,
+    @JsonKey(name: 'sex') required String sex,
+    @JsonKey(name: 'date_of_birth') required DateTime dateOfBirth,
+    @JsonKey(name: 'date_first_seen') required DateTime dateFirstSeen,
     
     // Birth Details
-    required int gestationAtBirthWeeks,
-    required double birthWeightGrams,
-    required double birthLengthCm,
-    double? headCircumferenceCm,
-    String? otherBirthCharacteristics, // Twin/triplet, C-section, congenital features
-    int? birthOrder, // 1st, 2nd, 3rd born
+    @JsonKey(name: 'gestation_at_birth_weeks') required int gestationAtBirthWeeks,
+    @JsonKey(name: 'birth_weight_grams') required double birthWeightGrams,
+    @JsonKey(name: 'birth_length_cm') required double birthLengthCm,
+    @JsonKey(name: 'head_circumference_at_birth_cm') double? headCircumferenceCm, // ← FIXED!
+    @JsonKey(name: 'other_birth_characteristics') String? otherBirthCharacteristics,
+    @JsonKey(name: 'birth_order') int? birthOrder,
     
     // B. Health Record
-    required String placeOfBirth, // Health facility, Home, Other
-    String? healthFacilityName,
-    String? birthNotificationNumber,
-    DateTime? birthNotificationDate,
+    @JsonKey(name: 'place_of_birth') required String placeOfBirth,
+    @JsonKey(name: 'health_facility_name') String? healthFacilityName,
+    @JsonKey(name: 'birth_notification_number') String? birthNotificationNumber,
+    @JsonKey(name: 'birth_notification_date') DateTime? birthNotificationDate,
     
     // Registration Numbers
-    String? immunizationRegNumber,
-    String? cwcNumber, // Child Welfare Clinic Number
-    String? kmhflCode, // Health facility code
+    @JsonKey(name: 'immunization_reg_number') String? immunizationRegNumber,
+    @JsonKey(name: 'cwc_number') String? cwcNumber,
+    @JsonKey(name: 'kmhfl_code') String? kmhflCode,
     
     // C. Civil Registration
-    String? birthCertificateNumber,
-    DateTime? birthRegistrationDate,
-    String? birthRegistrationPlace,
+    @JsonKey(name: 'birth_certificate_number') String? birthCertificateNumber,
+    @JsonKey(name: 'birth_registration_date') DateTime? birthRegistrationDate,
+    @JsonKey(name: 'birth_registration_place') String? birthRegistrationPlace,
     
     // D. Family Details
-    String? fatherName,
-    String? fatherPhone,
-    String? motherName,
-    String? motherPhone,
-    String? guardianName, // If applicable
-    String? guardianPhone,
+    @JsonKey(name: 'father_name') String? fatherName,
+    @JsonKey(name: 'father_phone') String? fatherPhone,
+    @JsonKey(name: 'mother_name') String? motherName,
+    @JsonKey(name: 'mother_phone') String? motherPhone,
+    @JsonKey(name: 'guardian_name') String? guardianName,
+    @JsonKey(name: 'guardian_phone') String? guardianPhone,
     
     // Address
-    String? county,
-    String? subCounty,
-    String? ward,
-    String? village,
-    String? physicalAddress,
+    @JsonKey(name: 'county') String? county,
+    @JsonKey(name: 'sub_county') String? subCounty,
+    @JsonKey(name: 'ward') String? ward,
+    @JsonKey(name: 'village') String? village,
+    @JsonKey(name: 'physical_address') String? physicalAddress,
     
-    // E. Broad Clinical Review at First Contact (below 6 months)
-    double? weightAtFirstContact,
-    double? lengthAtFirstContact,
-    String? zScore,
+    // E. Broad Clinical Review at First Contact
+    @JsonKey(name: 'weight_at_first_contact') double? weightAtFirstContact,
+    @JsonKey(name: 'length_at_first_contact') double? lengthAtFirstContact,
+    @JsonKey(name: 'z_score') String? zScore,
     
     // HIV Status
-    bool? hivExposed,
-    String? hivStatus, // Exposed, Reactive, Non-reactive, Unknown
-    DateTime? hivTestDate,
+    @JsonKey(name: 'hiv_exposed') bool? hivExposed,
+    @JsonKey(name: 'hiv_status') String? hivStatus,
+    @JsonKey(name: 'hiv_test_date') DateTime? hivTestDate,
     
-    double? haemoglobin,
+    @JsonKey(name: 'haemoglobin') double? haemoglobin,
     
     // Physical Features
-    String? colouration, // Cyanosis, Jaundice, Macules, Hypopigmentation
-    String? eyes,
-    String? ears,
-    String? mouth,
-    String? chest,
-    String? heart,
-    String? abdomen,
-    String? umbilicalCord,
-    String? spine,
-    String? armsHands,
-    String? legsFeet,
-    String? genitalia, // Normal, Abnormal (specify)
-    String? anus, // Perforate (Normal), Imperforate (Abnormal)
+    @JsonKey(name: 'colouration') String? colouration,
+    @JsonKey(name: 'eyes') String? eyes,
+    @JsonKey(name: 'ears') String? ears,
+    @JsonKey(name: 'mouth') String? mouth,
+    @JsonKey(name: 'chest') String? chest,
+    @JsonKey(name: 'heart') String? heart,
+    @JsonKey(name: 'abdomen') String? abdomen,
+    @JsonKey(name: 'umbilical_cord') String? umbilicalCord,
+    @JsonKey(name: 'spine') String? spine,
+    @JsonKey(name: 'arms_hands') String? armsHands,
+    @JsonKey(name: 'legs_feet') String? legsFeet,
+    @JsonKey(name: 'genitalia') String? genitalia,
+    @JsonKey(name: 'anus') String? anus,
     
     // TB Screening
-    bool? tbScreened,
-    String? tbScreeningResult,
+    @JsonKey(name: 'tb_screened') bool? tbScreened,
+    @JsonKey(name: 'tb_screening_result') String? tbScreeningResult,
     
     // F. Feeding Information
-    bool? breastfeedingWell,
-    bool? breastfeedingPoorly,
-    bool? unableToBreastfeed,
-    bool? otherFoodsIntroducedBelow6Months,
-    int? ageOtherFoodsIntroduced,
-    bool? complementaryFoodFrom6Months,
+    @JsonKey(name: 'breastfeeding_well') bool? breastfeedingWell,
+    @JsonKey(name: 'breastfeeding_poorly') bool? breastfeedingPoorly,
+    @JsonKey(name: 'unable_to_breastfeed') bool? unableToBreastfeed,
+    @JsonKey(name: 'other_foods_introduced_below_6_months') bool? otherFoodsIntroducedBelow6Months,
+    @JsonKey(name: 'age_other_foods_introduced') int? ageOtherFoodsIntroduced,
+    @JsonKey(name: 'complementary_food_from_6_months') bool? complementaryFoodFrom6Months,
     
     // G. Other Problems Reported
-    String? sleepProblems,
-    bool? irritability,
-    String? otherProblems,
+    @JsonKey(name: 'sleep_problems') String? sleepProblems,
+    @JsonKey(name: 'irritability') bool? irritability,
+    @JsonKey(name: 'other_problems') String? otherProblems,
     
-    // Reason for Special Care (Page 26)
-    bool? birthWeightLessThan2500g,
-    bool? birthLessThan2YearsAfterLast,
-    bool? fifthChildOrMore,
-    bool? bornOfTeenageMother,
-    bool? bornOfMentallyIllMother,
-    bool? developmentalDelays,
-    bool? siblingUndernourished,
-    bool? multipleBirth,
-    bool? childWithSpecialNeeds,
-    bool? orphanVulnerableChild,
-    bool? childWithDisability,
-    bool? historyOfChildAbuse,
-    bool? cleftLipPalate,
-    String? otherSpecialCareReason,
+    // Reason for Special Care
+    @JsonKey(name: 'birth_weight_less_than_2500g') bool? birthWeightLessThan2500g,
+    @JsonKey(name: 'birth_less_than_2_years_after_last') bool? birthLessThan2YearsAfterLast,
+    @JsonKey(name: 'fifth_child_or_more') bool? fifthChildOrMore,
+    @JsonKey(name: 'born_of_teenage_mother') bool? bornOfTeenageMother,
+    @JsonKey(name: 'born_of_mentally_ill_mother') bool? bornOfMentallyIllMother,
+    @JsonKey(name: 'developmental_delays') bool? developmentalDelays,
+    @JsonKey(name: 'sibling_undernourished') bool? siblingUndernourished,
+    @JsonKey(name: 'multiple_birth') bool? multipleBirth,
+    @JsonKey(name: 'child_with_special_needs') bool? childWithSpecialNeeds,
+    @JsonKey(name: 'orphan_vulnerable_child') bool? orphanVulnerableChild,
+    @JsonKey(name: 'child_with_disability') bool? childWithDisability,
+    @JsonKey(name: 'history_of_child_abuse') bool? historyOfChildAbuse,
+    @JsonKey(name: 'cleft_lip_palate') bool? cleftLipPalate,
+    @JsonKey(name: 'other_special_care_reason') String? otherSpecialCareReason,
     
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _ChildProfile;
 
   factory ChildProfile.fromJson(Map<String, dynamic> json) =>

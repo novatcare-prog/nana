@@ -7,70 +7,70 @@ part 'childbirth_record.g.dart';
 @freezed
 class ChildbirthRecord with _$ChildbirthRecord {
   const factory ChildbirthRecord({
-    required String id,
-    required String maternalProfileId,
-    required DateTime deliveryDate,
-    required String deliveryTime,
-    required int durationOfPregnancyWeeks,
+    @JsonKey(name: 'id') String? id,  // ← Changed to nullable
+    @JsonKey(name: 'maternal_profile_id') required String maternalProfileId,
+    @JsonKey(name: 'delivery_date') required DateTime deliveryDate,
+    @JsonKey(name: 'delivery_time') required String deliveryTime,
+    @JsonKey(name: 'duration_of_pregnancy_weeks') required int durationOfPregnancyWeeks,
     
     // Place & Attendant
-    required String placeOfDelivery, // Health facility, Home, Other
-    String? healthFacilityName,
-    String? attendant, // Nurse, Midwife, Clinical Officer, Doctor
+    @JsonKey(name: 'place_of_delivery') required String placeOfDelivery,
+    @JsonKey(name: 'health_facility_name') String? healthFacilityName,
+    @JsonKey(name: 'attendant') String? attendant,
     
     // Mode of Delivery
-    required String modeOfDelivery, // SVD, Caesarean, Assisted (Vacuum/Forceps)
+    @JsonKey(name: 'mode_of_delivery') required String modeOfDelivery,
     
     // Mother's Condition
-    bool? skinToSkinImmediate,
-    String? apgarScore1Min,
-    String? apgarScore5Min,
-    String? apgarScore10Min,
-    bool? resuscitationDone,
-    double? bloodLossMl,
+    @JsonKey(name: 'skin_to_skin_immediate') bool? skinToSkinImmediate,
+    @JsonKey(name: 'apgar_score_1_min') String? apgarScore1Min,
+    @JsonKey(name: 'apgar_score_5_min') String? apgarScore5Min,
+    @JsonKey(name: 'apgar_score_10_min') String? apgarScore10Min,
+    @JsonKey(name: 'resuscitation_done') bool? resuscitationDone,
+    @JsonKey(name: 'blood_loss_ml') double? bloodLossMl,
     
     // Complications
-    bool? preEclampsia,
-    bool? eclampsia,
-    bool? pph, // Post-partum hemorrhage
-    bool? obstructedLabour,
-    String? meconiumGrade, // 0, 1, 2, 3
+    @JsonKey(name: 'pre_eclampsia') bool? preEclampsia,
+    @JsonKey(name: 'eclampsia') bool? eclampsia,
+    @JsonKey(name: 'pph') bool? pph,
+    @JsonKey(name: 'obstructed_labour') bool? obstructedLabour,
+    @JsonKey(name: 'meconium_grade') String? meconiumGrade,
     
     // Mother's Condition Post-delivery
-    String? motherCondition,
+    @JsonKey(name: 'mother_condition') String? motherCondition,
     
     // Drugs Administered to Mother
-    bool? oxytocinGiven,
-    bool? misoprostolGiven,
-    bool? heatStableCarbetocin,
-    bool? haartGiven, // If HIV positive
-    String? haartRegimen,
-    String? otherDrugs,
+    @JsonKey(name: 'oxytocin_given') bool? oxytocinGiven,
+    @JsonKey(name: 'misoprostol_given') bool? misoprostolGiven,
+    @JsonKey(name: 'heat_stable_carbetocin') bool? heatStableCarbetocin,
+    @JsonKey(name: 'haart_given') bool? haartGiven,
+    @JsonKey(name: 'haart_regimen') String? haartRegimen,
+    @JsonKey(name: 'other_drugs') String? otherDrugs,
     
     // Baby Details
-    required double birthWeightGrams,
-    required double birthLengthCm,
-    double? headCircumferenceCm,
-    String? babyCondition,
+    @JsonKey(name: 'birth_weight_grams') required double birthWeightGrams,
+    @JsonKey(name: 'birth_length_cm') required double birthLengthCm,
+    @JsonKey(name: 'head_circumference_cm') double? headCircumferenceCm,
+    @JsonKey(name: 'baby_condition') String? babyCondition,
     
     // Drugs Given to Baby
-    bool? chxGiven, // Chlorhexidine 7.1%
-    bool? vitaminKGiven,
-    bool? teoGiven, // Tetracycline Eye Ointment
+    @JsonKey(name: 'chx_given') bool? chxGiven,
+    @JsonKey(name: 'vitamin_k_given') bool? vitaminKGiven,
+    @JsonKey(name: 'teo_given') bool? teoGiven,
     
     // HIV Exposure
-    bool? babyHivExposed,
-    String? arvProphylaxisGiven, // AZT+NVP
+    @JsonKey(name: 'baby_hiv_exposed') bool? babyHivExposed,
+    @JsonKey(name: 'arv_prophylaxis_given') String? arvProphylaxisGiven,
     
     // Breastfeeding
-    bool? earlyInitiationBreastfeeding, // Within 1 hour
+    @JsonKey(name: 'early_initiation_breastfeeding') bool? earlyInitiationBreastfeeding,
     
     // Clinical Notes
-    String? notes,
-    String? conductedBy,
+    @JsonKey(name: 'notes') String? notes,
+    @JsonKey(name: 'conducted_by') String? conductedBy,
     
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _ChildbirthRecord;
 
   factory ChildbirthRecord.fromJson(Map<String, dynamic> json) =>

@@ -5,6 +5,7 @@ import '../../../../core/providers/supabase_providers.dart';
 import 'patient_detail_screen.dart';
 import 'patient_registration_screen.dart';
 import 'patient_list_screen.dart';
+import '/../core/widgets/offline_indicator.dart';
 
 /// Dashboard Screen - Main screen showing overview and quick actions
 /// IMPROVED VERSION with UX fixes based on clinical workflow
@@ -44,6 +45,10 @@ class DashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
+          const OfflineIndicator(),
+          const SizedBox(width: 8),
+          const SyncButton(),
+          const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh data',

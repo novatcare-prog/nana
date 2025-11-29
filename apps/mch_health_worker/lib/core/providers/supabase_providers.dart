@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
+import '../services/connectivity_service.dart';
+import '../services/hybrid_patient_repository.dart';
 
 // ✅ FIX: Add these two imports to tell this file where your repositories are
 import 'package:mch_core/src/data/repositories/supabase_maternal_profile_repository.dart';
@@ -35,9 +37,9 @@ final ancVisitRepositoryProvider = Provider<ANCVisitRepository>((ref) {
 // MATERNAL PROFILE DATA PROVIDERS
 // ============================================
 
+// Make sure it looks like THIS:
 final maternalProfilesProvider = FutureProvider<List<MaternalProfile>>((ref) async {
-  final repository = ref.watch(supabaseMaternalProfileRepositoryProvider);
-  return repository.getAllProfiles();
+  return ref.watch(hybridPatientRepositoryProvider).getAllPatients();
 });
 
 final maternalProfileByIdProvider = FutureProvider.family<MaternalProfile?, String>((ref, id) async {
@@ -64,8 +66,34 @@ final searchProfilesProvider = FutureProvider.family<List<MaternalProfile>, Stri
 });
 
 final statisticsProvider = FutureProvider<Map<String, int>>((ref) async {
-  final repository = ref.watch(supabaseMaternalProfileRepositoryProvider);
-  return repository.getStatistics();
+  try {
+    // Use hybrid repo to work offline
+    final patients = await ref.watch(hybridPatientRepositoryProvider).getAllPatients();
+    
+    final highRisk = patients.where((p) => 
+      p.diabetes == true || p.hypertension == true || p.previousCs == true || p.age > 35 || p.age < 18
+    ).length;
+
+    final now = DateTime.now();
+    final thirtyDaysFromNow = now.add(const Duration(days: 30));
+    final dueSoon = patients.where((p) => 
+      p.edd != null && p.edd!.isAfter(now) && p.edd!.isBefore(thirtyDaysFromNow)
+    ).length;
+
+    return {
+      'total': patients.length,
+      'highRisk': highRisk,
+      'dueSoon': dueSoon,
+    };
+  } catch (e) {
+    print('Error getting statistics: $e');
+    // Return empty stats on error
+    return {
+      'total': 0,
+      'highRisk': 0,
+      'dueSoon': 0,
+    };
+  }
 });
 
 // ============================================
@@ -150,4 +178,22 @@ final createVisitProvider = Provider<Future<void> Function(ANCVisit, bool)>((ref
     ref.invalidate(patientVisitsProvider(visit.maternalProfileId));
     ref.invalidate(visitCountProvider(visit.maternalProfileId));
   };
+});
+
+// Connectivity Service
+final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
+  return ConnectivityService();
+});
+
+// Hybrid Patient Repository
+final hybridPatientRepositoryProvider = Provider<HybridPatientRepository>((ref) {
+  final supabase = ref.watch(supabaseClientProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
+  return HybridPatientRepository(supabase, connectivity);
+});
+
+// Connection status stream
+final connectionStatusProvider = StreamProvider<bool>((ref) {
+  final connectivity = ref.watch(connectivityServiceProvider);
+  return connectivity.connectionStatus;
 });

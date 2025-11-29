@@ -8,47 +8,62 @@ part 'growth_record.g.dart';
 @freezed
 class GrowthRecord with _$GrowthRecord {
   const factory GrowthRecord({
-    required String id,
-    required String childId,
-    required DateTime measurementDate,
-    required int ageInMonths,
+    @JsonKey(name: 'id') String? id,
+    @JsonKey(name: 'child_profile_id') required String childId,
+    @JsonKey(name: 'visit_date') required DateTime measurementDate,
+    @JsonKey(name: 'age_in_months') required int ageInMonths,
     
     // Weight Measurement
-    required double weightKg,
-    String? weightForAgeZScore, // +3, +2, +1, -1, -2, -3
-    String? weightInterpretation, // Good, Danger, Very Dangerous
+    @JsonKey(name: 'weight_kg') required double weightKg,
+    @JsonKey(name: 'weight_for_age_z_score') double? weightForAgeZScore,
+    @JsonKey(name: 'weight_interpretation') String? weightInterpretation,
     
     // Length/Height Measurement
-    required double lengthHeightCm,
-    bool? measuredLying, // True = length (lying), False = height (standing)
-    String? heightForAgeZScore, // +3, +2, +1, -1, -2, -3
-    String? heightInterpretation, // Good, Dangerous
+    @JsonKey(name: 'length_cm') double? lengthCm, // For < 2 years (lying)
+    @JsonKey(name: 'height_cm') double? heightCm, // For >= 2 years (standing)
+    @JsonKey(name: 'measured_lying') bool? measuredLying,
+    @JsonKey(name: 'height_for_age_z_score') double? heightForAgeZScore,
+    @JsonKey(name: 'height_interpretation') String? heightInterpretation,
     
-    // MUAC (Mid-Upper Arm Circumference) - for children 6-59 months
-    double? muacCm,
-    String? muacInterpretation,
+    // Additional Z-scores
+    @JsonKey(name: 'weight_for_height_z_score') double? weightForHeightZScore,
+    @JsonKey(name: 'bmi_for_age_z_score') double? bmiForAgeZScore,
+    
+    // MUAC (Mid-Upper Arm Circumference)
+    @JsonKey(name: 'muac_cm') double? muacCm,
+    @JsonKey(name: 'muac_interpretation') String? muacInterpretation,
+    
+    // Head Circumference
+    @JsonKey(name: 'head_circumference_cm') double? headCircumferenceCm,
     
     // Edema (for malnutrition screening)
-    bool? edemaPresent,
-    String? edemaGrade, // +, ++, +++
+    @JsonKey(name: 'edema_present') @Default(false) bool edemaPresent,
+    @JsonKey(name: 'edema_grade') String? edemaGrade,
     
     // Nutritional Status
-    String? nutritionalStatus, // Well-nourished, Moderate malnutrition, Severe malnutrition
-    bool? referredForNutrition,
+    @JsonKey(name: 'nutritional_status') String? nutritionalStatus,
+    @JsonKey(name: 'growth_assessment') String? growthAssessment,
+    @JsonKey(name: 'referred_for_nutrition') bool? referredForNutrition,
     
     // Counseling Given
-    bool? feedingCounselingGiven,
-    String? feedingRecommendations,
+    @JsonKey(name: 'feeding_counseling_given') bool? feedingCounselingGiven,
+    @JsonKey(name: 'feeding_recommendations') String? feedingRecommendations,
     
     // Clinical Notes
-    String? notes,
-    String? measuredBy,
+    @JsonKey(name: 'concerns') String? concerns,
+    @JsonKey(name: 'interventions') String? interventions,
+    @JsonKey(name: 'next_visit_date') DateTime? nextVisitDate,
     
-    // Next Visit
-    DateTime? nextVisitDate,
+    // Health Worker Info
+    @JsonKey(name: 'recorded_by') String? recordedBy,
+    @JsonKey(name: 'health_facility') String? healthFacility,
     
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    // Legacy/Additional fields
+    @JsonKey(name: 'notes') String? notes,
+    @JsonKey(name: 'measured_by') String? measuredBy,
+    
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _GrowthRecord;
 
   factory GrowthRecord.fromJson(Map<String, dynamic> json) =>

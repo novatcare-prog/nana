@@ -20,63 +20,96 @@ ChildbirthRecord _$ChildbirthRecordFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ChildbirthRecord {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id')
+  String? get id => throw _privateConstructorUsedError; // ← Changed to nullable
+  @JsonKey(name: 'maternal_profile_id')
   String get maternalProfileId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'delivery_date')
   DateTime get deliveryDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'delivery_time')
   String get deliveryTime => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duration_of_pregnancy_weeks')
   int get durationOfPregnancyWeeks =>
       throw _privateConstructorUsedError; // Place & Attendant
-  String get placeOfDelivery =>
-      throw _privateConstructorUsedError; // Health facility, Home, Other
+  @JsonKey(name: 'place_of_delivery')
+  String get placeOfDelivery => throw _privateConstructorUsedError;
+  @JsonKey(name: 'health_facility_name')
   String? get healthFacilityName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'attendant')
   String? get attendant =>
-      throw _privateConstructorUsedError; // Nurse, Midwife, Clinical Officer, Doctor
-// Mode of Delivery
+      throw _privateConstructorUsedError; // Mode of Delivery
+  @JsonKey(name: 'mode_of_delivery')
   String get modeOfDelivery =>
-      throw _privateConstructorUsedError; // SVD, Caesarean, Assisted (Vacuum/Forceps)
-// Mother's Condition
+      throw _privateConstructorUsedError; // Mother's Condition
+  @JsonKey(name: 'skin_to_skin_immediate')
   bool? get skinToSkinImmediate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'apgar_score_1_min')
   String? get apgarScore1Min => throw _privateConstructorUsedError;
+  @JsonKey(name: 'apgar_score_5_min')
   String? get apgarScore5Min => throw _privateConstructorUsedError;
+  @JsonKey(name: 'apgar_score_10_min')
   String? get apgarScore10Min => throw _privateConstructorUsedError;
+  @JsonKey(name: 'resuscitation_done')
   bool? get resuscitationDone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'blood_loss_ml')
   double? get bloodLossMl =>
       throw _privateConstructorUsedError; // Complications
+  @JsonKey(name: 'pre_eclampsia')
   bool? get preEclampsia => throw _privateConstructorUsedError;
+  @JsonKey(name: 'eclampsia')
   bool? get eclampsia => throw _privateConstructorUsedError;
-  bool? get pph => throw _privateConstructorUsedError; // Post-partum hemorrhage
+  @JsonKey(name: 'pph')
+  bool? get pph => throw _privateConstructorUsedError;
+  @JsonKey(name: 'obstructed_labour')
   bool? get obstructedLabour => throw _privateConstructorUsedError;
-  String? get meconiumGrade => throw _privateConstructorUsedError; // 0, 1, 2, 3
-// Mother's Condition Post-delivery
+  @JsonKey(name: 'meconium_grade')
+  String? get meconiumGrade =>
+      throw _privateConstructorUsedError; // Mother's Condition Post-delivery
+  @JsonKey(name: 'mother_condition')
   String? get motherCondition =>
       throw _privateConstructorUsedError; // Drugs Administered to Mother
+  @JsonKey(name: 'oxytocin_given')
   bool? get oxytocinGiven => throw _privateConstructorUsedError;
+  @JsonKey(name: 'misoprostol_given')
   bool? get misoprostolGiven => throw _privateConstructorUsedError;
+  @JsonKey(name: 'heat_stable_carbetocin')
   bool? get heatStableCarbetocin => throw _privateConstructorUsedError;
-  bool? get haartGiven => throw _privateConstructorUsedError; // If HIV positive
+  @JsonKey(name: 'haart_given')
+  bool? get haartGiven => throw _privateConstructorUsedError;
+  @JsonKey(name: 'haart_regimen')
   String? get haartRegimen => throw _privateConstructorUsedError;
+  @JsonKey(name: 'other_drugs')
   String? get otherDrugs => throw _privateConstructorUsedError; // Baby Details
+  @JsonKey(name: 'birth_weight_grams')
   double get birthWeightGrams => throw _privateConstructorUsedError;
+  @JsonKey(name: 'birth_length_cm')
   double get birthLengthCm => throw _privateConstructorUsedError;
+  @JsonKey(name: 'head_circumference_cm')
   double? get headCircumferenceCm => throw _privateConstructorUsedError;
+  @JsonKey(name: 'baby_condition')
   String? get babyCondition =>
       throw _privateConstructorUsedError; // Drugs Given to Baby
-  bool? get chxGiven =>
-      throw _privateConstructorUsedError; // Chlorhexidine 7.1%
+  @JsonKey(name: 'chx_given')
+  bool? get chxGiven => throw _privateConstructorUsedError;
+  @JsonKey(name: 'vitamin_k_given')
   bool? get vitaminKGiven => throw _privateConstructorUsedError;
-  bool? get teoGiven =>
-      throw _privateConstructorUsedError; // Tetracycline Eye Ointment
-// HIV Exposure
+  @JsonKey(name: 'teo_given')
+  bool? get teoGiven => throw _privateConstructorUsedError; // HIV Exposure
+  @JsonKey(name: 'baby_hiv_exposed')
   bool? get babyHivExposed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'arv_prophylaxis_given')
   String? get arvProphylaxisGiven =>
-      throw _privateConstructorUsedError; // AZT+NVP
-// Breastfeeding
+      throw _privateConstructorUsedError; // Breastfeeding
+  @JsonKey(name: 'early_initiation_breastfeeding')
   bool? get earlyInitiationBreastfeeding =>
-      throw _privateConstructorUsedError; // Within 1 hour
-// Clinical Notes
+      throw _privateConstructorUsedError; // Clinical Notes
+  @JsonKey(name: 'notes')
   String? get notes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'conducted_by')
   String? get conductedBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this ChildbirthRecord to a JSON map.
@@ -96,47 +129,49 @@ abstract class $ChildbirthRecordCopyWith<$Res> {
       _$ChildbirthRecordCopyWithImpl<$Res, ChildbirthRecord>;
   @useResult
   $Res call(
-      {String id,
-      String maternalProfileId,
-      DateTime deliveryDate,
-      String deliveryTime,
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'maternal_profile_id') String maternalProfileId,
+      @JsonKey(name: 'delivery_date') DateTime deliveryDate,
+      @JsonKey(name: 'delivery_time') String deliveryTime,
+      @JsonKey(name: 'duration_of_pregnancy_weeks')
       int durationOfPregnancyWeeks,
-      String placeOfDelivery,
-      String? healthFacilityName,
-      String? attendant,
-      String modeOfDelivery,
-      bool? skinToSkinImmediate,
-      String? apgarScore1Min,
-      String? apgarScore5Min,
-      String? apgarScore10Min,
-      bool? resuscitationDone,
-      double? bloodLossMl,
-      bool? preEclampsia,
-      bool? eclampsia,
-      bool? pph,
-      bool? obstructedLabour,
-      String? meconiumGrade,
-      String? motherCondition,
-      bool? oxytocinGiven,
-      bool? misoprostolGiven,
-      bool? heatStableCarbetocin,
-      bool? haartGiven,
-      String? haartRegimen,
-      String? otherDrugs,
-      double birthWeightGrams,
-      double birthLengthCm,
-      double? headCircumferenceCm,
-      String? babyCondition,
-      bool? chxGiven,
-      bool? vitaminKGiven,
-      bool? teoGiven,
-      bool? babyHivExposed,
-      String? arvProphylaxisGiven,
+      @JsonKey(name: 'place_of_delivery') String placeOfDelivery,
+      @JsonKey(name: 'health_facility_name') String? healthFacilityName,
+      @JsonKey(name: 'attendant') String? attendant,
+      @JsonKey(name: 'mode_of_delivery') String modeOfDelivery,
+      @JsonKey(name: 'skin_to_skin_immediate') bool? skinToSkinImmediate,
+      @JsonKey(name: 'apgar_score_1_min') String? apgarScore1Min,
+      @JsonKey(name: 'apgar_score_5_min') String? apgarScore5Min,
+      @JsonKey(name: 'apgar_score_10_min') String? apgarScore10Min,
+      @JsonKey(name: 'resuscitation_done') bool? resuscitationDone,
+      @JsonKey(name: 'blood_loss_ml') double? bloodLossMl,
+      @JsonKey(name: 'pre_eclampsia') bool? preEclampsia,
+      @JsonKey(name: 'eclampsia') bool? eclampsia,
+      @JsonKey(name: 'pph') bool? pph,
+      @JsonKey(name: 'obstructed_labour') bool? obstructedLabour,
+      @JsonKey(name: 'meconium_grade') String? meconiumGrade,
+      @JsonKey(name: 'mother_condition') String? motherCondition,
+      @JsonKey(name: 'oxytocin_given') bool? oxytocinGiven,
+      @JsonKey(name: 'misoprostol_given') bool? misoprostolGiven,
+      @JsonKey(name: 'heat_stable_carbetocin') bool? heatStableCarbetocin,
+      @JsonKey(name: 'haart_given') bool? haartGiven,
+      @JsonKey(name: 'haart_regimen') String? haartRegimen,
+      @JsonKey(name: 'other_drugs') String? otherDrugs,
+      @JsonKey(name: 'birth_weight_grams') double birthWeightGrams,
+      @JsonKey(name: 'birth_length_cm') double birthLengthCm,
+      @JsonKey(name: 'head_circumference_cm') double? headCircumferenceCm,
+      @JsonKey(name: 'baby_condition') String? babyCondition,
+      @JsonKey(name: 'chx_given') bool? chxGiven,
+      @JsonKey(name: 'vitamin_k_given') bool? vitaminKGiven,
+      @JsonKey(name: 'teo_given') bool? teoGiven,
+      @JsonKey(name: 'baby_hiv_exposed') bool? babyHivExposed,
+      @JsonKey(name: 'arv_prophylaxis_given') String? arvProphylaxisGiven,
+      @JsonKey(name: 'early_initiation_breastfeeding')
       bool? earlyInitiationBreastfeeding,
-      String? notes,
-      String? conductedBy,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'conducted_by') String? conductedBy,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -154,7 +189,7 @@ class _$ChildbirthRecordCopyWithImpl<$Res, $Val extends ChildbirthRecord>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? maternalProfileId = null,
     Object? deliveryDate = null,
     Object? deliveryTime = null,
@@ -197,10 +232,10 @@ class _$ChildbirthRecordCopyWithImpl<$Res, $Val extends ChildbirthRecord>
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       maternalProfileId: null == maternalProfileId
           ? _value.maternalProfileId
           : maternalProfileId // ignore: cast_nullable_to_non_nullable
@@ -374,47 +409,49 @@ abstract class _$$ChildbirthRecordImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String maternalProfileId,
-      DateTime deliveryDate,
-      String deliveryTime,
+      {@JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'maternal_profile_id') String maternalProfileId,
+      @JsonKey(name: 'delivery_date') DateTime deliveryDate,
+      @JsonKey(name: 'delivery_time') String deliveryTime,
+      @JsonKey(name: 'duration_of_pregnancy_weeks')
       int durationOfPregnancyWeeks,
-      String placeOfDelivery,
-      String? healthFacilityName,
-      String? attendant,
-      String modeOfDelivery,
-      bool? skinToSkinImmediate,
-      String? apgarScore1Min,
-      String? apgarScore5Min,
-      String? apgarScore10Min,
-      bool? resuscitationDone,
-      double? bloodLossMl,
-      bool? preEclampsia,
-      bool? eclampsia,
-      bool? pph,
-      bool? obstructedLabour,
-      String? meconiumGrade,
-      String? motherCondition,
-      bool? oxytocinGiven,
-      bool? misoprostolGiven,
-      bool? heatStableCarbetocin,
-      bool? haartGiven,
-      String? haartRegimen,
-      String? otherDrugs,
-      double birthWeightGrams,
-      double birthLengthCm,
-      double? headCircumferenceCm,
-      String? babyCondition,
-      bool? chxGiven,
-      bool? vitaminKGiven,
-      bool? teoGiven,
-      bool? babyHivExposed,
-      String? arvProphylaxisGiven,
+      @JsonKey(name: 'place_of_delivery') String placeOfDelivery,
+      @JsonKey(name: 'health_facility_name') String? healthFacilityName,
+      @JsonKey(name: 'attendant') String? attendant,
+      @JsonKey(name: 'mode_of_delivery') String modeOfDelivery,
+      @JsonKey(name: 'skin_to_skin_immediate') bool? skinToSkinImmediate,
+      @JsonKey(name: 'apgar_score_1_min') String? apgarScore1Min,
+      @JsonKey(name: 'apgar_score_5_min') String? apgarScore5Min,
+      @JsonKey(name: 'apgar_score_10_min') String? apgarScore10Min,
+      @JsonKey(name: 'resuscitation_done') bool? resuscitationDone,
+      @JsonKey(name: 'blood_loss_ml') double? bloodLossMl,
+      @JsonKey(name: 'pre_eclampsia') bool? preEclampsia,
+      @JsonKey(name: 'eclampsia') bool? eclampsia,
+      @JsonKey(name: 'pph') bool? pph,
+      @JsonKey(name: 'obstructed_labour') bool? obstructedLabour,
+      @JsonKey(name: 'meconium_grade') String? meconiumGrade,
+      @JsonKey(name: 'mother_condition') String? motherCondition,
+      @JsonKey(name: 'oxytocin_given') bool? oxytocinGiven,
+      @JsonKey(name: 'misoprostol_given') bool? misoprostolGiven,
+      @JsonKey(name: 'heat_stable_carbetocin') bool? heatStableCarbetocin,
+      @JsonKey(name: 'haart_given') bool? haartGiven,
+      @JsonKey(name: 'haart_regimen') String? haartRegimen,
+      @JsonKey(name: 'other_drugs') String? otherDrugs,
+      @JsonKey(name: 'birth_weight_grams') double birthWeightGrams,
+      @JsonKey(name: 'birth_length_cm') double birthLengthCm,
+      @JsonKey(name: 'head_circumference_cm') double? headCircumferenceCm,
+      @JsonKey(name: 'baby_condition') String? babyCondition,
+      @JsonKey(name: 'chx_given') bool? chxGiven,
+      @JsonKey(name: 'vitamin_k_given') bool? vitaminKGiven,
+      @JsonKey(name: 'teo_given') bool? teoGiven,
+      @JsonKey(name: 'baby_hiv_exposed') bool? babyHivExposed,
+      @JsonKey(name: 'arv_prophylaxis_given') String? arvProphylaxisGiven,
+      @JsonKey(name: 'early_initiation_breastfeeding')
       bool? earlyInitiationBreastfeeding,
-      String? notes,
-      String? conductedBy,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+      @JsonKey(name: 'notes') String? notes,
+      @JsonKey(name: 'conducted_by') String? conductedBy,
+      @JsonKey(name: 'created_at') DateTime? createdAt,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -430,7 +467,7 @@ class __$$ChildbirthRecordImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? maternalProfileId = null,
     Object? deliveryDate = null,
     Object? deliveryTime = null,
@@ -473,10 +510,10 @@ class __$$ChildbirthRecordImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
   }) {
     return _then(_$ChildbirthRecordImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       maternalProfileId: null == maternalProfileId
           ? _value.maternalProfileId
           : maternalProfileId // ignore: cast_nullable_to_non_nullable
@@ -645,153 +682,187 @@ class __$$ChildbirthRecordImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ChildbirthRecordImpl implements _ChildbirthRecord {
   const _$ChildbirthRecordImpl(
-      {required this.id,
-      required this.maternalProfileId,
-      required this.deliveryDate,
-      required this.deliveryTime,
+      {@JsonKey(name: 'id') this.id,
+      @JsonKey(name: 'maternal_profile_id') required this.maternalProfileId,
+      @JsonKey(name: 'delivery_date') required this.deliveryDate,
+      @JsonKey(name: 'delivery_time') required this.deliveryTime,
+      @JsonKey(name: 'duration_of_pregnancy_weeks')
       required this.durationOfPregnancyWeeks,
-      required this.placeOfDelivery,
-      this.healthFacilityName,
-      this.attendant,
-      required this.modeOfDelivery,
-      this.skinToSkinImmediate,
-      this.apgarScore1Min,
-      this.apgarScore5Min,
-      this.apgarScore10Min,
-      this.resuscitationDone,
-      this.bloodLossMl,
-      this.preEclampsia,
-      this.eclampsia,
-      this.pph,
-      this.obstructedLabour,
-      this.meconiumGrade,
-      this.motherCondition,
-      this.oxytocinGiven,
-      this.misoprostolGiven,
-      this.heatStableCarbetocin,
-      this.haartGiven,
-      this.haartRegimen,
-      this.otherDrugs,
-      required this.birthWeightGrams,
-      required this.birthLengthCm,
-      this.headCircumferenceCm,
-      this.babyCondition,
-      this.chxGiven,
-      this.vitaminKGiven,
-      this.teoGiven,
-      this.babyHivExposed,
-      this.arvProphylaxisGiven,
+      @JsonKey(name: 'place_of_delivery') required this.placeOfDelivery,
+      @JsonKey(name: 'health_facility_name') this.healthFacilityName,
+      @JsonKey(name: 'attendant') this.attendant,
+      @JsonKey(name: 'mode_of_delivery') required this.modeOfDelivery,
+      @JsonKey(name: 'skin_to_skin_immediate') this.skinToSkinImmediate,
+      @JsonKey(name: 'apgar_score_1_min') this.apgarScore1Min,
+      @JsonKey(name: 'apgar_score_5_min') this.apgarScore5Min,
+      @JsonKey(name: 'apgar_score_10_min') this.apgarScore10Min,
+      @JsonKey(name: 'resuscitation_done') this.resuscitationDone,
+      @JsonKey(name: 'blood_loss_ml') this.bloodLossMl,
+      @JsonKey(name: 'pre_eclampsia') this.preEclampsia,
+      @JsonKey(name: 'eclampsia') this.eclampsia,
+      @JsonKey(name: 'pph') this.pph,
+      @JsonKey(name: 'obstructed_labour') this.obstructedLabour,
+      @JsonKey(name: 'meconium_grade') this.meconiumGrade,
+      @JsonKey(name: 'mother_condition') this.motherCondition,
+      @JsonKey(name: 'oxytocin_given') this.oxytocinGiven,
+      @JsonKey(name: 'misoprostol_given') this.misoprostolGiven,
+      @JsonKey(name: 'heat_stable_carbetocin') this.heatStableCarbetocin,
+      @JsonKey(name: 'haart_given') this.haartGiven,
+      @JsonKey(name: 'haart_regimen') this.haartRegimen,
+      @JsonKey(name: 'other_drugs') this.otherDrugs,
+      @JsonKey(name: 'birth_weight_grams') required this.birthWeightGrams,
+      @JsonKey(name: 'birth_length_cm') required this.birthLengthCm,
+      @JsonKey(name: 'head_circumference_cm') this.headCircumferenceCm,
+      @JsonKey(name: 'baby_condition') this.babyCondition,
+      @JsonKey(name: 'chx_given') this.chxGiven,
+      @JsonKey(name: 'vitamin_k_given') this.vitaminKGiven,
+      @JsonKey(name: 'teo_given') this.teoGiven,
+      @JsonKey(name: 'baby_hiv_exposed') this.babyHivExposed,
+      @JsonKey(name: 'arv_prophylaxis_given') this.arvProphylaxisGiven,
+      @JsonKey(name: 'early_initiation_breastfeeding')
       this.earlyInitiationBreastfeeding,
-      this.notes,
-      this.conductedBy,
-      this.createdAt,
-      this.updatedAt});
+      @JsonKey(name: 'notes') this.notes,
+      @JsonKey(name: 'conducted_by') this.conductedBy,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt});
 
   factory _$ChildbirthRecordImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChildbirthRecordImplFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'id')
+  final String? id;
+// ← Changed to nullable
   @override
+  @JsonKey(name: 'maternal_profile_id')
   final String maternalProfileId;
   @override
+  @JsonKey(name: 'delivery_date')
   final DateTime deliveryDate;
   @override
+  @JsonKey(name: 'delivery_time')
   final String deliveryTime;
   @override
+  @JsonKey(name: 'duration_of_pregnancy_weeks')
   final int durationOfPregnancyWeeks;
 // Place & Attendant
   @override
+  @JsonKey(name: 'place_of_delivery')
   final String placeOfDelivery;
-// Health facility, Home, Other
   @override
+  @JsonKey(name: 'health_facility_name')
   final String? healthFacilityName;
   @override
+  @JsonKey(name: 'attendant')
   final String? attendant;
-// Nurse, Midwife, Clinical Officer, Doctor
 // Mode of Delivery
   @override
+  @JsonKey(name: 'mode_of_delivery')
   final String modeOfDelivery;
-// SVD, Caesarean, Assisted (Vacuum/Forceps)
 // Mother's Condition
   @override
+  @JsonKey(name: 'skin_to_skin_immediate')
   final bool? skinToSkinImmediate;
   @override
+  @JsonKey(name: 'apgar_score_1_min')
   final String? apgarScore1Min;
   @override
+  @JsonKey(name: 'apgar_score_5_min')
   final String? apgarScore5Min;
   @override
+  @JsonKey(name: 'apgar_score_10_min')
   final String? apgarScore10Min;
   @override
+  @JsonKey(name: 'resuscitation_done')
   final bool? resuscitationDone;
   @override
+  @JsonKey(name: 'blood_loss_ml')
   final double? bloodLossMl;
 // Complications
   @override
+  @JsonKey(name: 'pre_eclampsia')
   final bool? preEclampsia;
   @override
+  @JsonKey(name: 'eclampsia')
   final bool? eclampsia;
   @override
+  @JsonKey(name: 'pph')
   final bool? pph;
-// Post-partum hemorrhage
   @override
+  @JsonKey(name: 'obstructed_labour')
   final bool? obstructedLabour;
   @override
+  @JsonKey(name: 'meconium_grade')
   final String? meconiumGrade;
-// 0, 1, 2, 3
 // Mother's Condition Post-delivery
   @override
+  @JsonKey(name: 'mother_condition')
   final String? motherCondition;
 // Drugs Administered to Mother
   @override
+  @JsonKey(name: 'oxytocin_given')
   final bool? oxytocinGiven;
   @override
+  @JsonKey(name: 'misoprostol_given')
   final bool? misoprostolGiven;
   @override
+  @JsonKey(name: 'heat_stable_carbetocin')
   final bool? heatStableCarbetocin;
   @override
+  @JsonKey(name: 'haart_given')
   final bool? haartGiven;
-// If HIV positive
   @override
+  @JsonKey(name: 'haart_regimen')
   final String? haartRegimen;
   @override
+  @JsonKey(name: 'other_drugs')
   final String? otherDrugs;
 // Baby Details
   @override
+  @JsonKey(name: 'birth_weight_grams')
   final double birthWeightGrams;
   @override
+  @JsonKey(name: 'birth_length_cm')
   final double birthLengthCm;
   @override
+  @JsonKey(name: 'head_circumference_cm')
   final double? headCircumferenceCm;
   @override
+  @JsonKey(name: 'baby_condition')
   final String? babyCondition;
 // Drugs Given to Baby
   @override
+  @JsonKey(name: 'chx_given')
   final bool? chxGiven;
-// Chlorhexidine 7.1%
   @override
+  @JsonKey(name: 'vitamin_k_given')
   final bool? vitaminKGiven;
   @override
+  @JsonKey(name: 'teo_given')
   final bool? teoGiven;
-// Tetracycline Eye Ointment
 // HIV Exposure
   @override
+  @JsonKey(name: 'baby_hiv_exposed')
   final bool? babyHivExposed;
   @override
+  @JsonKey(name: 'arv_prophylaxis_given')
   final String? arvProphylaxisGiven;
-// AZT+NVP
 // Breastfeeding
   @override
+  @JsonKey(name: 'early_initiation_breastfeeding')
   final bool? earlyInitiationBreastfeeding;
-// Within 1 hour
 // Clinical Notes
   @override
+  @JsonKey(name: 'notes')
   final String? notes;
   @override
+  @JsonKey(name: 'conducted_by')
   final String? conductedBy;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -946,138 +1017,178 @@ class _$ChildbirthRecordImpl implements _ChildbirthRecord {
 
 abstract class _ChildbirthRecord implements ChildbirthRecord {
   const factory _ChildbirthRecord(
-      {required final String id,
+      {@JsonKey(name: 'id') final String? id,
+      @JsonKey(name: 'maternal_profile_id')
       required final String maternalProfileId,
-      required final DateTime deliveryDate,
-      required final String deliveryTime,
+      @JsonKey(name: 'delivery_date') required final DateTime deliveryDate,
+      @JsonKey(name: 'delivery_time') required final String deliveryTime,
+      @JsonKey(name: 'duration_of_pregnancy_weeks')
       required final int durationOfPregnancyWeeks,
-      required final String placeOfDelivery,
-      final String? healthFacilityName,
-      final String? attendant,
-      required final String modeOfDelivery,
-      final bool? skinToSkinImmediate,
-      final String? apgarScore1Min,
-      final String? apgarScore5Min,
-      final String? apgarScore10Min,
-      final bool? resuscitationDone,
-      final double? bloodLossMl,
-      final bool? preEclampsia,
-      final bool? eclampsia,
-      final bool? pph,
-      final bool? obstructedLabour,
-      final String? meconiumGrade,
-      final String? motherCondition,
-      final bool? oxytocinGiven,
-      final bool? misoprostolGiven,
-      final bool? heatStableCarbetocin,
-      final bool? haartGiven,
-      final String? haartRegimen,
-      final String? otherDrugs,
+      @JsonKey(name: 'place_of_delivery') required final String placeOfDelivery,
+      @JsonKey(name: 'health_facility_name') final String? healthFacilityName,
+      @JsonKey(name: 'attendant') final String? attendant,
+      @JsonKey(name: 'mode_of_delivery') required final String modeOfDelivery,
+      @JsonKey(name: 'skin_to_skin_immediate') final bool? skinToSkinImmediate,
+      @JsonKey(name: 'apgar_score_1_min') final String? apgarScore1Min,
+      @JsonKey(name: 'apgar_score_5_min') final String? apgarScore5Min,
+      @JsonKey(name: 'apgar_score_10_min') final String? apgarScore10Min,
+      @JsonKey(name: 'resuscitation_done') final bool? resuscitationDone,
+      @JsonKey(name: 'blood_loss_ml') final double? bloodLossMl,
+      @JsonKey(name: 'pre_eclampsia') final bool? preEclampsia,
+      @JsonKey(name: 'eclampsia') final bool? eclampsia,
+      @JsonKey(name: 'pph') final bool? pph,
+      @JsonKey(name: 'obstructed_labour') final bool? obstructedLabour,
+      @JsonKey(name: 'meconium_grade') final String? meconiumGrade,
+      @JsonKey(name: 'mother_condition') final String? motherCondition,
+      @JsonKey(name: 'oxytocin_given') final bool? oxytocinGiven,
+      @JsonKey(name: 'misoprostol_given') final bool? misoprostolGiven,
+      @JsonKey(name: 'heat_stable_carbetocin') final bool? heatStableCarbetocin,
+      @JsonKey(name: 'haart_given') final bool? haartGiven,
+      @JsonKey(name: 'haart_regimen') final String? haartRegimen,
+      @JsonKey(name: 'other_drugs') final String? otherDrugs,
+      @JsonKey(name: 'birth_weight_grams')
       required final double birthWeightGrams,
-      required final double birthLengthCm,
-      final double? headCircumferenceCm,
-      final String? babyCondition,
-      final bool? chxGiven,
-      final bool? vitaminKGiven,
-      final bool? teoGiven,
-      final bool? babyHivExposed,
-      final String? arvProphylaxisGiven,
+      @JsonKey(name: 'birth_length_cm') required final double birthLengthCm,
+      @JsonKey(name: 'head_circumference_cm') final double? headCircumferenceCm,
+      @JsonKey(name: 'baby_condition') final String? babyCondition,
+      @JsonKey(name: 'chx_given') final bool? chxGiven,
+      @JsonKey(name: 'vitamin_k_given') final bool? vitaminKGiven,
+      @JsonKey(name: 'teo_given') final bool? teoGiven,
+      @JsonKey(name: 'baby_hiv_exposed') final bool? babyHivExposed,
+      @JsonKey(name: 'arv_prophylaxis_given') final String? arvProphylaxisGiven,
+      @JsonKey(name: 'early_initiation_breastfeeding')
       final bool? earlyInitiationBreastfeeding,
-      final String? notes,
-      final String? conductedBy,
-      final DateTime? createdAt,
+      @JsonKey(name: 'notes') final String? notes,
+      @JsonKey(name: 'conducted_by') final String? conductedBy,
+      @JsonKey(name: 'created_at') final DateTime? createdAt,
+      @JsonKey(name: 'updated_at')
       final DateTime? updatedAt}) = _$ChildbirthRecordImpl;
 
   factory _ChildbirthRecord.fromJson(Map<String, dynamic> json) =
       _$ChildbirthRecordImpl.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'id')
+  String? get id; // ← Changed to nullable
   @override
+  @JsonKey(name: 'maternal_profile_id')
   String get maternalProfileId;
   @override
+  @JsonKey(name: 'delivery_date')
   DateTime get deliveryDate;
   @override
+  @JsonKey(name: 'delivery_time')
   String get deliveryTime;
   @override
+  @JsonKey(name: 'duration_of_pregnancy_weeks')
   int get durationOfPregnancyWeeks; // Place & Attendant
   @override
-  String get placeOfDelivery; // Health facility, Home, Other
+  @JsonKey(name: 'place_of_delivery')
+  String get placeOfDelivery;
   @override
+  @JsonKey(name: 'health_facility_name')
   String? get healthFacilityName;
   @override
-  String? get attendant; // Nurse, Midwife, Clinical Officer, Doctor
-// Mode of Delivery
+  @JsonKey(name: 'attendant')
+  String? get attendant; // Mode of Delivery
   @override
-  String get modeOfDelivery; // SVD, Caesarean, Assisted (Vacuum/Forceps)
-// Mother's Condition
+  @JsonKey(name: 'mode_of_delivery')
+  String get modeOfDelivery; // Mother's Condition
   @override
+  @JsonKey(name: 'skin_to_skin_immediate')
   bool? get skinToSkinImmediate;
   @override
+  @JsonKey(name: 'apgar_score_1_min')
   String? get apgarScore1Min;
   @override
+  @JsonKey(name: 'apgar_score_5_min')
   String? get apgarScore5Min;
   @override
+  @JsonKey(name: 'apgar_score_10_min')
   String? get apgarScore10Min;
   @override
+  @JsonKey(name: 'resuscitation_done')
   bool? get resuscitationDone;
   @override
+  @JsonKey(name: 'blood_loss_ml')
   double? get bloodLossMl; // Complications
   @override
+  @JsonKey(name: 'pre_eclampsia')
   bool? get preEclampsia;
   @override
+  @JsonKey(name: 'eclampsia')
   bool? get eclampsia;
   @override
-  bool? get pph; // Post-partum hemorrhage
+  @JsonKey(name: 'pph')
+  bool? get pph;
   @override
+  @JsonKey(name: 'obstructed_labour')
   bool? get obstructedLabour;
   @override
-  String? get meconiumGrade; // 0, 1, 2, 3
-// Mother's Condition Post-delivery
+  @JsonKey(name: 'meconium_grade')
+  String? get meconiumGrade; // Mother's Condition Post-delivery
   @override
+  @JsonKey(name: 'mother_condition')
   String? get motherCondition; // Drugs Administered to Mother
   @override
+  @JsonKey(name: 'oxytocin_given')
   bool? get oxytocinGiven;
   @override
+  @JsonKey(name: 'misoprostol_given')
   bool? get misoprostolGiven;
   @override
+  @JsonKey(name: 'heat_stable_carbetocin')
   bool? get heatStableCarbetocin;
   @override
-  bool? get haartGiven; // If HIV positive
+  @JsonKey(name: 'haart_given')
+  bool? get haartGiven;
   @override
+  @JsonKey(name: 'haart_regimen')
   String? get haartRegimen;
   @override
+  @JsonKey(name: 'other_drugs')
   String? get otherDrugs; // Baby Details
   @override
+  @JsonKey(name: 'birth_weight_grams')
   double get birthWeightGrams;
   @override
+  @JsonKey(name: 'birth_length_cm')
   double get birthLengthCm;
   @override
+  @JsonKey(name: 'head_circumference_cm')
   double? get headCircumferenceCm;
   @override
+  @JsonKey(name: 'baby_condition')
   String? get babyCondition; // Drugs Given to Baby
   @override
-  bool? get chxGiven; // Chlorhexidine 7.1%
+  @JsonKey(name: 'chx_given')
+  bool? get chxGiven;
   @override
+  @JsonKey(name: 'vitamin_k_given')
   bool? get vitaminKGiven;
   @override
-  bool? get teoGiven; // Tetracycline Eye Ointment
-// HIV Exposure
+  @JsonKey(name: 'teo_given')
+  bool? get teoGiven; // HIV Exposure
   @override
+  @JsonKey(name: 'baby_hiv_exposed')
   bool? get babyHivExposed;
   @override
-  String? get arvProphylaxisGiven; // AZT+NVP
-// Breastfeeding
+  @JsonKey(name: 'arv_prophylaxis_given')
+  String? get arvProphylaxisGiven; // Breastfeeding
   @override
-  bool? get earlyInitiationBreastfeeding; // Within 1 hour
-// Clinical Notes
+  @JsonKey(name: 'early_initiation_breastfeeding')
+  bool? get earlyInitiationBreastfeeding; // Clinical Notes
   @override
+  @JsonKey(name: 'notes')
   String? get notes;
   @override
+  @JsonKey(name: 'conducted_by')
   String? get conductedBy;
   @override
+  @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
+  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of ChildbirthRecord
