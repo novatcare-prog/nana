@@ -54,3 +54,11 @@ export 'src/models/child/vitamin_a_record.dart';
 export 'src/models/child/deworming_record.dart';
 export 'src/data/repositories/vitamin_a_repository.dart';
 export 'src/data/repositories/deworming_repository.dart';
+
+// Child Health - Developmental Milestones
+export 'src/models/child/developmental_milestone.dart';
+export 'src/data/repositories/developmental_milestone_repository.dart';
+
+// Maternal Health - Postnatal Care
+export 'src/models/maternal/postnatal_visit.dart';
+export 'src/data/repositories/postnatal_visit_repository.dart';

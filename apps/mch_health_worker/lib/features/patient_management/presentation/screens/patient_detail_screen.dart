@@ -9,6 +9,7 @@ import '../../presentation/screens/immunization_malaria_screen.dart';
 import '../../presentation/screens/nutrition_tracking_screen.dart';
 import '../../presentation/screens/record_delivery_screen.dart';
 import '../../presentation/screens/children_list_screen.dart';
+import 'postnatal_screen.dart'; // ← ADD THIS LINE
 
 /// Patient Detail Screen with Tabbed Interface
 /// Design: Profile | Medical History | Lab Results | Visits
@@ -410,7 +411,7 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
           ),
           const SizedBox(height: 12),
 
-          // View Children Button (NEW!)
+          // View Children Button
           ElevatedButton.icon(
             onPressed: () {
               Navigator.push(
@@ -470,6 +471,28 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
             label: const Text('View Nutrition Tracking'),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 48),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Postnatal Care Button - NEW!
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PostnatalCareScreen(
+                    maternalProfile: patient,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.pregnant_woman),
+            label: const Text('Postnatal Care'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 48),
+              backgroundColor: Colors.teal[700],
+              foregroundColor: Colors.white,
             ),
           ),
         ],

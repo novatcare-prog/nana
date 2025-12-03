@@ -7,6 +7,7 @@ import 'growth_history_screen.dart';
 import 'immunization_card_screen.dart';
 import 'vit_a_deworming_screen.dart';
 import 'deworming_screen.dart';
+import 'developmental_milestone_screen.dart';
 
 class ChildDetailScreen extends ConsumerStatefulWidget {
   final ChildProfile child;
@@ -27,7 +28,7 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -45,11 +46,14 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
         title: Text(widget.child.childName),
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
           tabs: const [
             Tab(text: 'Profile'),
             Tab(text: 'Growth'),
             Tab(text: 'Immunizations'),
             Tab(text: 'Vit A & Deworming'),
+            Tab(text: 'Milestones')
           ],
         ),
       ),
@@ -60,6 +64,7 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
           _buildGrowthTab(latestGrowthAsync),
           _buildImmunizationsTab(),
            VitaminADewormingCardScreen(child: widget.child),
+           DevelopmentalMilestonesScreen(child: widget.child),
         ],
       ),
     );
