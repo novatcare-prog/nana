@@ -3,7 +3,7 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.24.5-blue.svg)](https://flutter.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-green.svg)](https://supabase.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.0.0-orange.svg)](https://github.com/novatcare-prog/nana/releases)
+[![Version](https://img.shields.io/badge/Version-1.1.0-orange.svg)](https://github.com/novatcare-prog/nana/releases)
 
 A comprehensive Flutter-based digital health system that digitizes Kenya's Mother and Child Health (MCH) Handbook 2020 guidelines. Built for healthcare workers to efficiently track maternal and child health services from pregnancy through early childhood.
 
@@ -12,6 +12,7 @@ A comprehensive Flutter-based digital health system that digitizes Kenya's Mothe
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [What's New in v1.1.0](#whats-new-in-v110)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [System Architecture](#system-architecture)
@@ -42,13 +43,67 @@ A comprehensive Flutter-based digital health system that digitizes Kenya's Mothe
 
 ---
 
+## 🎉 What's New in v1.1.0
+
+### 🔐 Password Reset & Recovery System (NEW)
+- ✅ **Email-based password reset** with Supabase Auth integration
+- ✅ **Hybrid deep linking** - Automatic app opening on Android/iOS
+- ✅ **Manual fallback** for Windows and web platforms
+- ✅ **Password strength validation** (8 characters, uppercase, lowercase, number, special character)
+- ✅ **PKCE flow** for enhanced security
+- ✅ **24-hour link expiration** with one-time use tokens
+
+### 👤 Settings & User Preferences (NEW)
+- ✅ **Comprehensive settings screen** with organized sections
+- ✅ **Profile management** - View user info, role, and facility
+- ✅ **Notification preferences** - Control appointment, immunization, and visit reminders
+- ✅ **App preferences** - Theme selection, language, and data sync options
+- ✅ **About section** - App version, MCH Handbook info, and support links
+
+### 🌙 Dark Theme Support (NEW)
+- ✅ **Three theme modes** - Light, Dark, and System Default
+- ✅ **Persistent preferences** - Theme choice saved with SharedPreferences
+- ✅ **Material Design 3** compliant
+- ✅ **Instant switching** - No app restart required
+- ✅ **Consistent branding** - Teal primary color maintained across themes
+
+### ✏️ Edit Profile Feature (NEW)
+- ✅ **Editable fields** - Full name, phone number, and facility selection
+- ✅ **Real-time validation** - Input validation with error messages
+- ✅ **Smart save button** - Appears only when changes are made
+- ✅ **Loading states** - Visual feedback during save operations
+- ✅ **Auto-refresh** - Profile updates immediately after save
+
+### 📅 Calendar Improvements (NEW)
+- ✅ **Color-coded markers** based on appointment status:
+  - 🔴 **Red** - Missed appointments (highest priority)
+  - 🟠 **Orange** - Pending/Scheduled appointments
+  - 🟢 **Green** - All appointments completed
+- ✅ **Real-time updates** - Markers refresh automatically on status changes
+- ✅ **Enhanced visual feedback** - Better user experience
+- ✅ **Month summary** - Quick stats for total, done, and pending appointments
+
+### 📦 New Dependencies
+- `package_info_plus: ^8.0.0` - App version information
+- `shared_preferences: ^2.2.0` - Persistent theme storage
+
+### 🔧 Technical Improvements
+- Deep linking configuration for Android (AndroidManifest.xml)
+- Deep linking configuration for iOS (Info.plist)
+- Theme provider with Riverpod state management
+- Enhanced calendar logic with status-based coloring
+- Improved security with PKCE authentication flow
+
+---
+
 ## ✨ Features
 
 ### 👤 User Management
 - ✅ Health worker authentication (email/password)
 - ✅ Role-based access control
 - ✅ User profiles with facility information
-- ⏳ Password reset functionality (planned)
+- ✅ **Password reset functionality** (NEW in v1.1.0)
+- ✅ **Edit profile capabilities** (NEW in v1.1.0)
 - ⏳ Multi-factor authentication (planned)
 
 ### 🤰 Maternal Health Services
@@ -158,10 +213,12 @@ A comprehensive Flutter-based digital health system that digitizes Kenya's Mothe
 
 #### Appointments & Scheduling
 - ✅ Appointment booking system
+- ✅ **Color-coded calendar view** (NEW in v1.1.0)
 - ✅ Multiple visit types support
 - ✅ Date and time scheduling
 - ✅ Notes and instructions
 - ✅ Appointment history
+- ✅ **Status tracking with visual indicators** (NEW in v1.1.0)
 
 ### 📱 Patient Management
 
@@ -193,8 +250,18 @@ A comprehensive Flutter-based digital health system that digitizes Kenya's Mothe
 - ✅ Row-Level Security (RLS) in Supabase
 - ✅ Role-based access control
 - ✅ Secure authentication with JWT tokens
+- ✅ **PKCE flow for enhanced security** (NEW in v1.1.0)
 - ✅ Data encryption in transit
 - ✅ Audit trail timestamps
+
+### 🎨 User Experience (NEW in v1.1.0)
+- ✅ **Dark theme support** (Light/Dark/System modes)
+- ✅ **Persistent preferences** with local storage
+- ✅ Responsive design (Mobile, Tablet, Desktop)
+- ✅ Adaptive navigation (Bottom nav for mobile, Rail for desktop)
+- ✅ Material Design 3
+- ✅ Teal color scheme (Kenya MCH branding)
+- ✅ Professional UI/UX
 
 ---
 
@@ -205,12 +272,13 @@ A comprehensive Flutter-based digital health system that digitizes Kenya's Mothe
 - **Language**: Dart
 - **State Management**: Riverpod 2.x
 - **Local Storage**: Hive
+- **Preferences**: SharedPreferences (NEW in v1.1.0)
 - **Code Generation**: Freezed, JSON Serializable
 - **UI Components**: Material Design 3
 
 ### Backend
 - **BaaS**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
+- **Authentication**: Supabase Auth with PKCE flow (Enhanced in v1.1.0)
 - **Database**: PostgreSQL 15+
 - **Real-time**: Supabase Realtime (WebSockets)
 - **Storage**: Supabase Storage (future use)
@@ -232,6 +300,14 @@ MCH Kenya App
 │
 ├── 📱 Frontend (Flutter)
 │   ├── mch_health_worker (Health worker app)
+│   │   ├── Features
+│   │   │   ├── Authentication (with password reset)
+│   │   │   ├── Settings & Preferences (NEW)
+│   │   │   ├── Profile Management (NEW)
+│   │   │   └── Patient Management
+│   │   └── Core
+│   │       ├── Theme Provider (NEW)
+│   │       └── Other Providers
 │   ├── mch_patient (Patient app - future)
 │   └── mch_core (Shared package)
 │       ├── Models (Freezed/JSON Serializable)
@@ -243,13 +319,12 @@ MCH Kenya App
 │   │   ├── 15+ tables with relationships
 │   │   ├── Indexes for performance
 │   │   └── Row-Level Security policies
-│   ├── Authentication (JWT-based)
+│   ├── Authentication (JWT-based + PKCE)
 │   └── Real-time subscriptions
 │
-└── 💾 Local Storage (Hive)
-    ├── Patient data cache
-    ├── Visit records
-    └── Sync queue
+└── 💾 Local Storage
+    ├── Hive (Patient data cache)
+    └── SharedPreferences (User preferences)
 ```
 
 ### Data Flow
@@ -293,7 +368,16 @@ User Action → Riverpod Provider → Repository → Supabase/Hive → UI Update
    SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
-4. **Run database migrations**
+4. **Configure Password Reset (v1.1.0)**
+   
+   In Supabase Dashboard:
+   - Go to Authentication → URL Configuration
+   - Add redirect URLs:
+     - `mchkenya://reset-password`
+     - `mchkenya://auth-callback`
+   - Customize email templates under Authentication → Email Templates
+
+5. **Run database migrations**
    
    Execute SQL files in order from `/database/`:
    - `01_auth_setup.sql`
@@ -301,17 +385,30 @@ User Action → Riverpod Provider → Repository → Supabase/Hive → UI Update
    - `03_anc_visits.sql`
    - ... (all numbered SQL files)
 
-5. **Generate code**
+6. **Generate code**
    ```bash
    cd packages/mch_core
    dart run build_runner build --delete-conflicting-outputs
    ```
 
-6. **Run the app**
+7. **Run the app**
    ```bash
    cd apps/mch_health_worker
    flutter run
    ```
+
+### Deep Linking Setup (v1.1.0)
+
+**Android** (Already configured in AndroidManifest.xml):
+- Custom scheme: `mchkenya://`
+- Hosts: `reset-password`, `auth-callback`
+
+**iOS** (Already configured in Info.plist):
+- URL Scheme: `mchkenya`
+- Deep linking enabled
+
+**Windows/Web**:
+- Manual code entry fallback available
 
 ### Database Setup (Supabase)
 
@@ -388,20 +485,35 @@ mch_kenya/
 │       ├── lib/
 │       │   ├── core/
 │       │   │   ├── providers/      # Riverpod providers
+│       │   │   │   ├── auth_providers.dart
+│       │   │   │   ├── theme_provider.dart (NEW in v1.1.0)
+│       │   │   │   └── appointment_providers.dart
 │       │   │   ├── services/       # Business logic
 │       │   │   └── widgets/        # Reusable widgets
 │       │   │
 │       │   └── features/
 │       │       ├── auth/           # Authentication
+│       │       │   └── presentation/screens/
+│       │       │       ├── login_screen.dart
+│       │       │       ├── forgot_password_screen.dart (NEW)
+│       │       │       ├── reset_password_screen.dart (NEW)
+│       │       │       └── enter_reset_code_screen.dart (NEW)
+│       │       │
 │       │       ├── dashboard/      # Main dashboard
 │       │       └── patient_management/
 │       │           ├── data/       # (deprecated - moved to mch_core)
 │       │           └── presentation/
 │       │               └── screens/  # All UI screens
+│       │                   ├── settings_screen.dart (NEW)
+│       │                   ├── edit_profile_screen.dart (NEW)
+│       │                   └── schedule_screen.dart (UPDATED)
 │       │
-│       ├── android/                # Android config
+│       ├── android/
+│       │   └── app/src/main/AndroidManifest.xml (UPDATED)
+│       ├── ios/
+│       │   └── Runner/Info.plist (UPDATED)
 │       ├── windows/                # Windows config
-│       └── pubspec.yaml
+│       └── pubspec.yaml            # (UPDATED with new deps)
 │
 ├── packages/
 │   └── mch_core/                   # Shared core package
@@ -430,10 +542,14 @@ mch_kenya/
 ├── docs/                           # Documentation
 │   ├── API.md
 │   ├── SETUP.md
-│   └── USER_GUIDE.md
+│   ├── USER_GUIDE.md
+│   ├── MCH_Kenya_Development_Summary.pdf (NEW)
+│   ├── PASSWORD_RESET_SETUP_GUIDE.md (NEW)
+│   ├── DARK_THEME_GUIDE.md (NEW)
+│   └── SETTINGS_INTEGRATION_GUIDE.md (NEW)
 │
 ├── .gitignore
-├── README.md
+├── README.md                       # (UPDATED for v1.1.0)
 ├── LICENSE
 └── pubspec.yaml                    # Root workspace config
 ```
@@ -442,36 +558,47 @@ mch_kenya/
 
 ## 🗺️ Development Roadmap
 
-### ✅ Completed (v1.0.0)
-- Complete MCH Handbook 2020 digitization
-- Offline-first architecture
-- 14 major feature modules
-- Comprehensive data models
-- Patient-provider workflows
+### ✅ Completed (v1.1.0) - December 4, 2025
+- ✅ Password reset system with email verification
+- ✅ Hybrid deep linking (Android/iOS + manual fallback)
+- ✅ Comprehensive settings screen
+- ✅ Dark theme support with persistence
+- ✅ Edit profile functionality
+- ✅ Color-coded calendar markers
+- ✅ Enhanced security with PKCE flow
+- ✅ 25 files delivered with complete documentation
+
+### ✅ Completed (v1.0.0) - November 2025
+- ✅ Complete MCH Handbook 2020 digitization
+- ✅ Offline-first architecture
+- ✅ 14 major feature modules
+- ✅ Comprehensive data models
+- ✅ Patient-provider workflows
 
 ### 🔄 In Progress
 - [ ] Performance optimization
 - [ ] Comprehensive testing suite
 - [ ] User acceptance testing
 
-### 📋 Planned Features (v1.1.0)
+### 📋 Planned Features (v1.2.0)
 
 #### High Priority
 - [ ] **Push Notifications**
+  - Firebase Cloud Messaging integration
   - Appointment reminders
   - Immunization due dates
   - Visit scheduling alerts
   
-- [ ] **Password Reset**
-  - Email-based reset flow
-  - Security questions
-  - Password strength requirements
-
 - [ ] **WHO Growth Charts**
   - Visual growth curve plotting
   - Z-score calculations
   - Growth trend analysis
   - Malnutrition identification
+
+- [ ] **Profile Photo Upload**
+  - Avatar image support
+  - Camera/gallery selection
+  - Image compression
 
 #### Medium Priority
 - [ ] **Reports & Analytics**
@@ -491,7 +618,7 @@ mch_kenya/
   - Due date filtering
   - Visit status filtering
 
-#### Future Enhancements
+#### Future Enhancements (v1.3.0+)
 - [ ] **Patient Mobile App**
   - Patient-facing mobile app
   - Appointment booking
@@ -517,6 +644,20 @@ mch_kenya/
   - Risk prediction models
   - Automated growth assessment
   - Anomaly detection
+
+---
+
+## 📱 Platform Support
+
+| Feature | Android | iOS | Windows | Web |
+|---------|---------|-----|---------|-----|
+| Core App | ✅ | ✅ | ✅ | ✅ |
+| Password Reset (Deep Link) | ✅ | ✅ | Manual | Manual |
+| Password Reset (Fallback) | ✅ | ✅ | ✅ | ✅ |
+| Dark Theme | ✅ | ✅ | ✅ | ✅ |
+| Offline Storage | ✅ | ✅ | ✅ | ✅ |
+| Settings & Preferences | ✅ | ✅ | ✅ | ✅ |
+| Push Notifications | ⏳ | ⏳ | ❌ | ❌ |
 
 ---
 
@@ -566,6 +707,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Novatcare Technologies**
 - GitHub: [@novatcare-prog](https://github.com/novatcare-prog)
+- Developer: Tony Olchugen
 
 ---
 
@@ -581,7 +723,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For questions, issues, or support:
-- 📧 Email: support@novatcare.com (update with actual email)
+- 📧 Email: support@novatcare.com
 - 🐛 Issues: [GitHub Issues](https://github.com/novatcare-prog/nana/issues)
 - 📖 Docs: [Documentation](https://github.com/novatcare-prog/nana/wiki)
 
@@ -596,12 +738,48 @@ If this project helps you, please consider giving it a ⭐ on GitHub!
 ## 📊 Project Stats
 
 - **Languages**: Dart, SQL
-- **Lines of Code**: ~15,000+
+- **Lines of Code**: ~18,000+ (updated in v1.1.0)
 - **Database Tables**: 15+
 - **Models**: 20+
-- **Screens**: 40+
+- **Screens**: 45+ (5 new in v1.1.0)
 - **Contributors**: Open for contributions!
 
 ---
 
+## 📋 Version History
+
+### v1.1.0 (December 4, 2025) - Latest Release ✨
+
+**New Features:**
+- ✅ Password reset system with email verification
+- ✅ Hybrid deep linking (automatic + manual fallback)
+- ✅ Comprehensive settings screen
+- ✅ Dark theme support with persistence
+- ✅ Edit profile functionality
+- ✅ Color-coded calendar markers (Red/Orange/Green)
+
+**Technical Improvements:**
+- ✅ Enhanced security with PKCE flow
+- ✅ Theme state management with Riverpod
+- ✅ Deep linking configuration for Android/iOS
+- ✅ Real-time calendar marker updates
+- ✅ Password strength validation
+
+**Documentation:**
+- 📄 Complete PDF development summary (15 pages)
+- 📖 6 comprehensive integration guides
+- 🔧 Updated setup and configuration docs
+
+**Files Changed:** 17 files | **Files Added:** 8 files | **Total Deliverables:** 25 files
+
+### v1.0.0 (November 2025)
+- ✅ Complete MCH Handbook 2020 implementation
+- ✅ 14 major features
+- ✅ Offline-first architecture
+- ✅ Multi-platform support
+
+---
+
 **Built with ❤️ for better maternal and child healthcare in Kenya**
+
+**🌟 Star this repo if you find it useful!**

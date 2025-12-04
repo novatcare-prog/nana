@@ -6,6 +6,7 @@ import '../../core/providers/facility_providers.dart';
 import '../patient_management/presentation/screens/patient_list_screen.dart';
 import '../patient_management/presentation/screens/dashboard_screen.dart';
 import '../patient_management/presentation/screens/schedule_screen.dart';
+import '../patient_management/presentation/screens/settings_screen.dart'; // ← ADD THIS
 
 /// Main Navigation Scaffold with Adaptive Layout
 /// - Phone: Bottom Navigation Bar
@@ -208,14 +209,17 @@ class _MainNavigationScaffoldState
             },
           ),
           
-          // Settings
+          // Settings - UPDATED!
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings - Coming soon')),
+              Navigator.pop(context); // Close drawer
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
               );
             },
           ),

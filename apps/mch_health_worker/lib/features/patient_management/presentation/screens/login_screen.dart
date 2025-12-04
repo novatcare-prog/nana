@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/auth_providers.dart';
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 
 /// Login Screen
 class LoginScreen extends ConsumerStatefulWidget {
@@ -65,6 +66,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const RegisterScreen(),
+      ),
+    );
+  }
+
+  void _navigateToForgotPassword() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ForgotPasswordScreen(),
       ),
     );
   }
@@ -178,21 +187,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
 
-                    // Forgot Password
+                    // Forgot Password - UPDATED!
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text('Password reset feature coming soon'),
-                                  ),
-                                );
-                              },
-                        child: const Text('Forgot Password?'),
+                        onPressed: _isLoading ? null : _navigateToForgotPassword,
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),

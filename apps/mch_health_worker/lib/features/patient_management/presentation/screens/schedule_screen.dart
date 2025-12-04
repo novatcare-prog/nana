@@ -22,14 +22,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     final appointmentsAsync = ref.watch(monthAppointmentsProvider(_focusedMonth));
-    // We check width here to toggle the FAB visibility on the Scaffold
     final isDesktop = MediaQuery.of(context).size.width >= 900;
 
     return Scaffold(
       drawer: widget.drawer,
       appBar: AppBar(
-        // 1. LOGIC: On Desktop, the sidebar is always visible, so we hide the menu button.
-        // On Mobile, we show the Avatar which opens the drawer.
         automaticallyImplyLeading: false, 
         leading: isDesktop
             ? null
@@ -41,7 +38,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
-                      backgroundColor: Colors.teal, // Matches your screenshot
+                      backgroundColor: Colors.teal,
                       child: const Text(
                         "T",
                         style: TextStyle(
@@ -57,7 +54,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         title: const Text('Schedule'),
         
         actions: [
-          // 2. NEW: Notification Bell (Moved from Drawer to here for visibility)
+          // Notification Bell
           Stack(
             alignment: Alignment.center,
             children: [
@@ -67,7 +64,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   // TODO: Navigate to notifications screen
                 },
               ),
-              // The Red Badge
               Positioned(
                 top: 12,
                 right: 12,
@@ -95,7 +91,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             ],
           ),
 
-          // 3. EXISTING: The "Today" shortcut
+          // Today Button
           IconButton(
             icon: const Icon(Icons.today),
             onPressed: () {
@@ -127,17 +123,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         ),
         data: (appointments) => LayoutBuilder(
           builder: (context, constraints) {
-            // ----------------------------------------------------------
-            // DESKTOP LAYOUT (Width >= 900)
-            // ----------------------------------------------------------
+            // DESKTOP LAYOUT
             if (constraints.maxWidth >= 900) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // LEFT SIDE: Calendar + Month Summary (40%)
+                  // LEFT SIDE: Calendar + Month Summary
                   Expanded(
                     flex: 4,
-                    // 1. Wrap SingleChildScrollView with ScrollConfiguration
                     child: ScrollConfiguration(
                       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                       child: SingleChildScrollView(
@@ -154,7 +147,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       ),
                     ),
                   ),
-                  // RIGHT SIDE: Header + List (60%)
+                  // RIGHT SIDE: Header + List
                   Expanded(
                     flex: 6,
                     child: Padding(
@@ -162,7 +155,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // NEW: Desktop Header Row
+                          // Desktop Header
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -176,7 +169,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  // Explicit Date Context
                                   Text(
                                     DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate),
                                     style: TextStyle(
@@ -186,7 +178,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                   ),
                                 ],
                               ),
-                              // NEW: Button moved to top-right for desktop
                               FilledButton.icon(
                                 onPressed: () => _navigateToBookAppointment(),
                                 icon: const Icon(Icons.add),
@@ -198,7 +189,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           const SizedBox(height: 24),
                           const Divider(),
                           
-                          // The Appointment List
+                          // Appointment List
                           Expanded(
                             child: _buildAppointmentsList(appointments),
                           ),
@@ -209,9 +200,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                 ],
               );
             }
-            // ----------------------------------------------------------
-            // MOBILE LAYOUT (Width < 900)
-            // ----------------------------------------------------------
+            // MOBILE LAYOUT
             else {
               return Column(
                 children: [
@@ -226,7 +215,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           },
         ),
       ),
-      // Only show FAB on Mobile (Desktop has the button in the header)
       floatingActionButton: isDesktop
           ? null
           : FloatingActionButton.extended(
@@ -248,11 +236,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // NEW: Calendar Legend & Stats Widget (Fills whitespace below calendar)
-  // ---------------------------------------------------------------------------
   Widget _buildCalendarLegend(List<Appointment> appointments) {
-    // Calculate simple stats for the focused month
     final total = appointments.length;
     final completed = appointments.where((a) => a.appointmentStatus == AppointmentStatus.completed).length;
     final pending = total - completed;
@@ -273,7 +257,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             ),
             const SizedBox(height: 16),
 
-            // STATISTICS ROW
+            // Statistics
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -294,7 +278,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             ),
             const SizedBox(height: 12),
 
-            // LEGEND GRID
+            // Legend
             Wrap(
               spacing: 16,
               runSpacing: 8,
@@ -347,10 +331,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       ],
     );
   }
-
-  // ---------------------------------------------------------------------------
-  // EXISTING WIDGETS (Unchanged logic, just cleaner organization)
-  // ---------------------------------------------------------------------------
 
   Widget _buildCalendar(List<Appointment> appointments) {
     return Card(
@@ -436,12 +416,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
     for (int day = 1; day <= daysInMonth; day++) {
       final date = DateTime(_focusedMonth.year, _focusedMonth.month, day);
-      final hasAppointments = appointments.any((a) =>
-          a.appointmentDate.year == date.year &&
-          a.appointmentDate.month == date.month &&
-          a.appointmentDate.day == date.day);
-
-      days.add(_buildDayCell(day, date, hasAppointments));
+      
+      // ✅ CHANGED: Pass appointments list instead of boolean
+      days.add(_buildDayCell(day, date, appointments));
 
       if ((firstWeekday + day - 1) % 7 == 0 || day == daysInMonth) {
         weeks.add(
@@ -459,13 +436,45 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     return Column(children: weeks);
   }
 
-  Widget _buildDayCell(int day, DateTime date, bool hasAppointments) {
+  // ✅ UPDATED: Color-coded markers based on appointment status
+  Widget _buildDayCell(int day, DateTime date, List<Appointment> appointments) {
     final isSelected = _selectedDate.year == date.year &&
         _selectedDate.month == date.month &&
         _selectedDate.day == date.day;
     final isToday = DateTime.now().year == date.year &&
         DateTime.now().month == date.month &&
         DateTime.now().day == date.day;
+
+    // Get appointments for this specific day
+    final dayAppointments = appointments.where((a) =>
+        a.appointmentDate.year == date.year &&
+        a.appointmentDate.month == date.month &&
+        a.appointmentDate.day == date.day).toList();
+
+    // Determine marker color based on appointment status
+    Color? markerColor;
+    if (dayAppointments.isNotEmpty) {
+      // Check for different statuses
+      final hasMissed = dayAppointments.any((a) =>
+          a.appointmentStatus == AppointmentStatus.missed);
+      
+      final hasPending = dayAppointments.any((a) =>
+          a.appointmentStatus == AppointmentStatus.scheduled ||
+          a.appointmentStatus == AppointmentStatus.confirmed ||
+          a.appointmentStatus == AppointmentStatus.rescheduled);
+      
+      final hasCompleted = dayAppointments.any((a) =>
+          a.appointmentStatus == AppointmentStatus.completed);
+
+      // Priority: Missed > Pending > Completed
+      if (hasMissed) {
+        markerColor = Colors.red;
+      } else if (hasPending) {
+        markerColor = Colors.orange;
+      } else if (hasCompleted) {
+        markerColor = Colors.green;
+      }
+    }
 
     return Expanded(
       child: GestureDetector(
@@ -505,13 +514,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   fontWeight: isToday ? FontWeight.bold : null,
                 ),
               ),
-              if (hasAppointments)
+              if (markerColor != null)
                 Container(
                   margin: const EdgeInsets.only(top: 2),
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: isSelected ? Colors.white : Colors.orange,
+                    color: isSelected ? Colors.white : markerColor,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -669,10 +678,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     );
   }
 
+  // ✅ UPDATED: Added invalidate to refresh calendar
   void _markAsCompleted(String appointmentId) async {
     try {
       final updateStatus = ref.read(updateAppointmentStatusProvider);
       await updateStatus(appointmentId, AppointmentStatus.completed);
+
+      // ✅ Refresh calendar markers
+      ref.invalidate(monthAppointmentsProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

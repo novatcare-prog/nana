@@ -3,20 +3,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 import 'core/providers/auth_providers.dart';
+import 'core/providers/theme_provider.dart';
 import 'features/patient_management/presentation/screens/login_screen.dart';
+import 'features/patient_management/presentation/screens/reset_password_screen.dart';
 import 'features/patient_management/presentation/screens/dashboard_screen.dart';
 import 'features/navigation/main_navigation_scaffold.dart';
 import 'core/services/hive_service.dart';
 
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Supabase - CORRECTED
+  
+  // Initialize Supabase
   await Supabase.initialize(
     url: 'https://fhdscavlgrgbotfxoxxw.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZHNjYXZsZ3JnYm90ZnhveHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTAzMzYsImV4cCI6MjA3ODc4NjMzNn0.V-_3cJMQ_iA7bmETwxr-7p2RImhqQ3pJ7Xw5H7O2mi4',
+     authOptions: const FlutterAuthClientOptions(
+    authFlowType: AuthFlowType.pkce,
+  ),
   );
-   // Initialize Hive for offline storage
+  
+  Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+    if (data.event == AuthChangeEvent.passwordRecovery) {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const ResetPasswordScreen(),
+        ),
+        (route) => false,
+      );
+    }
+  });
+  
+  // Initialize Hive for offline storage
   await HiveService.initAll();
 
   runApp(
@@ -26,18 +46,23 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider); // ← WATCH THEME
+    
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'MCH Kenya - Health Worker',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
+      
+      // ← USE THEME PROVIDER
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
+      
       home: const AuthGate(),
     );
   }

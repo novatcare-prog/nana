@@ -45,5 +45,23 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- DEEP LINKING CONFIGURATION - ADDED BELOW -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.mchkenya.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mchkenya</string>
+			</array>
+		</dict>
+	</array>
+	
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 </dict>
 </plist>
