@@ -3,6 +3,7 @@ library mch_core;
 // Maternal models
 export 'src/models/maternal/maternal_profile.dart';
 export 'src/models/maternal/anc_visit.dart';
+export 'src/data/repositories/anc_visit_repository.dart';
 
 // Facility
 export 'src/models/facility/facility.dart';
@@ -11,15 +12,16 @@ export 'src/models/facility/facility.dart';
 export 'src/data/repositories/supabase_maternal_profile_repository.dart';
 export 'src/data/repositories/facility_repository.dart';
 
-// Enums (if you have them)
-// export 'src/enums/blood_group.dart';
-// export 'src/enums/hiv_test_result.dart';
+// Enums
+export 'src/enums/blood_group.dart';
+export 'src/enums/hiv_test_result.dart';
 
 export 'src/models/users/user_profile.dart';
 
-//appointment model
 // Appointment
 export 'src/models/appointment/appointment.dart';
+export 'src/data/repositories/appointment_repository.dart';
+
 // Lab Results
 export 'src/models/lab/lab_result.dart';
 export 'src/data/repositories/lab_result_repository.dart';

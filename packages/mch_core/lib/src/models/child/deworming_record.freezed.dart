@@ -55,12 +55,8 @@ mixin _$DewormingRecord {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this DewormingRecord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DewormingRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $DewormingRecordCopyWith<DewormingRecord> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -99,8 +95,6 @@ class _$DewormingRecordCopyWithImpl<$Res, $Val extends DewormingRecord>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of DewormingRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -219,8 +213,6 @@ class __$$DewormingRecordImplCopyWithImpl<$Res>
       _$DewormingRecordImpl _value, $Res Function(_$DewormingRecordImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of DewormingRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -418,7 +410,7 @@ class _$DewormingRecordImpl implements _DewormingRecord {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -438,9 +430,7 @@ class _$DewormingRecordImpl implements _DewormingRecord {
       createdAt,
       updatedAt);
 
-  /// Create a copy of DewormingRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$DewormingRecordImplCopyWith<_$DewormingRecordImpl> get copyWith =>
@@ -492,30 +482,30 @@ abstract class _DewormingRecord implements DewormingRecord {
   int get ageInMonths;
   @override
   @JsonKey(name: 'dose_number')
-  int? get doseNumber; // Drug Information
-  @override
+  int? get doseNumber;
+  @override // Drug Information
   @JsonKey(name: 'drug_name')
-  String get drugName; // Albendazole or Mebendazole
-  @override
+  String get drugName;
+  @override // Albendazole or Mebendazole
   @JsonKey(name: 'dosage')
-  String get dosage; // "400mg" or "500mg"
+  String get dosage;
+  @override // "400mg" or "500mg"
 // Administration
-  @override
   @JsonKey(name: 'given_by')
   String? get givenBy;
   @override
   @JsonKey(name: 'health_facility')
-  String? get healthFacilityName; // Side Effects
-  @override
+  String? get healthFacilityName;
+  @override // Side Effects
   @JsonKey(name: 'side_effects_reported')
   bool get sideEffectsReported;
   @override
   @JsonKey(name: 'side_effects_description')
-  String? get sideEffectsDescription; // Next Due
-  @override
+  String? get sideEffectsDescription;
+  @override // Next Due
   @JsonKey(name: 'next_dose_due_date')
-  DateTime? get nextDoseDate; // Notes
-  @override
+  DateTime? get nextDoseDate;
+  @override // Notes
   @JsonKey(name: 'notes')
   String? get notes;
   @override
@@ -524,11 +514,8 @@ abstract class _DewormingRecord implements DewormingRecord {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of DewormingRecord
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$DewormingRecordImplCopyWith<_$DewormingRecordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

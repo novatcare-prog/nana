@@ -1,8 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 
+/// Enhanced HiveService with offline-first support
+/// Maintains all existing functionality + adds new offline features
 class HiveService {
-  // Box names
+  // ==================== EXISTING BOX NAMES ====================
   static const String _patientsBox = 'patients';
   static const String _labResultsBox = 'lab_results';
   static const String _immunizationsBox = 'immunizations';
@@ -11,14 +13,23 @@ class HiveService {
   static const String _ancVisitsBox = 'anc_visits';
   static const String _draftsBox = 'drafts';
   static const String _syncQueueBox = 'sync_queue';
-  static const String _settingsBox = 'settings'; 
+  static const String _settingsBox = 'settings';
+  
+  // ==================== NEW BOX NAMES (For Offline System) ====================
+  static const String _appointmentsBox = 'appointments';
+  static const String _facilitiesBox = 'facilities';
+  static const String _childProfilesBox = 'child_profiles';
+  static const String _growthRecordsBox = 'growth_records';
+  static const String _metadataBox = 'metadata';
+  static const String _cacheBox = 'cache';
+  static const String _lastSyncBox = 'last_sync';
 
-  /// Initialize all boxes
+  /// Initialize all boxes (UPDATED - includes new boxes)
   static Future<void> initAll() async {
-    // ✅ FIX: Initialize Hive for Flutter (finds the correct directory)
+    // Initialize Hive for Flutter
     await Hive.initFlutter();
 
-    // Now open the boxes
+    // Open existing boxes
     await Hive.openBox(_patientsBox);
     await Hive.openBox(_labResultsBox);
     await Hive.openBox(_immunizationsBox);
@@ -28,6 +39,39 @@ class HiveService {
     await Hive.openBox(_draftsBox);
     await Hive.openBox(_syncQueueBox);
     await Hive.openBox(_settingsBox);
+    
+    // Open new boxes for offline system
+    await Hive.openBox(_appointmentsBox);
+    await Hive.openBox(_facilitiesBox);
+    await Hive.openBox(_childProfilesBox);
+    await Hive.openBox(_growthRecordsBox);
+    await Hive.openBox(_metadataBox);
+    await Hive.openBox(_cacheBox);
+    await Hive.openBox(_lastSyncBox);
+    
+    print('✅ All Hive boxes initialized (${_getAllBoxNames().length} boxes)');
+  }
+
+  /// Get all box names
+  static List<String> _getAllBoxNames() {
+    return [
+      _patientsBox,
+      _labResultsBox,
+      _immunizationsBox,
+      _malariaBox,
+      _nutritionBox,
+      _ancVisitsBox,
+      _draftsBox,
+      _syncQueueBox,
+      _settingsBox,
+      _appointmentsBox,
+      _facilitiesBox,
+      _childProfilesBox,
+      _growthRecordsBox,
+      _metadataBox,
+      _cacheBox,
+      _lastSyncBox,
+    ];
   }
 
   // ==================== PATIENTS (MaternalProfile) ====================
@@ -118,6 +162,17 @@ class HiveService {
     }
     return null;
   }
+  
+  // NEW: Metadata box methods
+  static Future<void> setMetadata(String key, dynamic value) async {
+    final box = Hive.box(_metadataBox);
+    await box.put(key, value);
+  }
+  
+  static dynamic getMetadata(String key) {
+    final box = Hive.box(_metadataBox);
+    return box.get(key);
+  }
 
   // ==================== LAB RESULTS ====================
   
@@ -204,6 +259,75 @@ class HiveService {
         .toList();
   }
 
+  // ==================== APPOINTMENTS (NEW) ====================
+  
+  static Future<void> cacheAppointment(String id, Map<String, dynamic> appointment) async {
+    final box = Hive.box(_appointmentsBox);
+    await box.put(id, appointment);
+  }
+  
+  static Future<void> cacheAppointments(List<Map<String, dynamic>> appointments) async {
+    final box = Hive.box(_appointmentsBox);
+    final Map<dynamic, dynamic> entries = {
+      for (var a in appointments) a['id']: a
+    };
+    await box.putAll(entries);
+  }
+  
+  static Map<String, dynamic>? getCachedAppointment(String id) {
+    final box = Hive.box(_appointmentsBox);
+    final data = box.get(id);
+    if (data == null) return null;
+    return Map<String, dynamic>.from(data);
+  }
+  
+  static List<Map<String, dynamic>> getCachedAppointments() {
+    final box = Hive.box(_appointmentsBox);
+    return box.values
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+  
+  static Future<void> deleteAppointment(String id) async {
+    final box = Hive.box(_appointmentsBox);
+    await box.delete(id);
+  }
+
+  // ==================== FACILITIES (NEW) ====================
+  
+  static Future<void> cacheFacilities(List<Map<String, dynamic>> facilities) async {
+    final box = Hive.box(_facilitiesBox);
+    final Map<dynamic, dynamic> entries = {
+      for (var f in facilities) f['id']: f
+    };
+    await box.putAll(entries);
+  }
+  
+  static List<Map<String, dynamic>> getCachedFacilities() {
+    final box = Hive.box(_facilitiesBox);
+    return box.values
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  // ==================== CHILD PROFILES (NEW) ====================
+  
+  static Future<void> cacheChildProfile(String id, Map<String, dynamic> profile) async {
+    final box = Hive.box(_childProfilesBox);
+    await box.put(id, profile);
+  }
+  
+  static List<Map<String, dynamic>> getCachedChildProfiles(String maternalId) {
+    final box = Hive.box(_childProfilesBox);
+    return box.values
+        .where((e) {
+          final profile = Map<String, dynamic>.from(e);
+          return profile['maternal_profile_id'] == maternalId;
+        })
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
   // ==================== DRAFTS ====================
   
   static Future<String> saveDraft({
@@ -246,9 +370,46 @@ class HiveService {
     await box.delete(draftId);
   }
 
+  // ==================== STORAGE STATS (NEW) ====================
+  
+  /// Get storage statistics for all boxes
+  static Map<String, int> getStorageStats() {
+    final stats = <String, int>{};
+    
+    for (final boxName in _getAllBoxNames()) {
+      try {
+        if (Hive.isBoxOpen(boxName)) {
+          stats[boxName] = Hive.box(boxName).length;
+        }
+      } catch (e) {
+        stats[boxName] = 0;
+      }
+    }
+    
+    return stats;
+  }
+  
+  /// Get total number of cached items
+  static int getTotalCachedItems() {
+    return getStorageStats().values.fold(0, (sum, count) => sum + count);
+  }
+
+  // ==================== BOX ACCESS (NEW - for offline system) ====================
+  
+  /// Get a box by name (for advanced use)
+  static Box getBox(String boxName) {
+    return Hive.box(boxName);
+  }
+  
+  /// Check if a box is open
+  static bool isBoxOpen(String boxName) {
+    return Hive.isBoxOpen(boxName);
+  }
+
   // ==================== CLEAR ALL ====================
   
   static Future<void> clearAllCache() async {
+    // Clear existing boxes
     await Hive.box(_patientsBox).clear();
     await Hive.box(_labResultsBox).clear();
     await Hive.box(_immunizationsBox).clear();
@@ -258,5 +419,30 @@ class HiveService {
     await Hive.box(_draftsBox).clear();
     await Hive.box(_syncQueueBox).clear();
     await Hive.box(_settingsBox).clear();
+    
+    // Clear new boxes
+    await Hive.box(_appointmentsBox).clear();
+    await Hive.box(_facilitiesBox).clear();
+    await Hive.box(_childProfilesBox).clear();
+    await Hive.box(_growthRecordsBox).clear();
+    await Hive.box(_metadataBox).clear();
+    await Hive.box(_cacheBox).clear();
+    await Hive.box(_lastSyncBox).clear();
+    
+    print('⚠️ All cache cleared');
+  }
+  
+  /// Clear only appointment cache (useful for testing)
+  static Future<void> clearAppointmentCache() async {
+    await Hive.box(_appointmentsBox).clear();
+    print('⚠️ Appointment cache cleared');
+  }
+
+  // ==================== CLOSE ALL (NEW) ====================
+  
+  /// Close all Hive boxes (call on app termination)
+  static Future<void> closeAll() async {
+    await Hive.close();
+    print('✅ All Hive boxes closed');
   }
 }

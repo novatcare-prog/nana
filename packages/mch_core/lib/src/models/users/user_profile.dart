@@ -12,6 +12,7 @@ class UserProfile with _$UserProfile {
     required String email,
     @JsonKey(name: 'full_name') required String fullName,
     @JsonKey(name: 'phone') String? phone,
+    @JsonKey(name: 'id_number') String? idNumber,
     required String role,
     @JsonKey(name: 'facility_id') String? facilityId,
     @JsonKey(name: 'maternal_profile_id') String? maternalProfileId,

@@ -6,7 +6,10 @@ import '../../core/providers/facility_providers.dart';
 import '../patient_management/presentation/screens/patient_list_screen.dart';
 import '../patient_management/presentation/screens/dashboard_screen.dart';
 import '../patient_management/presentation/screens/schedule_screen.dart';
-import '../patient_management/presentation/screens/settings_screen.dart'; // ← ADD THIS
+import '../patient_management/presentation/screens/settings_screen.dart';
+import '../patient_management/presentation/screens/edit_profile_screen.dart';
+import '../reports/presentation/screens/reports_screen.dart';
+import '../../core/widgets/offline_indicator.dart';
 
 /// Main Navigation Scaffold with Adaptive Layout
 /// - Phone: Bottom Navigation Bar
@@ -72,30 +75,40 @@ class _MainNavigationScaffoldState
       // Desktop/Tablet: Use NavigationRail
       return Scaffold(
         drawer: _buildDrawer(),
-        body: Row(
+        body: Column(
           children: [
-            // Navigation Rail (Left Side)
-            NavigationRail(
-              extended: screenWidth >= 800,
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: _onDestinationSelected,
-              labelType: screenWidth >= 800
-                  ? NavigationRailLabelType.none
-                  : NavigationRailLabelType.all,
-              destinations: _destinations.map((destination) {
-                return NavigationRailDestination(
-                  icon: destination.icon,
-                  selectedIcon: destination.selectedIcon,
-                  label: Text(destination.label),
-                );
-              }).toList(),
-            ),
+            // Offline status banner at the top
+            const OfflineBanner(),
             
-            const VerticalDivider(thickness: 1, width: 1),
-            
-            // Main Content Area
+            // Main content with navigation rail
             Expanded(
-              child: _getPage(_selectedIndex),
+              child: Row(
+                children: [
+                  // Navigation Rail (Left Side)
+                  NavigationRail(
+                    extended: screenWidth >= 800,
+                    selectedIndex: _selectedIndex,
+                    onDestinationSelected: _onDestinationSelected,
+                    labelType: screenWidth >= 800
+                        ? NavigationRailLabelType.none
+                        : NavigationRailLabelType.all,
+                    destinations: _destinations.map((destination) {
+                      return NavigationRailDestination(
+                        icon: destination.icon,
+                        selectedIcon: destination.selectedIcon,
+                        label: Text(destination.label),
+                      );
+                    }).toList(),
+                  ),
+                  
+                  const VerticalDivider(thickness: 1, width: 1),
+                  
+                  // Main Content Area
+                  Expanded(
+                    child: _getPage(_selectedIndex),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -103,7 +116,17 @@ class _MainNavigationScaffoldState
     } else {
       // Mobile: Use Bottom Navigation Bar
       return Scaffold(
-        body: _getPage(_selectedIndex),
+        body: Column(
+          children: [
+            // Offline status banner at the top
+            const OfflineBanner(),
+            
+            // Main content
+            Expanded(
+              child: _getPage(_selectedIndex),
+            ),
+          ],
+        ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onDestinationSelected,
@@ -166,8 +189,9 @@ class _MainNavigationScaffoldState
             title: const Text('Reports & Analytics'),
             onTap: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reports & Analytics - Coming soon')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ReportsScreen()),
               );
             },
           ),
@@ -313,9 +337,12 @@ class _UserProfileHeader extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.white, size: 20),
               onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Edit Profile - Coming soon')),
+                Navigator.pop(context); // Close drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfileScreen(),
+                  ),
                 );
               },
             ),

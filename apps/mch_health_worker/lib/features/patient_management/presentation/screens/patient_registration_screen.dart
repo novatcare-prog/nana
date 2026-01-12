@@ -4,6 +4,7 @@ import 'package:mch_core/mch_core.dart';
 import 'package:uuid/uuid.dart'; 
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/providers/facility_providers.dart';
+import '../../../../core/widgets/searchable_facility_selector.dart';
 
 class PatientRegistrationScreen extends ConsumerStatefulWidget {
   const PatientRegistrationScreen({super.key});
@@ -311,39 +312,29 @@ class _PatientRegistrationScreenState
               key: _formKeys[0], // <--- Key for Step 1
               child: Column(
                 children: [
+                  // Searchable Facility Selector
                   Consumer(
                     builder: (context, ref, child) {
-                      final facilitiesAsync = ref.watch(facilitiesProvider);
                       final selectedFacility = ref.watch(selectedFacilityProvider);
-
-                      return facilitiesAsync.when(
-                        data: (facilities) {
-                          return DropdownButtonFormField<String>(
-                            value: selectedFacility?.id, 
-                            decoration: const InputDecoration(
-                              labelText: 'Select Facility *',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.local_hospital),
-                            ),
-                            items: facilities.map((facility) {
-                              return DropdownMenuItem(
-                                value: facility.id,
-                                child: Text('${facility.name} (${facility.kmhflCode})'),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                final facility = facilities.firstWhere((f) => f.id == value);
-                                ref.read(selectedFacilityProvider.notifier).state = facility;
-                                _kmhflCodeController.text = facility.kmhflCode;
-                                _facilityNameController.text = facility.name;
-                              }
-                            },
-                            validator: (value) => value == null ? 'Please select a facility' : null,
-                          );
+                      
+                      return SearchableFacilitySelector(
+                        selectedFacilityId: selectedFacility?.id,
+                        labelText: 'Select Facility *',
+                        onSelected: (facility) {
+                          if (facility != null) {
+                            ref.read(selectedFacilityProvider.notifier).state = facility;
+                            _kmhflCodeController.text = facility.kmhflCode;
+                            _facilityNameController.text = facility.name;
+                          } else {
+                            ref.read(selectedFacilityProvider.notifier).state = null;
+                            _kmhflCodeController.clear();
+                            _facilityNameController.clear();
+                          }
                         },
-                        loading: () => const Center(child: CircularProgressIndicator()),
-                        error: (error, stack) => Text('Error: $error'),
+                        validator: (value) => 
+                            ref.read(selectedFacilityProvider) == null 
+                                ? 'Please select a facility' 
+                                : null,
                       );
                     },
                   ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_providers.dart';
-import '../../../../core/providers/facility_providers.dart';
+import '../../../../core/widgets/searchable_facility_selector.dart';
 
 /// Registration Screen for Health Workers
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -90,8 +90,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final facilitiesAsync = ref.watch(facilitiesProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register Health Worker'),
@@ -198,43 +196,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Facility Dropdown
-                    facilitiesAsync.when(
-                      data: (facilities) {
-                        return DropdownButtonFormField<String>(
-                          value: _selectedFacilityId,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            labelText: 'Facility',
-                            hintText: 'Select facility',
-                            prefixIcon: const Icon(Icons.local_hospital_outlined),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          items: facilities
-                              .map((facility) => DropdownMenuItem(
-                                    value: facility.id,
-                                    child: Text(facility.name),
-                                  ))
-                              .toList(),
-                          onChanged: _isLoading
-                              ? null
-                              : (value) {
-                                  setState(() {
-                                    _selectedFacilityId = value;
-                                  });
-                                },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select a facility';
-                            }
-                            return null;
-                          },
-                        );
+                    // Facility Selector (Searchable)
+                    SearchableFacilitySelector(
+                      selectedFacilityId: _selectedFacilityId,
+                      labelText: 'Facility',
+                      hintText: 'Search for your facility...',
+                      enabled: !_isLoading,
+                      onSelected: (facility) {
+                        setState(() {
+                          _selectedFacilityId = facility?.id;
+                        });
                       },
-                      loading: () => const LinearProgressIndicator(),
-                      error: (error, stack) => Text('Error loading facilities: $error'),
+                      validator: (value) {
+                        if (_selectedFacilityId == null || _selectedFacilityId!.isEmpty) {
+                          return 'Please select a facility';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
 

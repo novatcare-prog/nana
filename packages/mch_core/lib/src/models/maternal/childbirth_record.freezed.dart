@@ -112,12 +112,8 @@ mixin _$ChildbirthRecord {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this ChildbirthRecord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ChildbirthRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ChildbirthRecordCopyWith<ChildbirthRecord> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -184,8 +180,6 @@ class _$ChildbirthRecordCopyWithImpl<$Res, $Val extends ChildbirthRecord>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ChildbirthRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -462,8 +456,6 @@ class __$$ChildbirthRecordImplCopyWithImpl<$Res>
       $Res Function(_$ChildbirthRecordImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ChildbirthRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -951,7 +943,7 @@ class _$ChildbirthRecordImpl implements _ChildbirthRecord {
             (identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -998,9 +990,7 @@ class _$ChildbirthRecordImpl implements _ChildbirthRecord {
         updatedAt
       ]);
 
-  /// Create a copy of ChildbirthRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ChildbirthRecordImplCopyWith<_$ChildbirthRecordImpl> get copyWith =>
@@ -1069,8 +1059,8 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
 
   @override
   @JsonKey(name: 'id')
-  String? get id; // ← Changed to nullable
-  @override
+  String? get id;
+  @override // ← Changed to nullable
   @JsonKey(name: 'maternal_profile_id')
   String get maternalProfileId;
   @override
@@ -1081,8 +1071,8 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   String get deliveryTime;
   @override
   @JsonKey(name: 'duration_of_pregnancy_weeks')
-  int get durationOfPregnancyWeeks; // Place & Attendant
-  @override
+  int get durationOfPregnancyWeeks;
+  @override // Place & Attendant
   @JsonKey(name: 'place_of_delivery')
   String get placeOfDelivery;
   @override
@@ -1090,11 +1080,11 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   String? get healthFacilityName;
   @override
   @JsonKey(name: 'attendant')
-  String? get attendant; // Mode of Delivery
-  @override
+  String? get attendant;
+  @override // Mode of Delivery
   @JsonKey(name: 'mode_of_delivery')
-  String get modeOfDelivery; // Mother's Condition
-  @override
+  String get modeOfDelivery;
+  @override // Mother's Condition
   @JsonKey(name: 'skin_to_skin_immediate')
   bool? get skinToSkinImmediate;
   @override
@@ -1111,8 +1101,8 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   bool? get resuscitationDone;
   @override
   @JsonKey(name: 'blood_loss_ml')
-  double? get bloodLossMl; // Complications
-  @override
+  double? get bloodLossMl;
+  @override // Complications
   @JsonKey(name: 'pre_eclampsia')
   bool? get preEclampsia;
   @override
@@ -1126,11 +1116,11 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   bool? get obstructedLabour;
   @override
   @JsonKey(name: 'meconium_grade')
-  String? get meconiumGrade; // Mother's Condition Post-delivery
-  @override
+  String? get meconiumGrade;
+  @override // Mother's Condition Post-delivery
   @JsonKey(name: 'mother_condition')
-  String? get motherCondition; // Drugs Administered to Mother
-  @override
+  String? get motherCondition;
+  @override // Drugs Administered to Mother
   @JsonKey(name: 'oxytocin_given')
   bool? get oxytocinGiven;
   @override
@@ -1147,8 +1137,8 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   String? get haartRegimen;
   @override
   @JsonKey(name: 'other_drugs')
-  String? get otherDrugs; // Baby Details
-  @override
+  String? get otherDrugs;
+  @override // Baby Details
   @JsonKey(name: 'birth_weight_grams')
   double get birthWeightGrams;
   @override
@@ -1159,8 +1149,8 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   double? get headCircumferenceCm;
   @override
   @JsonKey(name: 'baby_condition')
-  String? get babyCondition; // Drugs Given to Baby
-  @override
+  String? get babyCondition;
+  @override // Drugs Given to Baby
   @JsonKey(name: 'chx_given')
   bool? get chxGiven;
   @override
@@ -1168,17 +1158,17 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   bool? get vitaminKGiven;
   @override
   @JsonKey(name: 'teo_given')
-  bool? get teoGiven; // HIV Exposure
-  @override
+  bool? get teoGiven;
+  @override // HIV Exposure
   @JsonKey(name: 'baby_hiv_exposed')
   bool? get babyHivExposed;
   @override
   @JsonKey(name: 'arv_prophylaxis_given')
-  String? get arvProphylaxisGiven; // Breastfeeding
-  @override
+  String? get arvProphylaxisGiven;
+  @override // Breastfeeding
   @JsonKey(name: 'early_initiation_breastfeeding')
-  bool? get earlyInitiationBreastfeeding; // Clinical Notes
-  @override
+  bool? get earlyInitiationBreastfeeding;
+  @override // Clinical Notes
   @JsonKey(name: 'notes')
   String? get notes;
   @override
@@ -1190,11 +1180,8 @@ abstract class _ChildbirthRecord implements ChildbirthRecord {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of ChildbirthRecord
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ChildbirthRecordImplCopyWith<_$ChildbirthRecordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -193,12 +193,8 @@ mixin _$ChildProfile {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this ChildProfile to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ChildProfile
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ChildProfileCopyWith<ChildProfile> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -311,8 +307,6 @@ class _$ChildProfileCopyWithImpl<$Res, $Val extends ChildProfile>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ChildProfile
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -831,8 +825,6 @@ class __$$ChildProfileImplCopyWithImpl<$Res>
       _$ChildProfileImpl _value, $Res Function(_$ChildProfileImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ChildProfile
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1717,7 +1709,7 @@ class _$ChildProfileImpl implements _ChildProfile {
             (identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -1803,9 +1795,7 @@ class _$ChildProfileImpl implements _ChildProfile {
         updatedAt
       ]);
 
-  /// Create a copy of ChildProfile
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ChildProfileImplCopyWith<_$ChildProfileImpl> get copyWith =>
@@ -1934,8 +1924,8 @@ abstract class _ChildProfile implements ChildProfile {
   String get id;
   @override
   @JsonKey(name: 'maternal_profile_id')
-  String get maternalProfileId; // A. Particulars of the Child
-  @override
+  String get maternalProfileId;
+  @override // A. Particulars of the Child
   @JsonKey(name: 'child_name')
   String get childName;
   @override
@@ -1946,8 +1936,8 @@ abstract class _ChildProfile implements ChildProfile {
   DateTime get dateOfBirth;
   @override
   @JsonKey(name: 'date_first_seen')
-  DateTime get dateFirstSeen; // Birth Details
-  @override
+  DateTime get dateFirstSeen;
+  @override // Birth Details
   @JsonKey(name: 'gestation_at_birth_weeks')
   int get gestationAtBirthWeeks;
   @override
@@ -1958,14 +1948,14 @@ abstract class _ChildProfile implements ChildProfile {
   double get birthLengthCm;
   @override
   @JsonKey(name: 'head_circumference_at_birth_cm')
-  double? get headCircumferenceCm; // ← FIXED!
-  @override
+  double? get headCircumferenceCm;
+  @override // ← FIXED!
   @JsonKey(name: 'other_birth_characteristics')
   String? get otherBirthCharacteristics;
   @override
   @JsonKey(name: 'birth_order')
-  int? get birthOrder; // B. Health Record
-  @override
+  int? get birthOrder;
+  @override // B. Health Record
   @JsonKey(name: 'place_of_birth')
   String get placeOfBirth;
   @override
@@ -1976,8 +1966,8 @@ abstract class _ChildProfile implements ChildProfile {
   String? get birthNotificationNumber;
   @override
   @JsonKey(name: 'birth_notification_date')
-  DateTime? get birthNotificationDate; // Registration Numbers
-  @override
+  DateTime? get birthNotificationDate;
+  @override // Registration Numbers
   @JsonKey(name: 'immunization_reg_number')
   String? get immunizationRegNumber;
   @override
@@ -1985,8 +1975,8 @@ abstract class _ChildProfile implements ChildProfile {
   String? get cwcNumber;
   @override
   @JsonKey(name: 'kmhfl_code')
-  String? get kmhflCode; // C. Civil Registration
-  @override
+  String? get kmhflCode;
+  @override // C. Civil Registration
   @JsonKey(name: 'birth_certificate_number')
   String? get birthCertificateNumber;
   @override
@@ -1994,8 +1984,8 @@ abstract class _ChildProfile implements ChildProfile {
   DateTime? get birthRegistrationDate;
   @override
   @JsonKey(name: 'birth_registration_place')
-  String? get birthRegistrationPlace; // D. Family Details
-  @override
+  String? get birthRegistrationPlace;
+  @override // D. Family Details
   @JsonKey(name: 'father_name')
   String? get fatherName;
   @override
@@ -2012,8 +2002,8 @@ abstract class _ChildProfile implements ChildProfile {
   String? get guardianName;
   @override
   @JsonKey(name: 'guardian_phone')
-  String? get guardianPhone; // Address
-  @override
+  String? get guardianPhone;
+  @override // Address
   @JsonKey(name: 'county')
   String? get county;
   @override
@@ -2027,8 +2017,8 @@ abstract class _ChildProfile implements ChildProfile {
   String? get village;
   @override
   @JsonKey(name: 'physical_address')
-  String? get physicalAddress; // E. Broad Clinical Review at First Contact
-  @override
+  String? get physicalAddress;
+  @override // E. Broad Clinical Review at First Contact
   @JsonKey(name: 'weight_at_first_contact')
   double? get weightAtFirstContact;
   @override
@@ -2036,8 +2026,8 @@ abstract class _ChildProfile implements ChildProfile {
   double? get lengthAtFirstContact;
   @override
   @JsonKey(name: 'z_score')
-  String? get zScore; // HIV Status
-  @override
+  String? get zScore;
+  @override // HIV Status
   @JsonKey(name: 'hiv_exposed')
   bool? get hivExposed;
   @override
@@ -2048,8 +2038,8 @@ abstract class _ChildProfile implements ChildProfile {
   DateTime? get hivTestDate;
   @override
   @JsonKey(name: 'haemoglobin')
-  double? get haemoglobin; // Physical Features
-  @override
+  double? get haemoglobin;
+  @override // Physical Features
   @JsonKey(name: 'colouration')
   String? get colouration;
   @override
@@ -2087,14 +2077,14 @@ abstract class _ChildProfile implements ChildProfile {
   String? get genitalia;
   @override
   @JsonKey(name: 'anus')
-  String? get anus; // TB Screening
-  @override
+  String? get anus;
+  @override // TB Screening
   @JsonKey(name: 'tb_screened')
   bool? get tbScreened;
   @override
   @JsonKey(name: 'tb_screening_result')
-  String? get tbScreeningResult; // F. Feeding Information
-  @override
+  String? get tbScreeningResult;
+  @override // F. Feeding Information
   @JsonKey(name: 'breastfeeding_well')
   bool? get breastfeedingWell;
   @override
@@ -2111,8 +2101,8 @@ abstract class _ChildProfile implements ChildProfile {
   int? get ageOtherFoodsIntroduced;
   @override
   @JsonKey(name: 'complementary_food_from_6_months')
-  bool? get complementaryFoodFrom6Months; // G. Other Problems Reported
-  @override
+  bool? get complementaryFoodFrom6Months;
+  @override // G. Other Problems Reported
   @JsonKey(name: 'sleep_problems')
   String? get sleepProblems;
   @override
@@ -2120,8 +2110,8 @@ abstract class _ChildProfile implements ChildProfile {
   bool? get irritability;
   @override
   @JsonKey(name: 'other_problems')
-  String? get otherProblems; // Reason for Special Care
-  @override
+  String? get otherProblems;
+  @override // Reason for Special Care
   @JsonKey(name: 'birth_weight_less_than_2500g')
   bool? get birthWeightLessThan2500g;
   @override
@@ -2169,11 +2159,8 @@ abstract class _ChildProfile implements ChildProfile {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of ChildProfile
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ChildProfileImplCopyWith<_$ChildProfileImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

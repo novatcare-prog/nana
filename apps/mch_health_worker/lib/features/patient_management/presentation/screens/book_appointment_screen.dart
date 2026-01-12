@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mch_core/mch_core.dart';
+import 'package:mch_core/mch_core.dart'; // Ensures Access to Appointment model & Enums
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart'; // REQUIRED: Add 'uuid: ^4.0.0' to pubspec.yaml if missing
 import '../../../../core/providers/appointment_providers.dart';
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/providers/auth_providers.dart';
@@ -49,12 +50,37 @@ class _BookAppointmentScreenState
     super.dispose();
   }
 
+  // --- FIXED DATE SELECTION LOGIC ---
   Future<void> _selectDate() async {
+    final now = DateTime.now();
+    // Normalize "Today" to midnight (00:00:00) to prevent crashes
+    final today = DateTime(now.year, now.month, now.day);
+    
+    // Ensure initialDate is valid (must be >= firstDate)
+    // If _selectedDate is in the past (e.g., yesterday), reset it to Today.
+    if (_selectedDate.isBefore(today)) {
+      setState(() {
+        _selectedDate = today;
+      });
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: _selectedDate, // Now guaranteed to be valid
+      firstDate: today,           // Start from midnight today
+      lastDate: today.add(const Duration(days: 365)), // 1 Year ahead
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE91E63), // Pink 500 (Brand Color)
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     
     if (picked != null) {
@@ -68,6 +94,18 @@ class _BookAppointmentScreenState
     final picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE91E63),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     
     if (picked != null) {
@@ -102,11 +140,21 @@ class _BookAppointmentScreenState
         _selectedTime.minute,
       );
 
+      // --- CRITICAL FIX: Generate Valid UUID Locally ---
+      // This ensures the ID is valid for Supabase BEFORE sync happens.
+      final newAppointmentId = const Uuid().v4(); 
+
       final appointment = Appointment(
+        id: newAppointmentId, 
         maternalProfileId: _selectedPatientId!,
         patientName: patient.clientName,
         appointmentDate: appointmentDateTime,
         appointmentType: _selectedType,
+        
+        // --- FIXED PARAMETER NAME ---
+        // Matches the 'appointmentStatus' field in your mch_core model
+        appointmentStatus: AppointmentStatus.scheduled, 
+        
         notes: _notesController.text.trim().isEmpty 
             ? null 
             : _notesController.text.trim(),
@@ -114,8 +162,11 @@ class _BookAppointmentScreenState
         facilityName: patient.facilityName,
         createdBy: profile.id,
         createdByName: profile.fullName,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
+      // Save to Local Database (which triggers Sync)
       final createAppointment = ref.read(createAppointmentProvider);
       await createAppointment(appointment);
 

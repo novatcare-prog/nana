@@ -2,29 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
+import '/core/widgets/offline_indicator.dart';
 import 'patient_detail_screen.dart';
 import 'patient_registration_screen.dart';
 import 'patient_list_screen.dart';
-import '/../core/widgets/offline_indicator.dart';
 
-/// Dashboard Screen - Main screen showing overview and quick actions
-/// IMPROVED VERSION with UX fixes based on clinical workflow
 class DashboardScreen extends ConsumerWidget {
   final Widget? drawer;
 
   const DashboardScreen({super.key, this.drawer});
 
-  /// Helper method to get high risk reasons for a patient
-  /// Based on MOH MCH Handbook 2020 - Page 26
   List<String> _getHighRiskReasons(MaternalProfile patient) {
     List<String> reasons = [];
-    
     if (patient.diabetes == true) reasons.add('Diabetes');
     if (patient.hypertension == true) reasons.add('Hypertension');
     if (patient.previousCs == true) reasons.add('Previous CS');
     if (patient.age > 35) reasons.add('Age >35');
     if (patient.age < 18) reasons.add('Age <18');
-    
     return reasons;
   }
 
@@ -54,7 +48,6 @@ class DashboardScreen extends ConsumerWidget {
             tooltip: 'Refresh data',
             onPressed: () {
               ref.invalidate(maternalProfilesProvider);
-              ref.invalidate(statisticsProvider);
             },
           ),
         ],
@@ -97,11 +90,11 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildDashboard(BuildContext context, WidgetRef ref, List<MaternalProfile> profiles) {
-    // Calculate statistics
     final totalPatients = profiles.length;
     final today = DateTime.now();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    // Safe calculation for due this week
     final dueThisWeek = profiles.where((p) {
       if (p.edd == null) return false;
       final daysUntilDue = p.edd!.difference(today).inDays;
@@ -115,23 +108,35 @@ class DashboardScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Date Card
+          // Date Card (Uses Blue PrimaryContainer from Theme)
           Card(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: colorScheme.primaryContainer,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Icon(Icons.calendar_today, size: 32),
+                  Icon(
+                    Icons.calendar_today,
+                    size: 32,
+                    color: colorScheme.onPrimaryContainer, // White
+                  ),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         _formatDate(today),
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: colorScheme.onPrimaryContainer, // White
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const Text('Today'),
+                      Text(
+                        'Today',
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer.withOpacity(0.9), // White-ish
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -149,7 +154,7 @@ class DashboardScreen extends ConsumerWidget {
                   'Total Patients',
                   totalPatients.toString(),
                   Icons.people,
-                  Colors.blue,
+                  colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 16),
@@ -190,7 +195,7 @@ class DashboardScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
-          // Quick Actions - IMPROVED (Removed redundant New Patient)
+          // Quick Actions
           const Text(
             'Quick Actions',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -198,7 +203,6 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              // IMPROVED: Navigate to patient list with search instead of separate search
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
@@ -217,7 +221,6 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // IMPROVED: Replace "New Patient" with "View All Patients"
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
@@ -250,7 +253,6 @@ class DashboardScreen extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to patient list with high risk filter
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -341,7 +343,10 @@ class DashboardScreen extends ConsumerWidget {
     IconData icon,
     Color color,
   ) {
+    // FIX: Removed 'color: Colors.white'. 
+    // Now it uses Theme.of(context).cardTheme.color (White in Light, Grey in Dark)
     return Card(
+      surfaceTintColor: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -358,6 +363,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               label,
               textAlign: TextAlign.center,
+              // Theme automatically handles text color contrast
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -367,15 +373,15 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildPatientCard(BuildContext context, MaternalProfile patient) {
-    // Safe calculation for days until due
     final daysUntilDue = patient.edd?.difference(DateTime.now()).inDays;
     final isHighRisk = _isHighRisk(patient);
     final highRiskReasons = _getHighRiskReasons(patient);
 
+    // FIX: Removed 'color: Colors.white'. 
     return Card(
+      surfaceTintColor: Colors.transparent,
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        // IMPROVED: Neutral grey for default avatar
         leading: CircleAvatar(
           backgroundColor: isHighRisk ? Colors.red : Colors.grey[400],
           child: Text(
@@ -392,19 +398,16 @@ class DashboardScreen extends ConsumerWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // IMPROVED: Show "Not Assigned" if ANC is empty
             Text(
               patient.ancNumber.isNotEmpty 
                   ? 'ANC: ${patient.ancNumber}'
                   : 'ANC: Not Assigned',
             ),
-            // IMPROVED: Safe EDD display
             Text(
               patient.edd != null 
                   ? 'EDD: ${_formatDate(patient.edd!)} (${daysUntilDue ?? 0} days)'
                   : 'EDD: Not set'
             ),
-            // IMPROVED: Show specific high risk reasons
             if (isHighRisk && highRiskReasons.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
@@ -430,14 +433,16 @@ class DashboardScreen extends ConsumerWidget {
         ),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PatientDetailScreen(
-                patientId: patient.id!,
+          if (patient.id != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PatientDetailScreen(
+                  patientId: patient.id!,
+                ),
               ),
-            ),
-          );
+            );
+          }
         },
       ),
     );

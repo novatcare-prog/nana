@@ -180,10 +180,8 @@ final createVisitProvider = Provider<Future<void> Function(ANCVisit, bool)>((ref
   };
 });
 
-// Connectivity Service
-final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
-  return ConnectivityService();
-});
+// NOTE: connectivityServiceProvider is defined in core/services/connectivity_service.dart
+// Do NOT redefine it here to avoid duplicate instances
 
 // Hybrid Patient Repository
 final hybridPatientRepositoryProvider = Provider<HybridPatientRepository>((ref) {
@@ -192,8 +190,4 @@ final hybridPatientRepositoryProvider = Provider<HybridPatientRepository>((ref) 
   return HybridPatientRepository(supabase, connectivity);
 });
 
-// Connection status stream
-final connectionStatusProvider = StreamProvider<bool>((ref) {
-  final connectivity = ref.watch(connectivityServiceProvider);
-  return connectivity.connectionStatus;
-});
+// NOTE: connectionStatusProvider is defined in core/services/connectivity_service.dart

@@ -100,12 +100,8 @@ mixin _$GrowthRecord {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this GrowthRecord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of GrowthRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $GrowthRecordCopyWith<GrowthRecord> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -162,8 +158,6 @@ class _$GrowthRecordCopyWithImpl<$Res, $Val extends GrowthRecord>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of GrowthRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -390,8 +384,6 @@ class __$$GrowthRecordImplCopyWithImpl<$Res>
       _$GrowthRecordImpl _value, $Res Function(_$GrowthRecordImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of GrowthRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -794,7 +786,7 @@ class _$GrowthRecordImpl implements _GrowthRecord {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -833,9 +825,7 @@ class _$GrowthRecordImpl implements _GrowthRecord {
         updatedAt
       ]);
 
-  /// Create a copy of GrowthRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$GrowthRecordImplCopyWith<_$GrowthRecordImpl> get copyWith =>
@@ -905,8 +895,8 @@ abstract class _GrowthRecord implements GrowthRecord {
   DateTime get measurementDate;
   @override
   @JsonKey(name: 'age_in_months')
-  int get ageInMonths; // Weight Measurement
-  @override
+  int get ageInMonths;
+  @override // Weight Measurement
   @JsonKey(name: 'weight_kg')
   double get weightKg;
   @override
@@ -914,14 +904,14 @@ abstract class _GrowthRecord implements GrowthRecord {
   double? get weightForAgeZScore;
   @override
   @JsonKey(name: 'weight_interpretation')
-  String? get weightInterpretation; // Length/Height Measurement
-  @override
+  String? get weightInterpretation;
+  @override // Length/Height Measurement
   @JsonKey(name: 'length_cm')
-  double? get lengthCm; // For < 2 years (lying)
-  @override
+  double? get lengthCm;
+  @override // For < 2 years (lying)
   @JsonKey(name: 'height_cm')
-  double? get heightCm; // For >= 2 years (standing)
-  @override
+  double? get heightCm;
+  @override // For >= 2 years (standing)
   @JsonKey(name: 'measured_lying')
   bool? get measuredLying;
   @override
@@ -929,29 +919,29 @@ abstract class _GrowthRecord implements GrowthRecord {
   double? get heightForAgeZScore;
   @override
   @JsonKey(name: 'height_interpretation')
-  String? get heightInterpretation; // Additional Z-scores
-  @override
+  String? get heightInterpretation;
+  @override // Additional Z-scores
   @JsonKey(name: 'weight_for_height_z_score')
   double? get weightForHeightZScore;
   @override
   @JsonKey(name: 'bmi_for_age_z_score')
-  double? get bmiForAgeZScore; // MUAC (Mid-Upper Arm Circumference)
-  @override
+  double? get bmiForAgeZScore;
+  @override // MUAC (Mid-Upper Arm Circumference)
   @JsonKey(name: 'muac_cm')
   double? get muacCm;
   @override
   @JsonKey(name: 'muac_interpretation')
-  String? get muacInterpretation; // Head Circumference
-  @override
+  String? get muacInterpretation;
+  @override // Head Circumference
   @JsonKey(name: 'head_circumference_cm')
-  double? get headCircumferenceCm; // Edema (for malnutrition screening)
-  @override
+  double? get headCircumferenceCm;
+  @override // Edema (for malnutrition screening)
   @JsonKey(name: 'edema_present')
   bool get edemaPresent;
   @override
   @JsonKey(name: 'edema_grade')
-  String? get edemaGrade; // Nutritional Status
-  @override
+  String? get edemaGrade;
+  @override // Nutritional Status
   @JsonKey(name: 'nutritional_status')
   String? get nutritionalStatus;
   @override
@@ -959,14 +949,14 @@ abstract class _GrowthRecord implements GrowthRecord {
   String? get growthAssessment;
   @override
   @JsonKey(name: 'referred_for_nutrition')
-  bool? get referredForNutrition; // Counseling Given
-  @override
+  bool? get referredForNutrition;
+  @override // Counseling Given
   @JsonKey(name: 'feeding_counseling_given')
   bool? get feedingCounselingGiven;
   @override
   @JsonKey(name: 'feeding_recommendations')
-  String? get feedingRecommendations; // Clinical Notes
-  @override
+  String? get feedingRecommendations;
+  @override // Clinical Notes
   @JsonKey(name: 'concerns')
   String? get concerns;
   @override
@@ -974,14 +964,14 @@ abstract class _GrowthRecord implements GrowthRecord {
   String? get interventions;
   @override
   @JsonKey(name: 'next_visit_date')
-  DateTime? get nextVisitDate; // Health Worker Info
-  @override
+  DateTime? get nextVisitDate;
+  @override // Health Worker Info
   @JsonKey(name: 'recorded_by')
   String? get recordedBy;
   @override
   @JsonKey(name: 'health_facility')
-  String? get healthFacility; // Legacy/Additional fields
-  @override
+  String? get healthFacility;
+  @override // Legacy/Additional fields
   @JsonKey(name: 'notes')
   String? get notes;
   @override
@@ -993,11 +983,8 @@ abstract class _GrowthRecord implements GrowthRecord {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of GrowthRecord
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$GrowthRecordImplCopyWith<_$GrowthRecordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

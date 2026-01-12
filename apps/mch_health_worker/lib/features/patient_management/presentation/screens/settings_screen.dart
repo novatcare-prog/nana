@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/auth_providers.dart';
 import '../../../../core/providers/theme_provider.dart';
+import '../../../../core/services/hive_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'edit_profile_screen.dart';
 
@@ -73,6 +74,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               // Danger Zone
               _buildSectionHeader('Account', color: Colors.red),
               _buildDangerZone(context),
+              
+              const Divider(height: 32),
+              
+              // Debug Section
+              _buildSectionHeader('Debug', color: Colors.orange),
+              _buildDebugSection(context),
 
               const SizedBox(height: 32),
             ],
@@ -501,6 +508,106 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               backgroundColor: Colors.red,
             ),
             child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDebugSection(BuildContext context) {
+    final syncQueueCount = HiveService.getSyncQueueCount();
+    
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.sync, color: Colors.orange),
+            title: const Text('Pending Sync Items'),
+            subtitle: Text('$syncQueueCount items waiting to sync'),
+            trailing: TextButton(
+              onPressed: syncQueueCount > 0 ? () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Clear Sync Queue?'),
+                    content: Text(
+                      'This will delete $syncQueueCount pending items that failed to sync. '
+                      'This data will be lost. Are you sure?'
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  ),
+                );
+                
+                if (confirm == true) {
+                  await HiveService.getBox('sync_queue').clear();
+                  if (mounted) {
+                    setState(() {}); // Refresh UI
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✓ Sync queue cleared'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                }
+              } : null,
+              child: const Text('Clear'),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.storage, color: Colors.orange),
+            title: const Text('Clear All Cached Data'),
+            subtitle: const Text('Remove all offline data'),
+            trailing: TextButton(
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Clear All Cache?'),
+                    content: const Text(
+                      'This will delete all cached data including patients, appointments, etc. '
+                      'Data on the server will not be affected. Are you sure?'
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Clear All'),
+                      ),
+                    ],
+                  ),
+                );
+                
+                if (confirm == true) {
+                  await HiveService.clearAllCache();
+                  if (mounted) {
+                    setState(() {});
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✓ All cached data cleared'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Clear All'),
+            ),
           ),
         ],
       ),

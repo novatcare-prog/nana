@@ -99,12 +99,8 @@ mixin _$ImmunizationRecord {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this ImmunizationRecord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ImmunizationRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ImmunizationRecordCopyWith<ImmunizationRecord> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -161,8 +157,6 @@ class _$ImmunizationRecordCopyWithImpl<$Res, $Val extends ImmunizationRecord>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ImmunizationRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -389,8 +383,6 @@ class __$$ImmunizationRecordImplCopyWithImpl<$Res>
       $Res Function(_$ImmunizationRecordImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ImmunizationRecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -798,7 +790,7 @@ class _$ImmunizationRecordImpl implements _ImmunizationRecord {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -837,9 +829,7 @@ class _$ImmunizationRecordImpl implements _ImmunizationRecord {
         updatedAt
       ]);
 
-  /// Create a copy of ImmunizationRecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ImmunizationRecordImplCopyWith<_$ImmunizationRecordImpl> get copyWith =>
@@ -915,27 +905,27 @@ abstract class _ImmunizationRecord implements ImmunizationRecord {
   DateTime get dateGiven;
   @override
   @JsonKey(name: 'age_in_weeks')
-  int get ageInWeeks; // Child's age when vaccine given
-  @override
+  int get ageInWeeks;
+  @override // Child's age when vaccine given
   @JsonKey(name: 'age_at_vaccination_months')
   int? get ageAtVaccinationMonths;
   @override
   @JsonKey(name: 'age_at_vaccination_weeks')
-  int? get ageAtVaccinationWeeks; // Dose Information
-  @override
+  int? get ageAtVaccinationWeeks;
+  @override // Dose Information
   @JsonKey(name: 'dose_number')
-  int? get doseNumber; // 1st, 2nd, 3rd dose
-  @override
+  int? get doseNumber;
+  @override // 1st, 2nd, 3rd dose
   @JsonKey(name: 'dosage')
-  String? get dosage; // e.g., "0.05ml", "0.5ml", "2 drops"
-  @override
+  String? get dosage;
+  @override // e.g., "0.05ml", "0.5ml", "2 drops"
   @JsonKey(name: 'route')
-  String? get administrationRoute; // Oral, IM, Intradermal, Subcutaneous
-  @override
+  String? get administrationRoute;
+  @override // Oral, IM, Intradermal, Subcutaneous
   @JsonKey(name: 'site')
-  String? get administrationSite; // Left forearm, Right thigh, etc.
+  String? get administrationSite;
+  @override // Left forearm, Right thigh, etc.
 // Vaccine Details
-  @override
   @JsonKey(name: 'batch_number')
   String? get batchNumber;
   @override
@@ -946,11 +936,11 @@ abstract class _ImmunizationRecord implements ImmunizationRecord {
   DateTime? get manufactureDate;
   @override
   @JsonKey(name: 'expiry_date')
-  DateTime? get expiryDate; // Location
-  @override
+  DateTime? get expiryDate;
+  @override // Location
   @JsonKey(name: 'health_facility')
-  String? get healthFacilityName; // BCG Specific
-  @override
+  String? get healthFacilityName;
+  @override // BCG Specific
   @JsonKey(name: 'bcg_scar_checked')
   bool? get bcgScarChecked;
   @override
@@ -958,12 +948,12 @@ abstract class _ImmunizationRecord implements ImmunizationRecord {
   bool? get bcgScarPresent;
   @override
   @JsonKey(name: 'bcg_scar_check_date')
-  DateTime? get bcgScarCheckDate; // Administration
-  @override
+  DateTime? get bcgScarCheckDate;
+  @override // Administration
   @JsonKey(name: 'administered_by')
-  String? get givenBy; // Health worker name
+  String? get givenBy;
+  @override // Health worker name
 // AEFI (Adverse Events Following Immunization)
-  @override
   @JsonKey(name: 'adverse_reaction')
   bool get adverseEventReported;
   @override
@@ -974,8 +964,8 @@ abstract class _ImmunizationRecord implements ImmunizationRecord {
   String? get reactionSeverity;
   @override
   @JsonKey(name: 'reaction_reported')
-  bool get reactionReportedToAuthority; // Schedule Status
-  @override
+  bool get reactionReportedToAuthority;
+  @override // Schedule Status
   @JsonKey(name: 'given_on_schedule')
   bool get givenOnSchedule;
   @override
@@ -983,14 +973,14 @@ abstract class _ImmunizationRecord implements ImmunizationRecord {
   String? get reasonForDelay;
   @override
   @JsonKey(name: 'catch_up_dose')
-  bool get catchUpDose; // Next Due
-  @override
+  bool get catchUpDose;
+  @override // Next Due
   @JsonKey(name: 'next_dose_due_date')
   DateTime? get nextDoseDate;
   @override
   @JsonKey(name: 'next_vaccine_due')
-  String? get nextVaccineDue; // Notes
-  @override
+  String? get nextVaccineDue;
+  @override // Notes
   @JsonKey(name: 'notes')
   String? get notes;
   @override
@@ -999,11 +989,8 @@ abstract class _ImmunizationRecord implements ImmunizationRecord {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of ImmunizationRecord
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ImmunizationRecordImplCopyWith<_$ImmunizationRecordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

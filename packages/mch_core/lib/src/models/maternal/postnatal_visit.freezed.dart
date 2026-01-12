@@ -142,12 +142,8 @@ mixin _$PostnatalVisit {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this PostnatalVisit to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of PostnatalVisit
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $PostnatalVisitCopyWith<PostnatalVisit> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -228,8 +224,6 @@ class _$PostnatalVisitCopyWithImpl<$Res, $Val extends PostnatalVisit>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of PostnatalVisit
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -570,8 +564,6 @@ class __$$PostnatalVisitImplCopyWithImpl<$Res>
       _$PostnatalVisitImpl _value, $Res Function(_$PostnatalVisitImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PostnatalVisit
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1177,7 +1169,7 @@ class _$PostnatalVisitImpl implements _PostnatalVisit {
             (identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -1234,9 +1226,7 @@ class _$PostnatalVisitImpl implements _PostnatalVisit {
         updatedAt
       ]);
 
-  /// Create a copy of PostnatalVisit
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PostnatalVisitImplCopyWith<_$PostnatalVisitImpl> get copyWith =>
@@ -1330,14 +1320,14 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   String get maternalProfileId;
   @override
   @JsonKey(name: 'child_profile_id')
-  String? get childProfileId; // Visit Details
-  @override
+  String? get childProfileId;
+  @override // Visit Details
   @JsonKey(name: 'visit_date')
   DateTime get visitDate;
   @override
   @JsonKey(name: 'visit_type')
-  String get visitType; // '48 hours', '6 days', '6 weeks', '6 months', 'Other'
-  @override
+  String get visitType;
+  @override // '48 hours', '6 days', '6 weeks', '6 months', 'Other'
   @JsonKey(name: 'days_postpartum')
   int get daysPostpartum;
   @override
@@ -1345,8 +1335,8 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   String? get healthFacility;
   @override
   @JsonKey(name: 'attended_by')
-  String? get attendedBy; // Mother's Health Assessment
-  @override
+  String? get attendedBy;
+  @override // Mother's Health Assessment
   @JsonKey(name: 'mother_temperature')
   double? get motherTemperature;
   @override
@@ -1357,8 +1347,8 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   int? get motherPulse;
   @override
   @JsonKey(name: 'mother_weight')
-  double? get motherWeight; // Postpartum Complications
-  @override
+  double? get motherWeight;
+  @override // Postpartum Complications
   @JsonKey(name: 'excessive_bleeding')
   bool get excessiveBleeding;
   @override
@@ -1381,14 +1371,14 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   bool get urinaryProblems;
   @override
   @JsonKey(name: 'maternal_danger_signs')
-  String? get maternalDangerSigns; // Mental Health
-  @override
+  String? get maternalDangerSigns;
+  @override // Mental Health
   @JsonKey(name: 'mood_assessment')
-  String? get moodAssessment; // 'Good', 'Anxious', 'Depressed', 'Other'
-  @override
+  String? get moodAssessment;
+  @override // 'Good', 'Anxious', 'Depressed', 'Other'
   @JsonKey(name: 'mental_health_notes')
-  String? get mentalHealthNotes; // Baby's Health Assessment
-  @override
+  String? get mentalHealthNotes;
+  @override // Baby's Health Assessment
   @JsonKey(name: 'baby_weight')
   double? get babyWeight;
   @override
@@ -1399,37 +1389,36 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   bool get babyFeedingWell;
   @override
   @JsonKey(name: 'baby_feeding_notes')
-  String? get babyFeedingNotes; // Cord Care
-  @override
+  String? get babyFeedingNotes;
+  @override // Cord Care
   @JsonKey(name: 'cord_status')
-  String? get cordStatus; // 'Normal', 'Infected', 'Bleeding', 'Fallen off'
-  @override
+  String? get cordStatus;
+  @override // 'Normal', 'Infected', 'Bleeding', 'Fallen off'
   @JsonKey(name: 'cord_care_advice_given')
-  bool get cordCareAdviceGiven; // Jaundice
-  @override
+  bool get cordCareAdviceGiven;
+  @override // Jaundice
   @JsonKey(name: 'jaundice_present')
   bool get jaundicePresent;
   @override
   @JsonKey(name: 'jaundice_severity')
-  String? get jaundiceSeverity; // 'Mild', 'Moderate', 'Severe'
+  String? get jaundiceSeverity;
+  @override // 'Mild', 'Moderate', 'Severe'
 // Baby Danger Signs
-  @override
   @JsonKey(name: 'baby_danger_signs')
   String? get babyDangerSigns;
   @override
   @JsonKey(name: 'baby_danger_signs_notes')
-  String? get babyDangerSignsNotes; // Breastfeeding Support
-  @override
+  String? get babyDangerSignsNotes;
+  @override // Breastfeeding Support
   @JsonKey(name: 'breastfeeding_status')
-  String?
-      get breastfeedingStatus; // 'Exclusive', 'Mixed', 'Formula only', 'Not feeding'
-  @override
+  String? get breastfeedingStatus;
+  @override // 'Exclusive', 'Mixed', 'Formula only', 'Not feeding'
   @JsonKey(name: 'breastfeeding_frequency')
   String? get breastfeedingFrequency;
   @override
   @JsonKey(name: 'latch_quality')
-  String? get latchQuality; // 'Good', 'Poor', 'Needs support'
-  @override
+  String? get latchQuality;
+  @override // 'Good', 'Poor', 'Needs support'
   @JsonKey(name: 'breastfeeding_challenges')
   String? get breastfeedingChallenges;
   @override
@@ -1437,8 +1426,8 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   bool get breastfeedingSupportGiven;
   @override
   @JsonKey(name: 'breastfeeding_support_details')
-  String? get breastfeedingSupportDetails; // Family Planning
-  @override
+  String? get breastfeedingSupportDetails;
+  @override // Family Planning
   @JsonKey(name: 'family_planning_discussed')
   bool get familyPlanningDiscussed;
   @override
@@ -1449,11 +1438,11 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   bool get familyPlanningMethodProvided;
   @override
   @JsonKey(name: 'family_planning_notes')
-  String? get familyPlanningNotes; // Immunizations Given
-  @override
+  String? get familyPlanningNotes;
+  @override // Immunizations Given
   @JsonKey(name: 'immunizations_given')
-  String? get immunizationsGiven; // Referrals
-  @override
+  String? get immunizationsGiven;
+  @override // Referrals
   @JsonKey(name: 'referral_made')
   bool get referralMade;
   @override
@@ -1461,14 +1450,14 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   String? get referralTo;
   @override
   @JsonKey(name: 'referral_reason')
-  String? get referralReason; // Follow-up
-  @override
+  String? get referralReason;
+  @override // Follow-up
   @JsonKey(name: 'next_visit_date')
   DateTime? get nextVisitDate;
   @override
   @JsonKey(name: 'follow_up_instructions')
-  String? get followUpInstructions; // General Notes
-  @override
+  String? get followUpInstructions;
+  @override // General Notes
   @JsonKey(name: 'general_notes')
   String? get generalNotes;
   @override
@@ -1477,11 +1466,8 @@ abstract class _PostnatalVisit implements PostnatalVisit {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of PostnatalVisit
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$PostnatalVisitImplCopyWith<_$PostnatalVisitImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

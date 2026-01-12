@@ -1,91 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/providers/supabase_providers.dart';
-import '../../../../core/services/hive_service.dart';
+import '../services/connectivity_service.dart';
+import '../services/sync_manager.dart';
 
-/// Offline Indicator Widget
-/// Shows connection status and pending sync items
+/// Compact offline indicator for AppBar
 class OfflineIndicator extends ConsumerWidget {
   const OfflineIndicator({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final connectionAsync = ref.watch(connectionStatusProvider);
+    final isOnline = ref.watch(isOnlineProvider);
+    final pendingCount = ref.watch(pendingSyncCountProvider);
 
-    return connectionAsync.when(
-      data: (isOnline) {
-        if (isOnline) {
-          return _buildOnlineIndicator(context);
-        } else {
-          return _buildOfflineIndicator(context);
-        }
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
+    // Hide when online and nothing pending
+    if (isOnline && pendingCount == 0) {
+      return const SizedBox.shrink();
+    }
 
-  Widget _buildOnlineIndicator(BuildContext context) {
-    final syncQueue = HiveService.getSyncQueue();
-    
-    if (syncQueue.isEmpty) {
+    // Show syncing indicator
+    if (isOnline && pendingCount > 0) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.green.shade100,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.cloud_done, size: 16, color: Colors.green),
-            SizedBox(width: 4),
-            Text(
-              'Online',
-              style: TextStyle(fontSize: 12, color: Colors.green),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.orange.shade100,
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.blue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.sync, size: 16, color: Colors.orange),
-            const SizedBox(width: 4),
+            const SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 8),
             Text(
-              'Syncing ${syncQueue.length}',
-              style: const TextStyle(fontSize: 12, color: Colors.orange),
+              'Syncing $pendingCount',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.blue,
+              ),
             ),
           ],
         ),
       );
     }
-  }
 
-  Widget _buildOfflineIndicator(BuildContext context) {
-    final syncQueue = HiveService.getSyncQueue();
-    
+    // Show offline indicator
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.red.shade100,
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.cloud_off, size: 16, color: Colors.red),
-          const SizedBox(width: 4),
+          const Icon(Icons.cloud_off, size: 14, color: Colors.orange),
+          const SizedBox(width: 6),
           Text(
-            'Offline${syncQueue.isNotEmpty ? " (${syncQueue.length} pending)" : ""}',
-            style: const TextStyle(fontSize: 12, color: Colors.red),
+            'Offline${pendingCount > 0 ? ' $pendingCount' : ''}',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.orange,
+            ),
           ),
         ],
       ),
@@ -93,35 +73,69 @@ class OfflineIndicator extends ConsumerWidget {
   }
 }
 
-/// Sync Button Widget
-/// Manual sync trigger
-class SyncButton extends ConsumerStatefulWidget {
+/// Manual sync button for AppBar
+class SyncButton extends ConsumerWidget {
   const SyncButton({super.key});
 
   @override
-  ConsumerState<SyncButton> createState() => _SyncButtonState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOnline = ref.watch(isOnlineProvider);
+    final pendingCount = ref.watch(pendingSyncCountProvider);
 
-class _SyncButtonState extends ConsumerState<SyncButton> {
-  bool _isSyncing = false;
+    // Only show when online and has pending items
+    if (!isOnline || pendingCount == 0) {
+      return const SizedBox.shrink();
+    }
 
-  Future<void> _sync() async {
-    setState(() => _isSyncing = true);
+    return IconButton(
+      icon: const Icon(Icons.sync),
+      tooltip: 'Sync $pendingCount pending changes',
+      onPressed: () => _triggerSync(context, ref),
+    );
+  }
+
+  Future<void> _triggerSync(BuildContext context, WidgetRef ref) async {
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Syncing data...'),
+          ],
+        ),
+      ),
+    );
 
     try {
-      final hybridRepo = ref.read(hybridPatientRepositoryProvider);
-      await hybridRepo.syncOfflineChanges();
+      final syncManager = ref.read(syncManagerProvider);
+      final result = await syncManager.syncAll();
 
-      if (mounted) {
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading dialog
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✓ Sync completed successfully'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(result.message),
+            backgroundColor: result.success ? Colors.green : Colors.orange,
+            action: result.success
+                ? null
+                : SnackBarAction(
+                    label: 'Retry',
+                    onPressed: () => _triggerSync(context, ref),
+                  ),
           ),
         );
+
+        // Refresh UI
+        ref.invalidate(pendingSyncCountProvider);
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Sync failed: $e'),
@@ -129,31 +143,57 @@ class _SyncButtonState extends ConsumerState<SyncButton> {
           ),
         );
       }
-    } finally {
-      if (mounted) {
-        setState(() => _isSyncing = false);
-      }
     }
   }
+}
+
+/// Full-width offline banner
+class OfflineBanner extends ConsumerWidget {
+  const OfflineBanner({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final syncQueue = HiveService.getSyncQueue();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOnline = ref.watch(isOnlineProvider);
 
-    if (syncQueue.isEmpty) {
+    if (isOnline) {
       return const SizedBox.shrink();
     }
 
-    return IconButton(
-      icon: _isSyncing
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.sync),
-      tooltip: 'Sync ${syncQueue.length} pending changes',
-      onPressed: _isSyncing ? null : _sync,
+    final pendingCount = ref.watch(pendingSyncCountProvider);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: Colors.orange.withOpacity(0.1),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud_off, color: Colors.orange, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Working Offline',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
+                if (pendingCount > 0)
+                  Text(
+                    '$pendingCount change${pendingCount == 1 ? '' : 's'} will sync when online',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.orange[700],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

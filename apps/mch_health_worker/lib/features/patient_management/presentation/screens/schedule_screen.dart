@@ -23,6 +23,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   Widget build(BuildContext context) {
     final appointmentsAsync = ref.watch(monthAppointmentsProvider(_focusedMonth));
     final isDesktop = MediaQuery.of(context).size.width >= 900;
+    final theme = Theme.of(context);
 
     return Scaffold(
       drawer: widget.drawer,
@@ -38,7 +39,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
-                      backgroundColor: Colors.teal,
+                      // FIX: Changed Colors.teal to Theme Primary (Blue)
+                      backgroundColor: theme.primaryColor,
                       child: const Text(
                         "T",
                         style: TextStyle(
@@ -417,7 +419,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     for (int day = 1; day <= daysInMonth; day++) {
       final date = DateTime(_focusedMonth.year, _focusedMonth.month, day);
       
-      // ✅ CHANGED: Pass appointments list instead of boolean
+      // Pass appointments list instead of boolean
       days.add(_buildDayCell(day, date, appointments));
 
       if ((firstWeekday + day - 1) % 7 == 0 || day == daysInMonth) {
@@ -436,7 +438,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     return Column(children: weeks);
   }
 
-  // ✅ UPDATED: Color-coded markers based on appointment status
+  // Color-coded markers based on appointment status
   Widget _buildDayCell(int day, DateTime date, List<Appointment> appointments) {
     final isSelected = _selectedDate.year == date.year &&
         _selectedDate.month == date.month &&
@@ -678,13 +680,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     );
   }
 
-  // ✅ UPDATED: Added invalidate to refresh calendar
+  // Added invalidate to refresh calendar
   void _markAsCompleted(String appointmentId) async {
     try {
       final updateStatus = ref.read(updateAppointmentStatusProvider);
       await updateStatus(appointmentId, AppointmentStatus.completed);
 
-      // ✅ Refresh calendar markers
+      // Refresh calendar markers
       ref.invalidate(monthAppointmentsProvider);
 
       if (mounted) {

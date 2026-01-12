@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_providers.dart';
-import '../../../../core/providers/facility_providers.dart';
+import '../../../../core/widgets/searchable_facility_selector.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -105,7 +105,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(currentUserProfileProvider);
-    final facilitiesAsync = ref.watch(facilitiesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -203,36 +202,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Facility Dropdown
-                        facilitiesAsync.when(
-                          data: (facilities) {
-                            return DropdownButtonFormField<String>(
-                              value: _selectedFacilityId,
-                              decoration: const InputDecoration(
-                                labelText: 'Health Facility',
-                                prefixIcon: Icon(Icons.local_hospital),
-                                border: OutlineInputBorder(),
-                              ),
-                              items: facilities.map((facility) {
-                                return DropdownMenuItem(
-                                  value: facility.id,
-                                  child: Text(facility.name),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() => _selectedFacilityId = value);
-                                _onFieldChanged();
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select a facility';
-                                }
-                                return null;
-                              },
-                            );
+                        // Facility Selector (Searchable)
+                        SearchableFacilitySelector(
+                          selectedFacilityId: _selectedFacilityId,
+                          onSelected: (facility) {
+                            setState(() => _selectedFacilityId = facility?.id);
+                            _onFieldChanged();
                           },
-                          loading: () => const LinearProgressIndicator(),
-                          error: (error, stack) => Text('Error loading facilities: $error'),
+                          validator: (value) {
+                            if (_selectedFacilityId == null || _selectedFacilityId!.isEmpty) {
+                              return 'Please select a facility';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
 
@@ -319,85 +301,141 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   Widget _buildAvatarSection(dynamic profile) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark 
+              ? [
+                  theme.colorScheme.primary.withOpacity(0.3),
+                  theme.colorScheme.surface,
+                ]
+              : [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.primary.withOpacity(0.8),
+                ],
+        ),
       ),
       child: Column(
         children: [
+          // Avatar with camera button
           Stack(
+            alignment: Alignment.center,
             children: [
-              // Avatar
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Text(
-                  profile.fullName.isNotEmpty
-                      ? profile.fullName[0].toUpperCase()
-                      : 'U',
-                  style: const TextStyle(
-                    fontSize: 48,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              // Avatar Circle
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.5),
+                    width: 3,
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: isDark 
+                      ? theme.colorScheme.primary 
+                      : Colors.white,
+                  child: Text(
+                    profile.fullName.isNotEmpty
+                        ? profile.fullName[0].toUpperCase()
+                        : 'U',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: isDark 
+                          ? Colors.white 
+                          : theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
               
-              // Edit Icon (for future photo upload)
+              // Camera Button
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      width: 3,
-                    ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Photo upload coming soon'),
+                child: GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Photo upload coming soon'),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.secondary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isDark ? theme.colorScheme.surface : Colors.white,
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
-                      );
-                    },
+                      ],
+                    ),
                     child: const Icon(
                       Icons.camera_alt,
                       color: Colors.white,
-                      size: 20,
+                      size: 18,
                     ),
                   ),
                 ),
               ),
             ],
           ),
+          
           const SizedBox(height: 16),
+          
+          // Name
           Text(
             profile.fullName,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: isDark ? theme.colorScheme.onSurface : Colors.white,
+            ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          
+          const SizedBox(height: 8),
+          
+          // Role Badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(16),
+              color: isDark 
+                  ? theme.colorScheme.primaryContainer 
+                  : Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark 
+                    ? theme.colorScheme.primary.withOpacity(0.5)
+                    : Colors.white.withOpacity(0.3),
+              ),
             ),
             child: Text(
               profile.role.toUpperCase(),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                letterSpacing: 1.2,
+                color: isDark 
+                    ? theme.colorScheme.primary 
+                    : Colors.white,
               ),
             ),
           ),

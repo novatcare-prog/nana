@@ -49,12 +49,8 @@ mixin _$VitaminARecord {
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
-  /// Serializes this VitaminARecord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of VitaminARecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $VitaminARecordCopyWith<VitaminARecord> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -90,8 +86,6 @@ class _$VitaminARecordCopyWithImpl<$Res, $Val extends VitaminARecord>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of VitaminARecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -192,8 +186,6 @@ class __$$VitaminARecordImplCopyWithImpl<$Res>
       _$VitaminARecordImpl _value, $Res Function(_$VitaminARecordImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of VitaminARecord
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -358,7 +350,7 @@ class _$VitaminARecordImpl implements _VitaminARecord {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -375,9 +367,7 @@ class _$VitaminARecordImpl implements _VitaminARecord {
       createdAt,
       updatedAt);
 
-  /// Create a copy of VitaminARecord
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$VitaminARecordImplCopyWith<_$VitaminARecordImpl> get copyWith =>
@@ -425,22 +415,22 @@ abstract class _VitaminARecord implements VitaminARecord {
   int get ageInMonths;
   @override
   @JsonKey(name: 'dose_number')
-  int? get doseNumber; // Dosage
-  @override
+  int? get doseNumber;
+  @override // Dosage
   @JsonKey(name: 'dosage_iu')
-  int get dosageIU; // 100,000 or 200,000
+  int get dosageIU;
+  @override // 100,000 or 200,000
 // Administration
-  @override
   @JsonKey(name: 'given_by')
   String? get givenBy;
   @override
   @JsonKey(name: 'health_facility')
-  String? get healthFacilityName; // Next Due
-  @override
+  String? get healthFacilityName;
+  @override // Next Due
   @JsonKey(name: 'next_dose_due_date')
-  DateTime? get nextDoseDate; // 6 months later
+  DateTime? get nextDoseDate;
+  @override // 6 months later
 // Notes
-  @override
   @JsonKey(name: 'notes')
   String? get notes;
   @override
@@ -449,11 +439,8 @@ abstract class _VitaminARecord implements VitaminARecord {
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-
-  /// Create a copy of VitaminARecord
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$VitaminARecordImplCopyWith<_$VitaminARecordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
