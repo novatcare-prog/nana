@@ -58,8 +58,17 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text(_getErrorMessage(e.toString()))),
+              ],
+            ),
             backgroundColor: const Color(0xFFF44336),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            margin: const EdgeInsets.all(16),
           ),
         );
       }
@@ -68,6 +77,60 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  /// Convert technical error messages to user-friendly ones
+  String _getErrorMessage(String error) {
+    final errorLower = error.toLowerCase();
+    
+    // Invalid credentials
+    if (errorLower.contains('invalid_credentials') || 
+        errorLower.contains('invalid login credentials')) {
+      return 'Incorrect email or password. Please try again.';
+    }
+    
+    // User not found
+    if (errorLower.contains('user not found') || 
+        errorLower.contains('no user found')) {
+      return 'Account not found. Please check your email or sign up.';
+    }
+    
+    // Email not confirmed
+    if (errorLower.contains('email not confirmed')) {
+      return 'Please verify your email before signing in.';
+    }
+    
+    // Too many attempts
+    if (errorLower.contains('too many requests') || 
+        errorLower.contains('rate limit')) {
+      return 'Too many attempts. Please wait a few minutes and try again.';
+    }
+    
+    // Network error
+    if (errorLower.contains('network') || 
+        errorLower.contains('connection') ||
+        errorLower.contains('socket') ||
+        errorLower.contains('timeout')) {
+      return 'Connection error. Please check your internet and try again.';
+    }
+    
+    // Invalid email format
+    if (errorLower.contains('invalid email')) {
+      return 'Please enter a valid email address.';
+    }
+    
+    // Password too weak
+    if (errorLower.contains('password') && errorLower.contains('weak')) {
+      return 'Password is too weak. Use at least 6 characters.';
+    }
+    
+    // Account disabled
+    if (errorLower.contains('disabled') || errorLower.contains('banned')) {
+      return 'This account has been disabled. Please contact support.';
+    }
+    
+    // Default fallback
+    return 'Something went wrong. Please try again.';
   }
 
   String _formatPhoneNumber(String phone) {

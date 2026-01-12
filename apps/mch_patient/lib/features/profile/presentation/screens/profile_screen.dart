@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -753,6 +754,29 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
   File? _pendingImage;
 
   Future<void> _showImageSourceDialog() async {
+    // Photo upload not supported on web
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.info_outline, color: Colors.white),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text('Photo upload is available on the mobile app. Download the app to update your photo.'),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     if (widget.profileId == null || widget.profileId!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -896,17 +920,39 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
           // Refresh the profile
           widget.onPhotoUpdated?.call();
         } else {
-          throw Exception('Failed to update database');
+          throw Exception('save_failed');
         }
       } else {
-        throw Exception('Failed to upload photo');
+        throw Exception('upload_failed');
       }
     } catch (e) {
       if (mounted) {
+        String message = 'Could not upload photo. Please try again.';
+        final error = e.toString().toLowerCase();
+        
+        if (error.contains('network') || error.contains('connection') || error.contains('socket')) {
+          message = 'No internet connection. Please check and try again.';
+        } else if (error.contains('storage') || error.contains('bucket')) {
+          message = 'Storage not available. Please contact support.';
+        } else if (error.contains('permission')) {
+          message = 'Camera or storage permission denied. Please enable in settings.';
+        } else if (error.contains('too large') || error.contains('size')) {
+          message = 'Photo is too large. Please choose a smaller image.';
+        }
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error uploading photo: $e'),
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text(message)),
+              ],
+            ),
             backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            margin: const EdgeInsets.all(16),
           ),
         );
       }

@@ -33,6 +33,13 @@ class NotificationService {
   /// Initialize the notification service
   Future<void> initialize() async {
     if (_isInitialized) return;
+    
+    // Skip notification setup on web (not supported)
+    if (kIsWeb) {
+      debugPrint('🔔 NotificationService: Skipping on web platform');
+      _isInitialized = true;
+      return;
+    }
 
     // Initialize timezone
     tz_data.initializeTimeZones();
@@ -59,7 +66,7 @@ class NotificationService {
     );
 
     // Create notification channels for Android
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       await _createNotificationChannels();
     }
 
@@ -116,6 +123,9 @@ class NotificationService {
 
   /// Request notification permissions (iOS)
   Future<bool> requestPermissions() async {
+    // Skip on web
+    if (kIsWeb) return true;
+    
     if (Platform.isIOS) {
       final iosPlugin = _notifications.resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>();
