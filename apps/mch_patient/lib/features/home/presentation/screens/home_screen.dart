@@ -217,7 +217,7 @@ class _ShaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.teal.withOpacity(0.1),
+            color: Colors.teal.withOpacity(0.4),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -229,7 +229,7 @@ class _ShaCard extends StatelessWidget {
           Positioned(
             right: -40,
             top: -40,
-            child: Icon(Icons.shield_outlined, size: 220, color: Colors.white.withOpacity(0.1)),
+            child: Icon(Icons.shield_outlined, size: 220, color: Colors.white.withOpacity(0.05)),
           ),
           
           Padding(
@@ -261,7 +261,7 @@ class _ShaCard extends StatelessWidget {
                             Text(
                               "SOCIAL HEALTH AUTHORITY",
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
@@ -290,9 +290,9 @@ class _ShaCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.white.withOpacity(0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -461,7 +461,7 @@ class _ChildSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        border: isAlert ? Border.all(color: Colors.orange.withOpacity(0.1), width: 2) : null,
+        border: isAlert ? Border.all(color: Colors.orange.withOpacity(0.5), width: 2) : null,
         boxShadow: isDark ? null : [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),

@@ -223,7 +223,7 @@ class _PregnancyProgressCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFE91E63).withOpacity(0.1),
+            color: const Color(0xFFE91E63).withOpacity(0.4),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -242,7 +242,7 @@ class _PregnancyProgressCard extends StatelessWidget {
                   Text(
                     trimester.toUpperCase(),
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withOpacity(0.8),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,
@@ -282,7 +282,7 @@ class _PregnancyProgressCard extends StatelessWidget {
                     CircularProgressIndicator(
                       value: progress,
                       strokeWidth: 6,
-                      backgroundColor: Colors.white.withOpacity(0.1),
+                      backgroundColor: Colors.white.withOpacity(0.3),
                       valueColor:
                           const AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
@@ -327,7 +327,7 @@ class _PregnancyProgressCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 10,
-                  backgroundColor: Colors.white.withOpacity(0.1),
+                  backgroundColor: Colors.white.withOpacity(0.3),
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
@@ -390,8 +390,8 @@ class _TrimesterBadge extends StatelessWidget {
         color: isActive
             ? Colors.white
             : isCompleted
-                ? Colors.white.withOpacity(0.1)
-                : Colors.white.withOpacity(0.1),
+                ? Colors.white.withOpacity(0.5)
+                : Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

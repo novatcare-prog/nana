@@ -116,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
                     Text(
                       userPhone,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withOpacity(0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -127,9 +127,9 @@ class ProfileScreen extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        border: Border.all(color: Colors.white.withOpacity(0.4)),
                       ),
                       child: Text(
                         "ANC: $ancNumber",
@@ -150,13 +150,13 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         Icon(Icons.local_hospital, 
                           size: 14, 
-                          color: Colors.white.withOpacity(0.1)
+                          color: Colors.white.withOpacity(0.8)
                         ),
                         const SizedBox(width: 4),
                         Text(
                           facilityName,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withOpacity(0.8),
                             fontSize: 12,
                           ),
                         ),
