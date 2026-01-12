@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/growth_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Growth Charts Screen
 /// Shows growth history and measurements for a child
@@ -44,7 +45,7 @@ class GrowthChartsScreen extends ConsumerWidget {
           return growthRecordsAsync.when(
             data: (records) => _buildContent(context, child, records),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            error: (e, _) => ErrorHelper.buildErrorWidget(e),
           );
         },
         loading: () => const Center(

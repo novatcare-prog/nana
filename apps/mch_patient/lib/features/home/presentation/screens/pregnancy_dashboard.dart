@@ -7,6 +7,7 @@ import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/appointment_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Pregnancy Dashboard Screen
 /// Shown when the logged-in user has an active pregnancy
@@ -895,19 +896,9 @@ class _ChildrenView extends ConsumerWidget {
       loading: () => const Center(
         child: CircularProgressIndicator(color: Color(0xFFE91E63)),
       ),
-      error: (error, stack) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text('Failed to load children: $error'),
-            ElevatedButton(
-              onPressed: () => ref.invalidate(patientChildrenProvider),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
+      error: (error, stack) => ErrorHelper.buildErrorWidget(
+        error,
+        onRetry: () => ref.invalidate(patientChildrenProvider),
       ),
     );
   }

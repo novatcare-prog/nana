@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/appointment_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 class AppointmentsScreen extends ConsumerStatefulWidget {
   const AppointmentsScreen({super.key});
@@ -115,19 +116,9 @@ class _UpcomingAppointmentsTab extends ConsumerWidget {
       loading: () => const Center(
         child: CircularProgressIndicator(color: Color(0xFFE91E63)),
       ),
-      error: (error, stack) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text('Failed to load: $error'),
-            ElevatedButton(
-              onPressed: () => ref.invalidate(upcomingAppointmentsProvider),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
+      error: (error, stack) => ErrorHelper.buildErrorWidget(
+        error,
+        onRetry: () => ref.invalidate(upcomingAppointmentsProvider),
       ),
     );
   }
@@ -170,19 +161,9 @@ class _PastAppointmentsTab extends ConsumerWidget {
       loading: () => const Center(
         child: CircularProgressIndicator(color: Color(0xFFE91E63)),
       ),
-      error: (error, stack) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text('Failed to load: $error'),
-            ElevatedButton(
-              onPressed: () => ref.invalidate(pastAppointmentsProvider),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
+      error: (error, stack) => ErrorHelper.buildErrorWidget(
+        error,
+        onRetry: () => ref.invalidate(pastAppointmentsProvider),
       ),
     );
   }

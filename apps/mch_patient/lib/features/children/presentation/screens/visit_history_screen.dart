@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/visit_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Visit History Screen
 /// Shows all postnatal visits for a child
@@ -44,7 +45,7 @@ class VisitHistoryScreen extends ConsumerWidget {
           return visitsAsync.when(
             data: (visits) => _buildContent(context, child, visits),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            error: (e, _) => ErrorHelper.buildErrorWidget(e),
           );
         },
         loading: () => const Center(

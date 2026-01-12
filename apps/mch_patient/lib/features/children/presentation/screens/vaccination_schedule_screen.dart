@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/immunization_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Vaccination Schedule Screen
 /// Shows Kenya EPI vaccination schedule and child's immunization status
@@ -50,7 +51,7 @@ class VaccinationScheduleScreen extends ConsumerWidget {
                   return _buildContent(context, child, coverage, immunizations);
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, _) => ErrorHelper.buildErrorWidget(e),
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),

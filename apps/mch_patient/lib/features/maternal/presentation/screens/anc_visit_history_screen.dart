@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/anc_visit_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// ANC Visit History Screen
 /// Shows all antenatal care visits for the current pregnancy
@@ -40,7 +41,7 @@ class AncVisitHistoryScreen extends ConsumerWidget {
           return visitsAsync.when(
             data: (visits) => _buildContent(context, profile, visits),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            error: (e, _) => ErrorHelper.buildErrorWidget(e),
           );
         },
         loading: () => const Center(

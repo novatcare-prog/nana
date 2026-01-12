@@ -5,6 +5,7 @@ import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/services/notification_scheduler.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Settings Screen
 class SettingsScreen extends ConsumerWidget {
@@ -594,12 +595,7 @@ class SettingsScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   Navigator.pop(context); // Close loading
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  ErrorHelper.showErrorSnackbar(context, e);
                 }
               }
             },

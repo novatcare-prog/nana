@@ -10,6 +10,7 @@ import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/services/photo_upload_service.dart';
+import '../../../../core/utils/error_helper.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -27,7 +28,7 @@ class ProfileScreen extends ConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFFE91E63)),
         ),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => ErrorHelper.buildErrorWidget(e),
       ),
     );
   }
@@ -991,12 +992,7 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error removing photo: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {

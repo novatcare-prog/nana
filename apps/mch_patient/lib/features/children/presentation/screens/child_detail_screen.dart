@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/error_helper.dart';
 
 class ChildDetailScreen extends ConsumerWidget {
   final String childId;
@@ -40,20 +41,9 @@ class ChildDetailScreen extends ConsumerWidget {
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Error')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-              const SizedBox(height: 16),
-              Text('Failed to load child: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(childByIdProvider(childId)),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
+        body: ErrorHelper.buildErrorWidget(
+          error,
+          onRetry: () => ref.invalidate(childByIdProvider(childId)),
         ),
       ),
     );

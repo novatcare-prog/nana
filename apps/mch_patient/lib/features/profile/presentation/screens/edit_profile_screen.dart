@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Edit Profile Screen
 /// Allows patients to update their contact information and emergency contacts
@@ -100,12 +101,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Failed to update: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {
@@ -308,9 +304,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFFE91E63)),
         ),
-        error: (error, _) => Center(
-          child: Text('Error: $error'),
-        ),
+        error: (error, _) => ErrorHelper.buildErrorWidget(error),
       ),
     );
   }
