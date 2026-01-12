@@ -52,6 +52,7 @@ class MaternalProfile with _$MaternalProfile {
     @JsonKey(name: 'next_of_kin_name') String? nextOfKinName,
     @JsonKey(name: 'next_of_kin_relationship') String? nextOfKinRelationship,
     @JsonKey(name: 'next_of_kin_phone') String? nextOfKinPhone,
+    @JsonKey(name: 'photo_url') String? photoUrl,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _MaternalProfile;

@@ -58,6 +58,7 @@ _$MaternalProfileImpl _$$MaternalProfileImplFromJson(
       nextOfKinName: json['next_of_kin_name'] as String?,
       nextOfKinRelationship: json['next_of_kin_relationship'] as String?,
       nextOfKinPhone: json['next_of_kin_phone'] as String?,
+      photoUrl: json['photo_url'] as String?,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -113,6 +114,7 @@ Map<String, dynamic> _$$MaternalProfileImplToJson(
       'next_of_kin_name': instance.nextOfKinName,
       'next_of_kin_relationship': instance.nextOfKinRelationship,
       'next_of_kin_phone': instance.nextOfKinPhone,
+      'photo_url': instance.photoUrl,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

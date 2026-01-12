@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/child_provider.dart';
+import '../../../../core/services/photo_upload_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -82,22 +84,14 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 20),
                     
-                    // Avatar
-                    CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.white,
-                      child: CircleAvatar(
-                        radius: 42,
-                        backgroundColor: Colors.pink.shade50,
-                        child: Text(
-                          userName.isNotEmpty ? userName[0].toUpperCase() : "M",
-                          style: const TextStyle(
-                            fontSize: 36,
-                            color: Color(0xFFE91E63),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                    // Avatar with Photo Upload
+                    _ProfilePhotoWidget(
+                      photoUrl: profile?.photoUrl,
+                      userName: userName,
+                      profileId: profile?.id,
+                      onPhotoUpdated: () {
+                        ref.invalidate(currentMaternalProfileProvider);
+                      },
                     ),
                     
                     const SizedBox(height: 12),
@@ -732,5 +726,328 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Divider(height: 1, color: Colors.grey[100], indent: 64);
+  }
+}
+
+/// Profile Photo Widget with upload capability
+class _ProfilePhotoWidget extends StatefulWidget {
+  final String? photoUrl;
+  final String userName;
+  final String? profileId;
+  final VoidCallback? onPhotoUpdated;
+
+  const _ProfilePhotoWidget({
+    required this.photoUrl,
+    required this.userName,
+    required this.profileId,
+    this.onPhotoUpdated,
+  });
+
+  @override
+  State<_ProfilePhotoWidget> createState() => _ProfilePhotoWidgetState();
+}
+
+class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
+  final PhotoUploadService _photoService = PhotoUploadService();
+  bool _isUploading = false;
+  File? _pendingImage;
+
+  Future<void> _showImageSourceDialog() async {
+    if (widget.profileId == null || widget.profileId!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile not found. Please try again later.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final source = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        margin: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Update Profile Photo',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.photo_library, color: Colors.blue),
+              ),
+              title: const Text('Choose from Gallery'),
+              subtitle: const Text('Select an existing photo'),
+              onTap: () => Navigator.pop(context, 'gallery'),
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.camera_alt, color: Colors.green),
+              ),
+              title: const Text('Take a Photo'),
+              subtitle: const Text('Use your camera'),
+              onTap: () => Navigator.pop(context, 'camera'),
+            ),
+            if (widget.photoUrl != null && widget.photoUrl!.isNotEmpty)
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.delete, color: Colors.red),
+                ),
+                title: const Text('Remove Photo'),
+                subtitle: const Text('Delete current photo'),
+                onTap: () => Navigator.pop(context, 'remove'),
+              ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    if (source == 'remove') {
+      await _removePhoto();
+      return;
+    }
+
+    File? imageFile;
+    if (source == 'gallery') {
+      imageFile = await _photoService.pickFromGallery();
+    } else if (source == 'camera') {
+      imageFile = await _photoService.takePhoto();
+    }
+
+    if (imageFile != null) {
+      await _uploadPhoto(imageFile);
+    }
+  }
+
+  Future<void> _uploadPhoto(File imageFile) async {
+    setState(() {
+      _isUploading = true;
+      _pendingImage = imageFile;
+    });
+
+    try {
+      // Upload to Supabase Storage
+      final photoUrl = await _photoService.uploadProfilePhoto(
+        imageFile: imageFile,
+        maternalProfileId: widget.profileId!,
+      );
+
+      if (photoUrl != null) {
+        // Update the database
+        final success = await _photoService.updateProfilePhotoUrl(
+          maternalProfileId: widget.profileId!,
+          photoUrl: photoUrl,
+        );
+
+        if (success) {
+          // Delete old photo if exists
+          if (widget.photoUrl != null && widget.photoUrl!.isNotEmpty) {
+            await _photoService.deleteOldPhoto(widget.photoUrl);
+          }
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profile photo updated!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+
+          // Refresh the profile
+          widget.onPhotoUpdated?.call();
+        } else {
+          throw Exception('Failed to update database');
+        }
+      } else {
+        throw Exception('Failed to upload photo');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error uploading photo: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+          _pendingImage = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _removePhoto() async {
+    setState(() => _isUploading = true);
+
+    try {
+      final success = await _photoService.updateProfilePhotoUrl(
+        maternalProfileId: widget.profileId!,
+        photoUrl: '',
+      );
+
+      if (success && widget.photoUrl != null) {
+        await _photoService.deleteOldPhoto(widget.photoUrl);
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile photo removed'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+
+        widget.onPhotoUpdated?.call();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error removing photo: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _isUploading ? null : _showImageSourceDialog,
+      child: Stack(
+        children: [
+          // Main Avatar
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.white,
+            child: CircleAvatar(
+              radius: 46,
+              backgroundColor: Colors.pink.shade50,
+              backgroundImage: _getBackgroundImage(),
+              child: _shouldShowInitial()
+                  ? Text(
+                      widget.userName.isNotEmpty 
+                          ? widget.userName[0].toUpperCase() 
+                          : "M",
+                      style: const TextStyle(
+                        fontSize: 36,
+                        color: Color(0xFFE91E63),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
+            ),
+          ),
+          
+          // Loading Overlay
+          if (_isUploading)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          
+          // Camera Icon Badge
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE91E63),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: Icon(
+                _isUploading ? Icons.hourglass_empty : Icons.camera_alt,
+                color: Colors.white,
+                size: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ImageProvider? _getBackgroundImage() {
+    // Show pending image first (for immediate feedback)
+    if (_pendingImage != null) {
+      return FileImage(_pendingImage!);
+    }
+    
+    // Show existing photo from URL
+    if (widget.photoUrl != null && widget.photoUrl!.isNotEmpty) {
+      return NetworkImage(widget.photoUrl!);
+    }
+    
+    return null;
+  }
+
+  bool _shouldShowInitial() {
+    return _pendingImage == null && 
+           (widget.photoUrl == null || widget.photoUrl!.isEmpty);
   }
 }

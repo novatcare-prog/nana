@@ -94,6 +94,8 @@ mixin _$MaternalProfile {
   String? get nextOfKinRelationship => throw _privateConstructorUsedError;
   @JsonKey(name: 'next_of_kin_phone')
   String? get nextOfKinPhone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'photo_url')
+  String? get photoUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -156,6 +158,7 @@ abstract class $MaternalProfileCopyWith<$Res> {
       @JsonKey(name: 'next_of_kin_name') String? nextOfKinName,
       @JsonKey(name: 'next_of_kin_relationship') String? nextOfKinRelationship,
       @JsonKey(name: 'next_of_kin_phone') String? nextOfKinPhone,
+      @JsonKey(name: 'photo_url') String? photoUrl,
       @JsonKey(name: 'created_at') DateTime? createdAt,
       @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
@@ -217,6 +220,7 @@ class _$MaternalProfileCopyWithImpl<$Res, $Val extends MaternalProfile>
     Object? nextOfKinName = freezed,
     Object? nextOfKinRelationship = freezed,
     Object? nextOfKinPhone = freezed,
+    Object? photoUrl = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -397,6 +401,10 @@ class _$MaternalProfileCopyWithImpl<$Res, $Val extends MaternalProfile>
           ? _value.nextOfKinPhone
           : nextOfKinPhone // ignore: cast_nullable_to_non_nullable
               as String?,
+      photoUrl: freezed == photoUrl
+          ? _value.photoUrl
+          : photoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -462,6 +470,7 @@ abstract class _$$MaternalProfileImplCopyWith<$Res>
       @JsonKey(name: 'next_of_kin_name') String? nextOfKinName,
       @JsonKey(name: 'next_of_kin_relationship') String? nextOfKinRelationship,
       @JsonKey(name: 'next_of_kin_phone') String? nextOfKinPhone,
+      @JsonKey(name: 'photo_url') String? photoUrl,
       @JsonKey(name: 'created_at') DateTime? createdAt,
       @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
@@ -521,6 +530,7 @@ class __$$MaternalProfileImplCopyWithImpl<$Res>
     Object? nextOfKinName = freezed,
     Object? nextOfKinRelationship = freezed,
     Object? nextOfKinPhone = freezed,
+    Object? photoUrl = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -701,6 +711,10 @@ class __$$MaternalProfileImplCopyWithImpl<$Res>
           ? _value.nextOfKinPhone
           : nextOfKinPhone // ignore: cast_nullable_to_non_nullable
               as String?,
+      photoUrl: freezed == photoUrl
+          ? _value.photoUrl
+          : photoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -761,6 +775,7 @@ class _$MaternalProfileImpl implements _MaternalProfile {
       @JsonKey(name: 'next_of_kin_name') this.nextOfKinName,
       @JsonKey(name: 'next_of_kin_relationship') this.nextOfKinRelationship,
       @JsonKey(name: 'next_of_kin_phone') this.nextOfKinPhone,
+      @JsonKey(name: 'photo_url') this.photoUrl,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt});
 
@@ -890,6 +905,9 @@ class _$MaternalProfileImpl implements _MaternalProfile {
   @JsonKey(name: 'next_of_kin_phone')
   final String? nextOfKinPhone;
   @override
+  @JsonKey(name: 'photo_url')
+  final String? photoUrl;
+  @override
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @override
@@ -898,7 +916,7 @@ class _$MaternalProfileImpl implements _MaternalProfile {
 
   @override
   String toString() {
-    return 'MaternalProfile(id: $id, facilityId: $facilityId, kmhflCode: $kmhflCode, facilityName: $facilityName, ancNumber: $ancNumber, pncNumber: $pncNumber, clientName: $clientName, idNumber: $idNumber, age: $age, telephone: $telephone, county: $county, subCounty: $subCounty, ward: $ward, village: $village, gravida: $gravida, parity: $parity, heightCm: $heightCm, weightKg: $weightKg, lmp: $lmp, edd: $edd, gestationAtFirstVisit: $gestationAtFirstVisit, bloodGroup: $bloodGroup, diabetes: $diabetes, hypertension: $hypertension, tuberculosis: $tuberculosis, bloodTransfusion: $bloodTransfusion, drugAllergy: $drugAllergy, allergyDetails: $allergyDetails, previousCs: $previousCs, previousCsCount: $previousCsCount, bleedingHistory: $bleedingHistory, stillbirths: $stillbirths, neonatalDeaths: $neonatalDeaths, fgmDone: $fgmDone, hivResult: $hivResult, testedForSyphilis: $testedForSyphilis, syphilisResult: $syphilisResult, testedForHepatitisB: $testedForHepatitisB, hepatitisBResult: $hepatitisBResult, partnerTestedForHiv: $partnerTestedForHiv, partnerHivStatus: $partnerHivStatus, nextOfKinName: $nextOfKinName, nextOfKinRelationship: $nextOfKinRelationship, nextOfKinPhone: $nextOfKinPhone, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'MaternalProfile(id: $id, facilityId: $facilityId, kmhflCode: $kmhflCode, facilityName: $facilityName, ancNumber: $ancNumber, pncNumber: $pncNumber, clientName: $clientName, idNumber: $idNumber, age: $age, telephone: $telephone, county: $county, subCounty: $subCounty, ward: $ward, village: $village, gravida: $gravida, parity: $parity, heightCm: $heightCm, weightKg: $weightKg, lmp: $lmp, edd: $edd, gestationAtFirstVisit: $gestationAtFirstVisit, bloodGroup: $bloodGroup, diabetes: $diabetes, hypertension: $hypertension, tuberculosis: $tuberculosis, bloodTransfusion: $bloodTransfusion, drugAllergy: $drugAllergy, allergyDetails: $allergyDetails, previousCs: $previousCs, previousCsCount: $previousCsCount, bleedingHistory: $bleedingHistory, stillbirths: $stillbirths, neonatalDeaths: $neonatalDeaths, fgmDone: $fgmDone, hivResult: $hivResult, testedForSyphilis: $testedForSyphilis, syphilisResult: $syphilisResult, testedForHepatitisB: $testedForHepatitisB, hepatitisBResult: $hepatitisBResult, partnerTestedForHiv: $partnerTestedForHiv, partnerHivStatus: $partnerHivStatus, nextOfKinName: $nextOfKinName, nextOfKinRelationship: $nextOfKinRelationship, nextOfKinPhone: $nextOfKinPhone, photoUrl: $photoUrl, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -984,6 +1002,8 @@ class _$MaternalProfileImpl implements _MaternalProfile {
                 other.nextOfKinRelationship == nextOfKinRelationship) &&
             (identical(other.nextOfKinPhone, nextOfKinPhone) ||
                 other.nextOfKinPhone == nextOfKinPhone) &&
+            (identical(other.photoUrl, photoUrl) ||
+                other.photoUrl == photoUrl) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -1038,6 +1058,7 @@ class _$MaternalProfileImpl implements _MaternalProfile {
         nextOfKinName,
         nextOfKinRelationship,
         nextOfKinPhone,
+        photoUrl,
         createdAt,
         updatedAt
       ]);
@@ -1107,6 +1128,7 @@ abstract class _MaternalProfile implements MaternalProfile {
       @JsonKey(name: 'next_of_kin_relationship')
       final String? nextOfKinRelationship,
       @JsonKey(name: 'next_of_kin_phone') final String? nextOfKinPhone,
+      @JsonKey(name: 'photo_url') final String? photoUrl,
       @JsonKey(name: 'created_at') final DateTime? createdAt,
       @JsonKey(name: 'updated_at')
       final DateTime? updatedAt}) = _$MaternalProfileImpl;
@@ -1232,6 +1254,9 @@ abstract class _MaternalProfile implements MaternalProfile {
   @override
   @JsonKey(name: 'next_of_kin_phone')
   String? get nextOfKinPhone;
+  @override
+  @JsonKey(name: 'photo_url')
+  String? get photoUrl;
   @override
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
