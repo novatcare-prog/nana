@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/vitamin_a_deworming_providers.dart';
 import '../../../../core/providers/auth_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 
 class AddVitaminAScreen extends ConsumerStatefulWidget {
   final ChildProfile child;
@@ -82,12 +83,7 @@ class _AddVitaminAScreenState extends ConsumerState<AddVitaminAScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {

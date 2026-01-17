@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '/../../core/providers/child_immunization_providers.dart';
 import '/../../../core/providers/auth_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 
 class AddImmunizationScreen extends ConsumerStatefulWidget {
   final ChildProfile child;
@@ -104,12 +105,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: Exception: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {

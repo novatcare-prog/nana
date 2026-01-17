@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/providers/appointment_providers.dart';
+import '../../../../core/widgets/offline_indicator.dart';
+import '../../../../core/widgets/notification_bell.dart';
 import 'book_appointment_screen.dart';
 
 /// Schedule Screen with Responsive Calendar View
@@ -56,42 +58,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         title: const Text('Schedule'),
         
         actions: [
-          // Notification Bell
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {
-                  // TODO: Navigate to notifications screen
-                },
-              ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 12,
-                    minHeight: 12,
-                  ),
-                  child: const Text(
-                    '3',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            ],
-          ),
+          // Offline Status Indicator
+          const OfflineIndicator(),
+          const SizedBox(width: 4),
+          const SyncButton(),
+          
+          // Notification Bell (dynamic with real count)
+          const NotificationBell(),
 
           // Today Button
           IconButton(

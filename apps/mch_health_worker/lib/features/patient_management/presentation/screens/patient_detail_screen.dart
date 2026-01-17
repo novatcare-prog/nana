@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import 'anc_visit_history_screen.dart';
 import 'patient_edit_screen.dart';
 import 'lab_results_history_screen.dart';
@@ -107,20 +108,9 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Error')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error loading patient: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Go Back'),
-              ),
-            ],
-          ),
+        body: ErrorHelper.buildErrorWidget(
+          error,
+          onRetry: () => Navigator.pop(context),
         ),
       ),
     );

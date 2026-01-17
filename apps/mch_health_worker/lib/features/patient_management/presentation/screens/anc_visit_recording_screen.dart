@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 // Import the central provider file
 import '../../../../core/providers/supabase_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// ANC Visit Recording Screen - Based on MOH MCH Handbook Page 8
 class ANCVisitRecordingScreen extends ConsumerStatefulWidget {
@@ -199,13 +200,7 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('❌ Error: ${e.toString()}'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
-          );
+          ErrorHelper.showErrorSnackbar(context, e);
         }
       } finally {
         if (mounted) {

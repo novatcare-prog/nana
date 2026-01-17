@@ -120,6 +120,8 @@ class HiveService {
       'table': table,
       'data': data,
       'created_at': DateTime.now().toIso8601String(),
+      'retry_count': 0,  // Track failed attempts
+      'max_retries': 5,  // Max retry limit
     });
   }
 
@@ -141,6 +143,29 @@ class HiveService {
   static Future<void> removeFromSyncQueue(String syncId) async {
     final box = Hive.box(_syncQueueBox);
     await box.delete(syncId);
+  }
+
+  /// Increment retry count for failed sync item, returns true if max retries exceeded
+  static Future<bool> incrementRetryCount(String syncId) async {
+    final box = Hive.box(_syncQueueBox);
+    final item = box.get(syncId);
+    if (item == null) return true;
+    
+    final data = Map<String, dynamic>.from(item);
+    final retryCount = (data['retry_count'] ?? 0) + 1;
+    final maxRetries = data['max_retries'] ?? 5;
+    
+    if (retryCount >= maxRetries) {
+      // Max retries exceeded - move to dead letter queue or remove
+      await box.delete(syncId);
+      print('⚠️ Max retries exceeded for $syncId - removed from queue');
+      return true;
+    }
+    
+    data['retry_count'] = retryCount;
+    data['last_retry'] = DateTime.now().toIso8601String();
+    await box.put(syncId, data);
+    return false;
   }
 
   static int getSyncQueueCount() {

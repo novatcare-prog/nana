@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/childbirth_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Record Delivery Screen - MCH Handbook Page 15
 class RecordDeliveryScreen extends ConsumerStatefulWidget {
@@ -280,13 +281,7 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
       print('StackTrace: $stackTrace');
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Error: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 8),
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {

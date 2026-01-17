@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import '../../../../core/widgets/searchable_facility_selector.dart';
 
 /// Registration Screen for Health Workers
@@ -74,12 +75,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Registration failed: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {

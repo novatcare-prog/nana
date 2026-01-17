@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 import '../services/connectivity_service.dart';
 import '../services/hybrid_patient_repository.dart';
+import '../services/hive_service.dart';
 
 // ✅ FIX: Add these two imports to tell this file where your repositories are
 import 'package:mch_core/src/data/repositories/supabase_maternal_profile_repository.dart';
@@ -97,58 +98,128 @@ final statisticsProvider = FutureProvider<Map<String, int>>((ref) async {
 });
 
 // ============================================
-// ANC VISIT DATA PROVIDERS
+// ANC VISIT DATA PROVIDERS (OFFLINE-FIRST)
 // ============================================
 
 final patientVisitsProvider = FutureProvider.family<List<ANCVisit>, String>((ref, profileId) async {
   final repo = ref.watch(ancVisitRepositoryProvider);
-  return repo.getVisitsByPatientId(profileId);
+  final connectivity = ref.watch(connectivityServiceProvider);
+  
+  try {
+    if (connectivity.isOnline) {
+      final results = await repo.getVisitsByPatientId(profileId);
+      await HiveService.cacheANCVisits(profileId, results);
+      return results;
+    }
+  } catch (e) {
+    print('⚠️ Failed to fetch ANC visits online: $e');
+  }
+  
+  return HiveService.getCachedANCVisits(profileId);
 });
 
 final visitCountProvider = FutureProvider.family<int, String>((ref, profileId) async {
-  final repo = ref.watch(ancVisitRepositoryProvider);
-  return repo.getVisitCount(profileId);
+  final visits = await ref.watch(patientVisitsProvider(profileId).future);
+  return visits.length;
 });
 
 final nextContactNumberProvider = FutureProvider.family<int, String>((ref, profileId) async {
-  final repo = ref.watch(ancVisitRepositoryProvider);
-  return repo.getNextContactNumber(profileId);
+  final visits = await ref.watch(patientVisitsProvider(profileId).future);
+  return visits.length + 1;
 });
 
 
 // ============================================
-// MUTATION PROVIDERS (for creating/updating)
+// MUTATION PROVIDERS (WITH OFFLINE SUPPORT)
 // ============================================
 
 final createMaternalProfileProvider = Provider<Future<MaternalProfile> Function(MaternalProfile)>((ref) {
   final repository = ref.watch(supabaseMaternalProfileRepositoryProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
+  
   return (profile) async {
-    final result = await repository.createProfile(profile);
-    ref.invalidate(maternalProfilesProvider);
-    ref.invalidate(highRiskProfilesProvider);
-    ref.invalidate(profilesDueSoonProvider);
-    ref.invalidate(statisticsProvider);
-    return result;
+    if (connectivity.isOnline) {
+      final result = await repository.createProfile(profile);
+      
+      // Cache the new profile
+      await HiveService.cachePatient(result);
+      
+      ref.invalidate(maternalProfilesProvider);
+      ref.invalidate(highRiskProfilesProvider);
+      ref.invalidate(profilesDueSoonProvider);
+      ref.invalidate(statisticsProvider);
+      return result;
+    } else {
+      // Offline: add to sync queue
+      await HiveService.addToSyncQueue(
+        operation: 'insert',
+        table: 'maternal_profiles',
+        data: profile.toJson(),
+      );
+      
+      // Cache locally
+      await HiveService.cachePatient(profile);
+      
+      ref.invalidate(maternalProfilesProvider);
+      ref.invalidate(statisticsProvider);
+      
+      print('📝 Maternal profile queued for sync (offline mode)');
+      return profile;
+    }
   };
 });
 
 final updateMaternalProfileProvider = Provider<Future<MaternalProfile> Function(MaternalProfile)>((ref) {
   final repository = ref.watch(supabaseMaternalProfileRepositoryProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
+  
   return (profile) async {
-    final result = await repository.updateProfile(profile);
-    ref.invalidate(maternalProfilesProvider);
-    ref.invalidate(maternalProfileByIdProvider(profile.id!));
-    ref.invalidate(highRiskProfilesProvider);
-    ref.invalidate(profilesDueSoonProvider);
-    ref.invalidate(statisticsProvider);
-    return result;
+    if (connectivity.isOnline) {
+      final result = await repository.updateProfile(profile);
+      
+      await HiveService.cachePatient(result);
+      
+      ref.invalidate(maternalProfilesProvider);
+      ref.invalidate(maternalProfileByIdProvider(profile.id!));
+      ref.invalidate(highRiskProfilesProvider);
+      ref.invalidate(profilesDueSoonProvider);
+      ref.invalidate(statisticsProvider);
+      return result;
+    } else {
+      await HiveService.addToSyncQueue(
+        operation: 'update',
+        table: 'maternal_profiles',
+        data: profile.toJson(),
+      );
+      
+      await HiveService.cachePatient(profile);
+      
+      ref.invalidate(maternalProfilesProvider);
+      ref.invalidate(maternalProfileByIdProvider(profile.id!));
+      ref.invalidate(statisticsProvider);
+      
+      print('📝 Maternal profile update queued for sync (offline mode)');
+      return profile;
+    }
   };
 });
 
 final deleteMaternalProfileProvider = Provider<Future<void> Function(String)>((ref) {
   final repository = ref.watch(supabaseMaternalProfileRepositoryProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
+  
   return (id) async {
-    await repository.deleteProfile(id);
+    if (connectivity.isOnline) {
+      await repository.deleteProfile(id);
+    } else {
+      await HiveService.addToSyncQueue(
+        operation: 'delete',
+        table: 'maternal_profiles',
+        data: {'id': id},
+      );
+      print('📝 Maternal profile deletion queued for sync (offline mode)');
+    }
+    
     ref.invalidate(maternalProfilesProvider);
     ref.invalidate(highRiskProfilesProvider);
     ref.invalidate(profilesDueSoonProvider);
@@ -156,25 +227,51 @@ final deleteMaternalProfileProvider = Provider<Future<void> Function(String)>((r
   };
 });
 
-// ✅ This provider will now be created correctly
+
+// ✅ This provider now supports offline mode
 final createVisitProvider = Provider<Future<void> Function(ANCVisit, bool)>((ref) {
   final ancRepo = ref.watch(ancVisitRepositoryProvider);
   final profileRepo = ref.watch(supabaseMaternalProfileRepositoryProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
   
   return (visit, bool isHighRisk) async {
-    // 1. Save the visit
-    await ancRepo.createVisit(visit);
-    
-    // 2. If high risk, flag the main profile
-    if (isHighRisk) {
-      await profileRepo.flagPatientAsHighRisk(visit.maternalProfileId);
-      // Invalidate dashboard providers
-      ref.invalidate(maternalProfilesProvider);
-      ref.invalidate(statisticsProvider);
-      ref.invalidate(highRiskProfilesProvider);
+    if (connectivity.isOnline) {
+      // Online: Save directly to Supabase
+      await ancRepo.createVisit(visit);
+      
+      // If high risk, flag the main profile
+      if (isHighRisk) {
+        await profileRepo.flagPatientAsHighRisk(visit.maternalProfileId);
+        ref.invalidate(maternalProfilesProvider);
+        ref.invalidate(statisticsProvider);
+        ref.invalidate(highRiskProfilesProvider);
+      }
+    } else {
+      // Offline: Add to sync queue
+      await HiveService.addToSyncQueue(
+        operation: 'insert',
+        table: 'anc_visits',
+        data: visit.toJson(),
+      );
+      
+      // Cache the visit locally
+      final cached = HiveService.getCachedANCVisits(visit.maternalProfileId);
+      cached.add(visit);
+      await HiveService.cacheANCVisits(visit.maternalProfileId, cached);
+      
+      // If high risk, queue that update too
+      if (isHighRisk) {
+        await HiveService.addToSyncQueue(
+          operation: 'update',
+          table: 'maternal_profiles',
+          data: {'id': visit.maternalProfileId, 'is_high_risk': true},
+        );
+      }
+      
+      print('📝 ANC visit queued for sync (offline mode)');
     }
     
-    // 3. Invalidate visit-specific providers
+    // Invalidate visit-specific providers
     ref.invalidate(patientVisitsProvider(visit.maternalProfileId));
     ref.invalidate(visitCountProvider(visit.maternalProfileId));
   };

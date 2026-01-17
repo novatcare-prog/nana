@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/growth_monitoring_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import 'growth_record_screen.dart';
 
 /// Growth History Screen
@@ -72,16 +73,7 @@ class GrowthHistoryScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error loading records: $error'),
-            ],
-          ),
-        ),
+        error: (error, stack) => ErrorHelper.buildErrorWidget(error),
       ),
     );
   }

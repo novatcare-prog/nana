@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/growth_monitoring_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Add Growth Record Screen
 /// Records weight, length/height, MUAC, head circumference
@@ -140,13 +141,7 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Error: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {

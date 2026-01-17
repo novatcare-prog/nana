@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import 'patient_registration_screen.dart';
 import 'patient_detail_screen.dart';
 import '/../../core/widgets/offline_indicator.dart';
+import '../widgets/patient_card.dart';
 
 /// Patient List Screen - Shows all registered patients with search and filter
 /// IMPROVED VERSION with UX fixes based on clinical workflow
@@ -231,7 +233,7 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
                   itemCount: filteredProfiles.length,
                   itemBuilder: (context, index) {
                     final patient = filteredProfiles[index];
-                    return _buildPatientCard(context, patient);
+                    return PatientCard(patient: patient);
                   },
                 ),
               ),
@@ -239,20 +241,9 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(maternalProfilesProvider),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
+        error: (error, stack) => ErrorHelper.buildErrorWidget(
+          error,
+          onRetry: () => ref.invalidate(maternalProfilesProvider),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

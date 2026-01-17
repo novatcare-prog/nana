@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import 'anc_visit_recording_screen.dart';
 
 /// ANC Visit History Screen - Shows all ANC visits for a patient
@@ -147,20 +148,9 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error loading visits: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(patientVisitsProvider(patientId)),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
+        error: (error, stack) => ErrorHelper.buildErrorWidget(
+          error,
+          onRetry: () => ref.invalidate(patientVisitsProvider(patientId)),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

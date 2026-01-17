@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/auth_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import 'enter_reset_code_screen.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
@@ -39,12 +40,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       setState(() => _isLoading = false);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     }
   }

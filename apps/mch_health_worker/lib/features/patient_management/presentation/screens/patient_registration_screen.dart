@@ -4,6 +4,7 @@ import 'package:mch_core/mch_core.dart';
 import 'package:uuid/uuid.dart'; 
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/providers/facility_providers.dart';
+import '../../../../core/utils/error_helper.dart';
 import '../../../../core/widgets/searchable_facility_selector.dart';
 
 class PatientRegistrationScreen extends ConsumerStatefulWidget {
@@ -201,12 +202,7 @@ class _PatientRegistrationScreenState
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('❌ Error: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ErrorHelper.showErrorSnackbar(context, e);
         }
       } finally {
         if (mounted) {

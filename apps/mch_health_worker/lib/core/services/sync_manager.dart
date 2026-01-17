@@ -6,7 +6,7 @@ import 'hive_service.dart';
 import 'connectivity_service.dart';
 
 /// Enhanced Sync Manager - Handles syncing offline data to server
-/// Now with automatic sync, retry logic, and better error handling
+/// Now with automatic sync, retry logic, conflict resolution, and better error handling
 class SyncManager {
   final SupabaseClient _supabase;
   final ConnectivityService _connectivity;
@@ -14,6 +14,10 @@ class SyncManager {
   bool _isSyncing = false;
   Timer? _periodicSyncTimer;
   StreamController<SyncResult>? _syncResultController;
+  
+  // Conflict tracking
+  final List<ConflictRecord> _conflicts = [];
+  List<ConflictRecord> get conflicts => List.unmodifiable(_conflicts);
 
   SyncManager(this._supabase, this._connectivity);
 
@@ -27,9 +31,9 @@ class SyncManager {
       }
     });
 
-    // Start periodic sync (every 5 minutes when online)
+    // Start periodic sync (every 15 minutes when online - battery optimized)
     _periodicSyncTimer = Timer.periodic(
-      const Duration(minutes: 5),
+      const Duration(minutes: 15),
       (_) {
         if (_connectivity.isOnline && !_isSyncing) {
           syncAll();
@@ -103,6 +107,12 @@ class SyncManager {
         failed++;
         errors.add('${item['table']}: $e');
         print('❌ Sync failed: ${item['table']} - $e');
+        
+        // Increment retry count - item will be removed if max retries exceeded
+        final maxRetriesExceeded = await HiveService.incrementRetryCount(item['id']);
+        if (maxRetriesExceeded) {
+          errors.add('${item['table']}: removed after max retries');
+        }
       }
     }
 
@@ -159,16 +169,100 @@ class SyncManager {
       case 'anc_visits':
         await _syncANCVisit(operation, data);
         break;
-      // NEW: Appointments
       case 'appointments':
         await _syncAppointment(operation, data);
         break;
-      // NEW: Child profiles
       case 'child_profiles':
         await _syncChildProfile(operation, data);
         break;
+      // NEW: Postnatal visits
+      case 'postnatal_visits':
+        await _syncGenericTable('postnatal_visits', operation, data);
+        break;
+      // NEW: Growth records
+      case 'growth_records':
+        await _syncGenericTable('growth_records', operation, data);
+        break;
+      // NEW: Developmental milestones
+      case 'developmental_milestones':
+        await _syncGenericTable('developmental_milestones', operation, data);
+        break;
+      // NEW: Child immunizations
+      case 'immunization_records':
+        await _syncGenericTable('immunization_records', operation, data);
+        break;
+      // NEW: Vitamin A records
+      case 'vitamin_a_records':
+        await _syncGenericTable('vitamin_a_records', operation, data);
+        break;
+      // NEW: Deworming records
+      case 'deworming_records':
+        await _syncGenericTable('deworming_records', operation, data);
+        break;
+      // NEW: MUAC measurements
+      case 'muac_measurements':
+        await _syncGenericTable('muac_measurements', operation, data);
+        break;
+      // NEW: Childbirth records
+      case 'childbirth_records':
+        await _syncGenericTable('childbirth_records', operation, data);
+        break;
       default:
         print('⚠️ Unknown table: $table');
+    }
+  }
+
+  /// Generic sync method for tables with standard CRUD operations
+  /// Now includes timestamp-based conflict resolution for updates
+  Future<void> _syncGenericTable(String tableName, String operation, Map<String, dynamic> data) async {
+    if (operation == 'insert') {
+      // Remove temporary IDs
+      if (data['id'] != null && data['id'].toString().startsWith('temp_')) {
+        data.remove('id');
+      }
+      await _supabase.from(tableName).insert(data);
+    } else if (operation == 'update') {
+      // Timestamp-based conflict resolution
+      final recordId = data['id'];
+      final localUpdatedAt = data['updated_at'] != null 
+          ? DateTime.parse(data['updated_at'].toString())
+          : DateTime.now();
+      
+      // Fetch server version to check timestamp
+      final serverResponse = await _supabase
+          .from(tableName)
+          .select('id, updated_at')
+          .eq('id', recordId)
+          .maybeSingle();
+      
+      if (serverResponse != null && serverResponse['updated_at'] != null) {
+        final serverUpdatedAt = DateTime.parse(serverResponse['updated_at'].toString());
+        
+        // Only update if local version is newer than server
+        if (localUpdatedAt.isAfter(serverUpdatedAt)) {
+          await _supabase.from(tableName).update(data).eq('id', recordId);
+          print('✅ Updated $tableName: $recordId (local was newer)');
+        } else if (serverUpdatedAt.isAfter(localUpdatedAt)) {
+          // Server is newer - record conflict and skip update
+          _conflicts.add(ConflictRecord(
+            id: recordId,
+            table: tableName,
+            localData: data,
+            serverData: serverResponse,
+            localUpdatedAt: localUpdatedAt,
+            serverUpdatedAt: serverUpdatedAt,
+          ));
+          print('⚠️ Conflict detected in $tableName: $recordId - server is newer, skipping update');
+        } else {
+          // Same timestamp - update anyway (no conflict)
+          await _supabase.from(tableName).update(data).eq('id', recordId);
+        }
+      } else {
+        // No server record or no timestamp - proceed with update
+        await _supabase.from(tableName).update(data).eq('id', recordId);
+      }
+    } else if (operation == 'delete') {
+      await _supabase.from(tableName).delete().eq('id', data['id']);
     }
   }
 
@@ -352,3 +446,35 @@ final syncResultsProvider = StreamProvider<SyncResult>((ref) {
   final manager = ref.watch(syncManagerProvider);
   return manager.syncResults;
 });
+
+/// Provider for conflict count
+final conflictCountProvider = Provider<int>((ref) {
+  final manager = ref.watch(syncManagerProvider);
+  return manager.conflicts.length;
+});
+
+// ==================== CONFLICT RECORD ====================
+
+/// Represents a conflict between local and server data
+class ConflictRecord {
+  final String id;
+  final String table;
+  final Map<String, dynamic> localData;
+  final Map<String, dynamic> serverData;
+  final DateTime localUpdatedAt;
+  final DateTime serverUpdatedAt;
+  final DateTime detectedAt;
+
+  ConflictRecord({
+    required this.id,
+    required this.table,
+    required this.localData,
+    required this.serverData,
+    required this.localUpdatedAt,
+    required this.serverUpdatedAt,
+  }) : detectedAt = DateTime.now();
+
+  @override
+  String toString() =>
+      'ConflictRecord(table: $table, id: $id, local: $localUpdatedAt, server: $serverUpdatedAt)';
+}

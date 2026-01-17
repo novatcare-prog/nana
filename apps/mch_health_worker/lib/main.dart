@@ -15,7 +15,8 @@ import 'core/services/connectivity_service.dart';
 import 'features/navigation/main_navigation_scaffold.dart';
 import 'features/patient_management/presentation/screens/login_screen.dart';
 import 'features/patient_management/presentation/screens/reset_password_screen.dart';
-import 'features/patient_management/presentation/screens/splash_screen.dart'; 
+import 'features/patient_management/presentation/screens/splash_screen.dart';
+import 'core/widgets/offline_indicator.dart'; 
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -82,8 +83,10 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       
-      // ✅ Start with the Splash Screen
-      home: const SplashScreen(), 
+      // ✅ Start with the Splash Screen, wrapped with sync error listener
+      home: const SyncErrorListener(
+        child: SplashScreen(),
+      ), 
     );
   }
 }

@@ -9,7 +9,9 @@ import '../patient_management/presentation/screens/schedule_screen.dart';
 import '../patient_management/presentation/screens/settings_screen.dart';
 import '../patient_management/presentation/screens/edit_profile_screen.dart';
 import '../reports/presentation/screens/reports_screen.dart';
+import '../patient_management/presentation/screens/notifications_screen.dart';
 import '../../core/widgets/offline_indicator.dart';
+import '../../core/providers/notification_providers.dart';
 
 /// Main Navigation Scaffold with Adaptive Layout
 /// - Phone: Bottom Navigation Bar
@@ -72,34 +74,19 @@ class _MainNavigationScaffoldState
     final useNavigationRail = screenWidth >= 600;
 
     if (useNavigationRail) {
-      // Desktop/Tablet: Use NavigationRail
+      // Desktop/Tablet: Use Custom Sidebar
       return Scaffold(
-        drawer: _buildDrawer(),
         body: Column(
           children: [
             // Offline status banner at the top
             const OfflineBanner(),
             
-            // Main content with navigation rail
+            // Main content with sidebar
             Expanded(
               child: Row(
                 children: [
-                  // Navigation Rail (Left Side)
-                  NavigationRail(
-                    extended: screenWidth >= 800,
-                    selectedIndex: _selectedIndex,
-                    onDestinationSelected: _onDestinationSelected,
-                    labelType: screenWidth >= 800
-                        ? NavigationRailLabelType.none
-                        : NavigationRailLabelType.all,
-                    destinations: _destinations.map((destination) {
-                      return NavigationRailDestination(
-                        icon: destination.icon,
-                        selectedIcon: destination.selectedIcon,
-                        label: Text(destination.label),
-                      );
-                    }).toList(),
-                  ),
+                  // Custom Sidebar (Left Side)
+                  _buildDesktopSidebar(context, screenWidth >= 800),
                   
                   const VerticalDivider(thickness: 1, width: 1),
                   
@@ -134,6 +121,234 @@ class _MainNavigationScaffoldState
         ),
       );
     }
+  }
+
+  // ========== DESKTOP SIDEBAR WIDGET ==========
+  Widget _buildDesktopSidebar(BuildContext context, bool extended) {
+    final theme = Theme.of(context);
+    final sidebarWidth = extended ? 220.0 : 72.0;
+    
+    return Container(
+      width: sidebarWidth,
+      color: theme.colorScheme.surface,
+      child: Column(
+        children: [
+          // App Logo/Header
+          Container(
+            height: 64,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/BLUE_app_launcher_ICON-01.png',
+                  width: 32,
+                  height: 32,
+                ),
+                if (extended) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    'MCH Kenya',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.primaryColor,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          
+          const Divider(height: 1),
+          
+          // Main Navigation Items
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              children: [
+                // Dashboard
+                _buildSidebarItem(
+                  context: context,
+                  icon: Icons.dashboard_outlined,
+                  selectedIcon: Icons.dashboard,
+                  label: 'Dashboard',
+                  isSelected: _selectedIndex == 0,
+                  extended: extended,
+                  onTap: () => _onDestinationSelected(0),
+                ),
+                // Patients
+                _buildSidebarItem(
+                  context: context,
+                  icon: Icons.people_outline,
+                  selectedIcon: Icons.people,
+                  label: 'Patients',
+                  isSelected: _selectedIndex == 1,
+                  extended: extended,
+                  onTap: () => _onDestinationSelected(1),
+                ),
+                // Schedule
+                _buildSidebarItem(
+                  context: context,
+                  icon: Icons.calendar_today_outlined,
+                  selectedIcon: Icons.calendar_today,
+                  label: 'Schedule',
+                  isSelected: _selectedIndex == 2,
+                  extended: extended,
+                  onTap: () => _onDestinationSelected(2),
+                ),
+                
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Divider(),
+                ),
+                
+                // Reports
+                _buildSidebarItem(
+                  context: context,
+                  icon: Icons.analytics_outlined,
+                  selectedIcon: Icons.analytics,
+                  label: 'Reports',
+                  isSelected: false,
+                  extended: extended,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReportsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                // Notifications (with badge)
+                Consumer(
+                  builder: (context, ref, _) {
+                    final count = ref.watch(unreadNotificationCountProvider);
+                    return _buildSidebarItem(
+                      context: context,
+                      icon: Icons.notifications_outlined,
+                      selectedIcon: Icons.notifications,
+                      label: 'Notifications',
+                      isSelected: false,
+                      extended: extended,
+                      badge: count > 0 ? count : null,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationsScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Divider(),
+                ),
+                
+                // Settings
+                _buildSidebarItem(
+                  context: context,
+                  icon: Icons.settings_outlined,
+                  selectedIcon: Icons.settings,
+                  label: 'Settings',
+                  isSelected: false,
+                  extended: extended,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          
+          // User Profile Footer
+          const Divider(height: 1),
+          _UserProfileHeader(),
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build a sidebar item
+  Widget _buildSidebarItem({
+    required BuildContext context,
+    required IconData icon,
+    required IconData selectedIcon,
+    required String label,
+    required bool isSelected,
+    required bool extended,
+    required VoidCallback onTap,
+    int? badge,
+  }) {
+    final theme = Theme.of(context);
+    final color = isSelected ? theme.primaryColor : theme.iconTheme.color;
+    final bgColor = isSelected ? theme.primaryColor.withOpacity(0.1) : Colors.transparent;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      child: Material(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: extended ? 12 : 0,
+              vertical: 12,
+            ),
+            child: Row(
+              mainAxisAlignment: extended ? MainAxisAlignment.start : MainAxisAlignment.center,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(isSelected ? selectedIcon : icon, color: color),
+                    if (badge != null)
+                      Positioned(
+                        right: -8,
+                        top: -4,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            badge > 9 ? '9+' : '$badge',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                if (extended) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   // ========== DRAWER WIDGET ==========
@@ -210,25 +425,35 @@ class _MainNavigationScaffoldState
           
           const Divider(),
           
-          // Notifications
-          ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Notifications'),
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                '3',
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications - Coming soon')),
+          // Notifications (with real badge count)
+          Consumer(
+            builder: (context, ref, _) {
+              final count = ref.watch(unreadNotificationCountProvider);
+              return ListTile(
+                leading: const Icon(Icons.notifications),
+                title: const Text('Notifications'),
+                trailing: count > 0
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          count > 99 ? '99+' : '$count',
+                          style: const TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      )
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationsScreen(),
+                    ),
+                  );
+                },
               );
             },
           ),

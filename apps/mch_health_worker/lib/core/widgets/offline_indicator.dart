@@ -12,12 +12,7 @@ class OfflineIndicator extends ConsumerWidget {
     final isOnline = ref.watch(isOnlineProvider);
     final pendingCount = ref.watch(pendingSyncCountProvider);
 
-    // Hide when online and nothing pending
-    if (isOnline && pendingCount == 0) {
-      return const SizedBox.shrink();
-    }
-
-    // Show syncing indicator
+    // Show syncing indicator (online with pending items)
     if (isOnline && pendingCount > 0) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -47,6 +42,11 @@ class OfflineIndicator extends ConsumerWidget {
       );
     }
 
+    // Hide when online and nothing pending
+    if (isOnline && pendingCount == 0) {
+      return const SizedBox.shrink();
+    }
+
     // Show offline indicator
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -60,7 +60,7 @@ class OfflineIndicator extends ConsumerWidget {
           const Icon(Icons.cloud_off, size: 14, color: Colors.orange),
           const SizedBox(width: 6),
           Text(
-            'Offline${pendingCount > 0 ? ' $pendingCount' : ''}',
+            'Offline${pendingCount > 0 ? ' ($pendingCount)' : ''}',
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -195,5 +195,64 @@ class OfflineBanner extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+/// Listens to sync results and shows user-friendly notifications
+/// Wrap your main app widget with this to get automatic sync error notifications
+class SyncErrorListener extends ConsumerWidget {
+  final Widget child;
+  
+  const SyncErrorListener({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Listen to sync results stream
+    ref.listen<AsyncValue<SyncResult>>(syncResultsProvider, (previous, next) {
+      next.whenData((result) {
+        // Only show notification if there were failures
+        if (result.failed > 0 && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.warning_amber, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Sync completed with ${result.failed} error${result.failed == 1 ? '' : 's'}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        if (result.synced > 0)
+                          Text(
+                            '${result.synced} item${result.synced == 1 ? '' : 's'} synced successfully',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.orange.shade700,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Retry',
+                textColor: Colors.white,
+                onPressed: () {
+                  final syncManager = ref.read(syncManagerProvider);
+                  syncManager.syncAll();
+                },
+              ),
+            ),
+          );
+        }
+      });
+    });
+    
+    return child;
   }
 }
