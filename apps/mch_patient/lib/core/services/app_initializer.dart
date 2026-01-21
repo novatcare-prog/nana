@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'notification_service.dart';
 
 /// App Initializer Service
@@ -22,6 +21,11 @@ class AppInitializer {
   String? get error => _error;
   bool get hasError => _error != null;
 
+  /// Supabase configuration from compile-time environment variables
+  /// Set via --dart-define during build for better security
+  static const String _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static const String _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+
   /// Initialize all app services
   /// Returns true if successful, false if failed
   Future<bool> initialize({
@@ -32,9 +36,15 @@ class AppInitializer {
     _error = null;
 
     try {
-      // Step 1: Load environment variables (20%)
+      // Step 1: Validate configuration (20%)
       _updateProgress('Loading configuration...', 0.0, onProgress);
-      await dotenv.load(fileName: ".env");
+      
+      if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
+        throw Exception(
+          'Missing Supabase configuration. '
+          'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx'
+        );
+      }
       _updateProgress('Configuration loaded', 0.2, onProgress);
 
       // Step 2: Initialize Hive for offline storage (40%)
@@ -45,16 +55,9 @@ class AppInitializer {
       // Step 3: Initialize Supabase (70%)
       _updateProgress('Connecting to server...', 0.4, onProgress);
       
-      final supabaseUrl = dotenv.env['SUPABASE_URL'];
-      final supabaseKey = dotenv.env['SUPABASE_ANON_KEY'];
-      
-      if (supabaseUrl == null || supabaseKey == null) {
-        throw Exception('Missing Supabase configuration');
-      }
-      
       await Supabase.initialize(
-        url: supabaseUrl,
-        anonKey: supabaseKey,
+        url: _supabaseUrl,
+        anonKey: _supabaseAnonKey,
       );
       _updateProgress('Connected to server', 0.7, onProgress);
 

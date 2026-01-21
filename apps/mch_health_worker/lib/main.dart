@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mch_core/mch_core.dart';
 
 // --- Core Imports ---
@@ -20,16 +19,26 @@ import 'core/widgets/offline_indicator.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+/// Supabase configuration from compile-time environment variables
+/// Set via --dart-define during build for better security
+const String _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+const String _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. Load environment variables
-  await dotenv.load(fileName: ".env");
+  // 1. Validate Supabase configuration
+  if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
+    throw Exception(
+      'Missing Supabase configuration. '
+      'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx'
+    );
+  }
   
-  // 2. Initialize Supabase (using .env)
+  // 2. Initialize Supabase (using compile-time env vars)
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+    url: _supabaseUrl,
+    anonKey: _supabaseAnonKey,
     authOptions: const FlutterAuthClientOptions(
       authFlowType: AuthFlowType.pkce,
     ),
