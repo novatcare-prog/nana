@@ -87,12 +87,11 @@ def main():
     
     generate_ico(hw_source, hw_output, "Health Worker App")
     
-    # Patient App
+    # Patient App - use cropped logo
     pt_source = os.path.join(
         PROJECT_ROOT,
-        "apps", "mch_patient", "ios", "Runner",
-        "Assets.xcassets", "AppIcon.appiconset",
-        "Icon-App-1024x1024@1x.png"
+        "apps", "mch_patient", "assets", "images",
+        "logo_cropped.png"
     )
     pt_output = os.path.join(
         PROJECT_ROOT,
