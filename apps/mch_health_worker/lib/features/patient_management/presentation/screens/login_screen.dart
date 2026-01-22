@@ -89,11 +89,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Logo/Icon
-                    Icon(
-                      Icons.local_hospital,
-                      size: 80,
-                      color: Theme.of(context).colorScheme.primary,
+                    // Logo
+                    Image.asset(
+                      'assets/images/BLUE_app_launcher_ICON-01.png',
+                      height: 120,
+                      width: 120,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Fallback to icon if image fails to load
+                        return Icon(
+                          Icons.local_hospital,
+                          size: 80,
+                          color: Theme.of(context).colorScheme.primary,
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
 
