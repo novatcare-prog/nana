@@ -293,9 +293,15 @@ CREATE POLICY "Admins can manage all milestones"
 -- STEP 8: facilities (public read, admin write)
 -- =====================================================
 
--- Everyone can read facilities list
+-- Authenticated users can read facilities list
 CREATE POLICY "Anyone can view facilities"
   ON facilities FOR SELECT
+  USING (true);
+
+-- Allow unauthenticated users to view facilities (needed for registration)
+CREATE POLICY "Anon users can view facilities"
+  ON facilities FOR SELECT
+  TO anon
   USING (true);
 
 -- Only admins can modify facilities
