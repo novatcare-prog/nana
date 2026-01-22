@@ -4,7 +4,9 @@ import '../../../../core/providers/auth_providers.dart';
 import '../../../../core/utils/error_helper.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final String? email;
+  
+  const ResetPasswordScreen({super.key, this.email});
 
   @override
   ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -12,6 +14,8 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _codeController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   
@@ -27,7 +31,18 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   bool _hasSpecialChar = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Pre-fill email if provided
+    if (widget.email != null) {
+      _emailController.text = widget.email!;
+    }
+  }
+
+  @override
   void dispose() {
+    _emailController.dispose();
+    _codeController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -68,7 +83,18 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
     try {
       final authService = ref.read(authServiceProvider);
-      await authService.updatePassword(_newPasswordController.text);
+      
+      // Use OTP verification if code is provided, otherwise try updatePassword
+      if (_codeController.text.isNotEmpty && _emailController.text.isNotEmpty) {
+        await authService.verifyOtpAndResetPassword(
+          email: _emailController.text.trim(),
+          token: _codeController.text.trim(),
+          newPassword: _newPasswordController.text,
+        );
+      } else {
+        // Fallback for when already authenticated (e.g., from deep link)
+        await authService.updatePassword(_newPasswordController.text);
+      }
 
       if (mounted) {
         // Show success message
@@ -129,7 +155,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
                   // Subtitle
                   Text(
-                    'Your new password must be different from previously used passwords.',
+                    'Enter the 6-digit code from your email along with your new password.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey[600],
                         ),
@@ -137,7 +163,54 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // New Password Field
+                  // Email Field
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email Address',
+                      hintText: 'Enter your email',
+                      prefixIcon: const Icon(Icons.email),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Reset Code Field
+                  TextFormField(
+                    controller: _codeController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: '6-Digit Reset Code',
+                      hintText: 'Enter code from email',
+                      prefixIcon: const Icon(Icons.pin),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the reset code';
+                      }
+                      if (value.length != 6) {
+                        return 'Code must be 6 digits';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
                   TextFormField(
                     controller: _newPasswordController,
                     obscureText: _obscureNewPassword,

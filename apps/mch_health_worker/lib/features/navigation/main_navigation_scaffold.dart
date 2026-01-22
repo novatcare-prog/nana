@@ -562,9 +562,13 @@ class _UserProfileHeader extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.white, size: 20),
               onPressed: () {
-                Navigator.pop(context); // Close drawer
-                Navigator.push(
-                  context,
+                // Only pop if we're in a drawer (not sidebar)
+                final scaffold = Scaffold.maybeOf(context);
+                if (scaffold?.isDrawerOpen ?? false) {
+                  Navigator.pop(context); // Close drawer
+                }
+                // Use root navigator to ensure proper back navigation
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
                     builder: (context) => const EditProfileScreen(),
                   ),

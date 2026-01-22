@@ -89,6 +89,49 @@ class AuthService {
     }
   }
 
+  /// Verify OTP and reset password
+  /// This is used for the forgot password flow with 6-digit code
+  Future<void> verifyOtpAndResetPassword({
+    required String email,
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      print('🔐 Attempting OTP verification for: $email');
+      
+      // First, verify the OTP token to establish a session
+      final response = await _supabase.auth.verifyOTP(
+        email: email,
+        token: token,
+        type: OtpType.recovery,
+      );
+      
+      print('🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
+      
+      if (response.user == null) {
+        throw Exception('Invalid or expired code. Please request a new one.');
+      }
+      
+      // Then update the password
+      print('🔐 Updating password...');
+      await _supabase.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      print('🔐 Password updated successfully!');
+      
+    } catch (e) {
+      print('🔐 ==========================================');
+      print('🔐 PASSWORD RESET ERROR:');
+      print('🔐 Error type: ${e.runtimeType}');
+      print('🔐 Full error: $e');
+      print('🔐 ==========================================');
+      
+      // Show the ACTUAL error message instead of generic ones
+      final errorMessage = e.toString();
+      throw Exception('Reset failed: $errorMessage');
+    }
+  }
+
   /// Get user profile from database
   Future<Map<String, dynamic>?> getUserProfile(String userId) async {
     try {

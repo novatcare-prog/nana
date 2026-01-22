@@ -161,22 +161,13 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
               children: [
                 const SizedBox(height: 60),
 
-                // Logo
-                Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.pregnant_woman,
-                    size: 50,
-                    color: Colors.white,
+                // Logo - switches based on theme brightness
+                Center(
+                  child: Image.asset(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 'assets/images/Asset_2.png'
+                        : 'assets/images/Asset_3.png',
+                    height: 180,
                   ),
                 ),
 

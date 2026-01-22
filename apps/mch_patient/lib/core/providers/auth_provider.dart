@@ -127,21 +127,45 @@ class AuthController {
     required String token,
     required String newPassword,
   }) async {
-    // First, verify the OTP token
-    final response = await _supabase.auth.verifyOTP(
-      email: email,
-      token: token,
-      type: OtpType.recovery,
-    );
-    
-    if (response.user == null) {
-      throw Exception('Invalid or expired code');
+    try {
+      // First, verify the OTP token
+      print('🔐 Attempting OTP verification for: $email with token: ${token.substring(0, 2)}...');
+      
+      final response = await _supabase.auth.verifyOTP(
+        email: email,
+        token: token,
+        type: OtpType.recovery,
+      );
+      
+      print('🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
+      
+      if (response.user == null) {
+        throw Exception('Invalid or expired code. Please request a new one.');
+      }
+      
+      // Then update the password
+      print('🔐 Updating password...');
+      await _supabase.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      print('🔐 Password updated successfully!');
+      
+    } catch (e) {
+      print('🔐 Password reset error: $e');
+      
+      // Re-throw with more specific messages
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('otp') && errorStr.contains('expired')) {
+        throw Exception('Code has expired. Please request a new one.');
+      } else if (errorStr.contains('invalid') || errorStr.contains('otp')) {
+        throw Exception('Invalid code. Please check and try again.');
+      } else if (errorStr.contains('same_password')) {
+        throw Exception('New password must be different from your current password.');
+      } else if (errorStr.contains('weak')) {
+        throw Exception('Password is too weak. Please use a stronger password.');
+      }
+      rethrow;
     }
-    
-    // Then update the password
-    await _supabase.auth.updateUser(
-      UserAttributes(password: newPassword),
-    );
   }
 
   // Update password (for logged-in users)

@@ -48,43 +48,59 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         elevation: 0,
       ),
       body: userProfileAsync.when(
-        data: (profile) => SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Card
-              _buildProfileCard(context, profile),
-              const SizedBox(height: 8),
+        data: (profile) {
+          // Handle null profile (e.g., after logout)
+          if (profile == null) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading profile...'),
+                ],
+              ),
+            );
+          }
+          
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Card
+                _buildProfileCard(context, profile),
+                const SizedBox(height: 8),
 
-              // Notification Settings
-              _buildSectionHeader('Notifications'),
-              _buildNotificationSettings(),
-              const Divider(height: 32),
+                // Notification Settings
+                _buildSectionHeader('Notifications'),
+                _buildNotificationSettings(),
+                const Divider(height: 32),
 
-              // App Preferences
-              _buildSectionHeader('App Preferences'),
-              _buildAppPreferences(),
-              const Divider(height: 32),
+                // App Preferences
+                _buildSectionHeader('App Preferences'),
+                _buildAppPreferences(),
+                const Divider(height: 32),
 
-              // About
-              _buildSectionHeader('About'),
-              _buildAboutSection(),
-              const Divider(height: 32),
+                // About
+                _buildSectionHeader('About'),
+                _buildAboutSection(),
+                const Divider(height: 32),
 
-              // Danger Zone
-              _buildSectionHeader('Account', color: Colors.red),
-              _buildDangerZone(context),
-              
-              const Divider(height: 32),
-              
-              // Debug Section
-              _buildSectionHeader('Debug', color: Colors.orange),
-              _buildDebugSection(context),
+                // Danger Zone
+                _buildSectionHeader('Account', color: Colors.red),
+                _buildDangerZone(context),
+                
+                const Divider(height: 32),
+                
+                // Debug Section
+                _buildSectionHeader('Debug', color: Colors.orange),
+                _buildDebugSection(context),
 
-              const SizedBox(height: 32),
-            ],
-          ),
-        ),
+                const SizedBox(height: 32),
+              ],
+            ),
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Text('Error loading profile: $error'),
@@ -484,7 +500,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 await authActions.signOut();
                 
                 if (mounted) {
-                  Navigator.pop(context); // Close loading
+                  Navigator.pop(context); // Close loading dialog
+                  
+                  // Navigate to login and clear all routes
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/login',
+                    (route) => false,
+                  );
+                  
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('✓ Logged out successfully'),

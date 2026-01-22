@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/auth_providers.dart';
 import '../../../../core/utils/error_helper.dart';
-import 'enter_reset_code_screen.dart';
+import 'reset_password_screen.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -269,11 +269,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const EnterResetCodeScreen(),
+                    builder: (context) => ResetPasswordScreen(
+                      email: _emailController.text.trim(),
+                    ),
                   ),
                 );
               },
-              child: const Text('Enter Code Manually'),
+              child: const Text('Enter Code'),
             ),
           ],
         ),

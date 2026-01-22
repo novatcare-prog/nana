@@ -35,7 +35,15 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await ref.read(authControllerProvider).updatePassword(
+      // Check if user is authenticated (required for updatePassword)
+      final authController = ref.read(authControllerProvider);
+      final currentUser = authController.currentUser;
+      
+      if (currentUser == null) {
+        throw Exception('Session expired. Please use the forgot password flow again.');
+      }
+      
+      await authController.updatePassword(
         newPassword: _passwordController.text,
       );
 
@@ -54,7 +62,29 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       setState(() => _isLoading = false);
       
       if (mounted) {
-        ErrorHelper.showErrorSnackbar(context, e);
+        // Show more descriptive error
+        String message = 'Something went wrong. Please try again.';
+        if (e.toString().contains('Session expired') || e.toString().contains('not authenticated')) {
+          message = 'Session expired. Please go back to login and use "Forgot Password" again.';
+        } else if (e.toString().contains('same_password')) {
+          message = 'New password must be different from your current password.';
+        }
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text(message)),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 5),
+          ),
+        );
       }
     }
   }

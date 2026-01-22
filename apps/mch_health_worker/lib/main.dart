@@ -44,12 +44,23 @@ void main() async {
     ),
   );
   
-  // 3. Listen for Password Recovery
+  // 3. Listen for Auth State Changes (Password Recovery, Sign Out)
   Supabase.instance.client.auth.onAuthStateChange.listen((data) {
     if (data.event == AuthChangeEvent.passwordRecovery) {
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const ResetPasswordScreen(),
+        ),
+        (route) => false,
+      );
+    } else if (data.event == AuthChangeEvent.signedOut) {
+      // Show logging out animation, then navigate to login
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const _LoggingOutScreen(),
+          transitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (_, animation, __, child) => 
+            FadeTransition(opacity: animation, child: child),
         ),
         (route) => false,
       );
@@ -258,3 +269,129 @@ class RoleChecker extends ConsumerWidget {
 
 // Supabase client accessor
 SupabaseClient get supabase => Supabase.instance.client;
+
+/// Animated Logging Out Screen
+class _LoggingOutScreen extends StatefulWidget {
+  const _LoggingOutScreen();
+
+  @override
+  State<_LoggingOutScreen> createState() => _LoggingOutScreenState();
+}
+
+class _LoggingOutScreenState extends State<_LoggingOutScreen> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.8).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _controller, 
+        curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
+      ),
+    );
+
+    _controller.forward();
+
+    // Navigate to login after animation
+    Future.delayed(const Duration(milliseconds: 1800), () {
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const LoginScreen(),
+            transitionDuration: const Duration(milliseconds: 500),
+            transitionsBuilder: (_, animation, __, child) => 
+              FadeTransition(opacity: animation, child: child),
+          ),
+          (route) => false,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Center(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _fadeAnimation.value.clamp(0.3, 1.0),
+              child: Transform.scale(
+                scale: _scaleAnimation.value,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Animated icon
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.waving_hand,
+                        size: 50,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    
+                    // Text
+                    Text(
+                      'Goodbye!',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Logging you out...',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    
+                    // Spinner
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
