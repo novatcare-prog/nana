@@ -155,7 +155,7 @@ class AuthController {
       
       // Re-throw with more specific messages
       final errorStr = e.toString().toLowerCase();
-      if (errorStr.contains('otp') && errorStr.contains('expired')) {
+      if (errorStr.contains('otp_expired') || (errorStr.contains('otp') && errorStr.contains('expired'))) {
         throw Exception('Code has expired. Please request a new one.');
       } else if (errorStr.contains('invalid') || errorStr.contains('otp')) {
         throw Exception('Invalid code. Please check and try again.');

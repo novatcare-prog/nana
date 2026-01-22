@@ -73,12 +73,11 @@ def main():
     print("Windows ICO Generator for Nana Apps")
     print("=" * 50)
     
-    # Health Worker App - use iOS 1024x1024 source
+    # Health Worker App - use cropped transparent logo
     hw_source = os.path.join(
         PROJECT_ROOT,
-        "apps", "mch_health_worker", "ios", "Runner", 
-        "Assets.xcassets", "AppIcon.appiconset",
-        "Icon-App-1024x1024@1x.png"
+        "apps", "mch_health_worker", "assets", "images",
+        "logo_cropped.png"
     )
     hw_output = os.path.join(
         PROJECT_ROOT,

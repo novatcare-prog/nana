@@ -91,9 +91,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     // Logo
                     Image.asset(
-                      'assets/images/BLUE_app_launcher_ICON-01.png',
-                      height: 120,
-                      width: 120,
+                      'assets/images/logo_transparent.png',
+                      height: 150,
+                      width: 150,
                       errorBuilder: (context, error, stackTrace) {
                         // Fallback to icon if image fails to load
                         return Icon(
