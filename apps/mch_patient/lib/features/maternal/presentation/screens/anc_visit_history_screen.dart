@@ -70,7 +70,8 @@ class AncVisitHistoryScreen extends ConsumerWidget {
                   color: Colors.pink.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.pregnant_woman, size: 48, color: Colors.pink.shade300),
+                child: Icon(Icons.pregnant_woman,
+                    size: 48, color: Colors.pink.shade300),
               ),
               const SizedBox(height: 24),
               Text(
@@ -85,7 +86,9 @@ class AncVisitHistoryScreen extends ConsumerWidget {
               Text(
                 'Your antenatal care visits will appear here after your clinic appointments.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                    fontSize: 14),
               ),
             ],
           ),
@@ -151,7 +154,7 @@ class _AncSummaryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final latestVisit = visits.isNotEmpty ? visits.first : null;
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -218,7 +221,8 @@ class _AncSummaryHeader extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.event_available, size: 14, color: Colors.white),
+                  const Icon(Icons.event_available,
+                      size: 14, color: Colors.white),
                   const SizedBox(width: 4),
                   Text(
                     'Next: ${DateFormat('d MMM yyyy').format(latestVisit!.nextVisitDate!)}',
@@ -312,7 +316,8 @@ class _AncVisitCard extends StatelessWidget {
                 children: [
                   // Contact Number Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: isLatest
                           ? const Color(0xFFE91E63)
@@ -332,7 +337,8 @@ class _AncVisitCard extends StatelessWidget {
                   // High Risk Badge
                   if (visit.isHighRisk == true)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(12),
@@ -406,7 +412,8 @@ class _AncVisitCard extends StatelessWidget {
               ),
 
               // Baby Info
-              if (visit.foetalHeartRate != null || visit.foetalMovement == true) ...[
+              if (visit.foetalHeartRate != null ||
+                  visit.foetalMovement == true) ...[
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -421,11 +428,13 @@ class _AncVisitCard extends StatelessWidget {
                       const SizedBox(width: 16),
                       Row(
                         children: [
-                          Icon(Icons.check_circle, size: 14, color: Colors.green[600]),
+                          Icon(Icons.check_circle,
+                              size: 14, color: Colors.green[600]),
                           const SizedBox(width: 4),
                           Text(
                             'Movement felt',
-                            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[700]),
                           ),
                         ],
                       ),
@@ -466,7 +475,8 @@ class _AncVisitCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.event_available, size: 14, color: Colors.blue),
+                      const Icon(Icons.event_available,
+                          size: 14, color: Colors.blue),
                       const SizedBox(width: 8),
                       Text(
                         'Next: ${DateFormat('d MMM yyyy').format(visit.nextVisitDate!)}',
@@ -664,63 +674,82 @@ class _VisitDetailSheet extends StatelessWidget {
 
             // Sections
             _buildSection('Visit Information', [
-              _DetailRow(label: 'Gestation', value: '${visit.gestationWeeks} weeks'),
+              _DetailRow(
+                  label: 'Gestation', value: '${visit.gestationWeeks} weeks'),
               if (visit.healthWorkerName != null)
                 _DetailRow(label: 'Seen By', value: visit.healthWorkerName!),
             ]),
 
-            if (visit.weightKg != null || visit.bloodPressure != null || visit.haemoglobin != null)
+            if (visit.weightKg != null ||
+                visit.bloodPressure != null ||
+                visit.haemoglobin != null)
               _buildSection('Vital Signs', [
                 if (visit.weightKg != null)
                   _DetailRow(label: 'Weight', value: '${visit.weightKg} kg'),
                 if (visit.bloodPressure != null)
-                  _DetailRow(label: 'Blood Pressure', value: visit.bloodPressure!),
+                  _DetailRow(
+                      label: 'Blood Pressure', value: visit.bloodPressure!),
                 if (visit.muacCm != null)
                   _DetailRow(label: 'MUAC', value: '${visit.muacCm} cm'),
                 if (visit.haemoglobin != null)
-                  _DetailRow(label: 'Haemoglobin', value: '${visit.haemoglobin} g/dL'),
+                  _DetailRow(
+                      label: 'Haemoglobin', value: '${visit.haemoglobin} g/dL'),
                 if (visit.pallor == true)
-                  _DetailRow(label: 'Pallor', value: 'Present', isAlert: true),
+                  const _DetailRow(
+                      label: 'Pallor', value: 'Present', isAlert: true),
               ]),
 
             if (visit.fundalHeight != null || visit.foetalHeartRate != null)
               _buildSection('Baby\'s Health', [
                 if (visit.fundalHeight != null)
-                  _DetailRow(label: 'Fundal Height', value: '${visit.fundalHeight} cm'),
+                  _DetailRow(
+                      label: 'Fundal Height',
+                      value: '${visit.fundalHeight} cm'),
                 if (visit.presentation != null)
                   _DetailRow(label: 'Presentation', value: visit.presentation!),
                 if (visit.lie != null)
                   _DetailRow(label: 'Lie', value: visit.lie!),
                 if (visit.foetalHeartRate != null)
-                  _DetailRow(label: 'Heart Rate', value: '${visit.foetalHeartRate} bpm'),
+                  _DetailRow(
+                      label: 'Heart Rate',
+                      value: '${visit.foetalHeartRate} bpm'),
                 if (visit.foetalMovement == true)
-                  _DetailRow(label: 'Movement', value: 'Present'),
+                  const _DetailRow(label: 'Movement', value: 'Present'),
               ]),
 
             if (visit.urineProtein != null || visit.hivTested == true)
               _buildSection('Lab Tests', [
                 if (visit.urineProtein != null)
-                  _DetailRow(label: 'Urine Protein', value: visit.urineProtein!),
+                  _DetailRow(
+                      label: 'Urine Protein', value: visit.urineProtein!),
                 if (visit.urineGlucose != null)
-                  _DetailRow(label: 'Urine Glucose', value: visit.urineGlucose!),
+                  _DetailRow(
+                      label: 'Urine Glucose', value: visit.urineGlucose!),
                 if (visit.hivTested == true)
-                  _DetailRow(label: 'HIV Test', value: visit.hivResult ?? 'Tested'),
+                  _DetailRow(
+                      label: 'HIV Test', value: visit.hivResult ?? 'Tested'),
                 if (visit.syphilisTested == true)
-                  _DetailRow(label: 'Syphilis Test', value: visit.syphilisResult ?? 'Tested'),
+                  _DetailRow(
+                      label: 'Syphilis Test',
+                      value: visit.syphilisResult ?? 'Tested'),
               ]),
 
-            if (visit.tdInjectionGiven == true || visit.ifasTabletsGiven != null)
+            if (visit.tdInjectionGiven == true ||
+                visit.ifasTabletsGiven != null)
               _buildSection('Preventive Services', [
                 if (visit.tdInjectionGiven == true)
-                  _DetailRow(label: 'TD Injection', value: 'Given'),
+                  const _DetailRow(label: 'TD Injection', value: 'Given'),
                 if (visit.iptpSpGiven == true)
-                  _DetailRow(label: 'IPTp-SP', value: 'Given'),
+                  const _DetailRow(label: 'IPTp-SP', value: 'Given'),
                 if (visit.ifasTabletsGiven != null)
-                  _DetailRow(label: 'IFAS Tablets', value: '${visit.ifasTabletsGiven} tablets'),
+                  _DetailRow(
+                      label: 'IFAS Tablets',
+                      value: '${visit.ifasTabletsGiven} tablets'),
                 if (visit.lllinGiven == true)
-                  _DetailRow(label: 'LLIN (Mosquito Net)', value: 'Given'),
+                  const _DetailRow(
+                      label: 'LLIN (Mosquito Net)', value: 'Given'),
                 if (visit.dewormingGiven == true)
-                  _DetailRow(label: 'Deworming', value: 'Given'),
+                  const _DetailRow(label: 'Deworming', value: 'Given'),
               ]),
 
             if (visit.complaints != null || visit.diagnosis != null)
@@ -739,7 +768,8 @@ class _VisitDetailSheet extends StatelessWidget {
               _buildSection('Next Appointment', [
                 _DetailRow(
                   label: 'Date',
-                  value: DateFormat('EEEE, d MMMM yyyy').format(visit.nextVisitDate!),
+                  value: DateFormat('EEEE, d MMMM yyyy')
+                      .format(visit.nextVisitDate!),
                 ),
               ]),
 

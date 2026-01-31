@@ -42,7 +42,7 @@ class _RecordTTDoseScreenState extends ConsumerState<RecordTTDoseScreen> {
 
     try {
       final profile = ref.read(currentUserProfileProvider).value;
-      
+
       final immunization = MaternalImmunization(
         maternalProfileId: widget.patientId,
         patientName: widget.patient.clientName,
@@ -109,7 +109,7 @@ class _RecordTTDoseScreenState extends ConsumerState<RecordTTDoseScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             DropdownButtonFormField<int>(
-              value: _ttDose,
+              initialValue: _ttDose,
               decoration: const InputDecoration(
                 labelText: 'TT Dose *',
                 border: OutlineInputBorder(),
@@ -161,7 +161,8 @@ class _RecordTTDoseScreenState extends ConsumerState<RecordTTDoseScreen> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: _isLoading ? null : _saveTTDose,
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50)),
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Save TT Dose'),

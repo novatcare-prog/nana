@@ -25,10 +25,9 @@ class RecordLabResultScreen extends ConsumerStatefulWidget {
       _RecordLabResultScreenState();
 }
 
-class _RecordLabResultScreenState
-    extends ConsumerState<RecordLabResultScreen> {
+class _RecordLabResultScreenState extends ConsumerState<RecordLabResultScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   LabTestType _selectedTestType = LabTestType.hemoglobin;
   DateTime _testDate = DateTime.now();
   final _resultValueController = TextEditingController();
@@ -36,7 +35,7 @@ class _RecordLabResultScreenState
   final _referenceRangeController = TextEditingController();
   final _notesController = TextEditingController();
   bool _isAbnormal = false;
-  
+
   bool _isLoading = false;
 
   // Test templates based on MCH Handbook
@@ -111,7 +110,7 @@ class _RecordLabResultScreenState
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
-    
+
     if (picked != null) {
       setState(() {
         _testDate = picked;
@@ -136,15 +135,15 @@ class _RecordLabResultScreenState
         testName: template['name']!,
         testDate: _testDate,
         resultValue: _resultValueController.text.trim(),
-        resultUnit: _resultUnitController.text.trim().isEmpty 
-            ? null 
+        resultUnit: _resultUnitController.text.trim().isEmpty
+            ? null
             : _resultUnitController.text.trim(),
-        referenceRange: _referenceRangeController.text.trim().isEmpty 
-            ? null 
+        referenceRange: _referenceRangeController.text.trim().isEmpty
+            ? null
             : _referenceRangeController.text.trim(),
         isAbnormal: _isAbnormal,
-        notes: _notesController.text.trim().isEmpty 
-            ? null 
+        notes: _notesController.text.trim().isEmpty
+            ? null
             : _notesController.text.trim(),
         facilityId: profile!.facilityId!,
         facilityName: widget.patient.facilityName,
@@ -212,18 +211,18 @@ class _RecordLabResultScreenState
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Test Type
             Text(
               'Test Information',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             DropdownButtonFormField<LabTestType>(
-              value: _selectedTestType,
+              initialValue: _selectedTestType,
               decoration: const InputDecoration(
                 labelText: 'Test Type *',
                 border: OutlineInputBorder(),
@@ -244,14 +243,15 @@ class _RecordLabResultScreenState
                 }
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Test Date
             ListTile(
               leading: const Icon(Icons.calendar_today),
               title: const Text('Test Date'),
-              subtitle: Text(DateFormat('EEEE, MMM dd, yyyy').format(_testDate)),
+              subtitle:
+                  Text(DateFormat('EEEE, MMM dd, yyyy').format(_testDate)),
               trailing: const Icon(Icons.edit),
               onTap: _selectDate,
               shape: RoundedRectangleBorder(
@@ -259,16 +259,16 @@ class _RecordLabResultScreenState
                 side: BorderSide(color: Colors.grey.shade300),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Test Results
             Text(
               'Test Results',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             // Result Value
             TextFormField(
               controller: _resultValueController,
@@ -281,9 +281,9 @@ class _RecordLabResultScreenState
               validator: (value) =>
                   value?.isEmpty ?? true ? 'Result is required' : null,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Unit (optional)
             TextFormField(
               controller: _resultUnitController,
@@ -294,9 +294,9 @@ class _RecordLabResultScreenState
                 prefixIcon: Icon(Icons.straighten),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Reference Range
             TextFormField(
               controller: _referenceRangeController,
@@ -307,9 +307,9 @@ class _RecordLabResultScreenState
                 prefixIcon: Icon(Icons.bar_chart),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Is Abnormal Flag
             CheckboxListTile(
               title: const Text('Abnormal Result'),
@@ -325,9 +325,9 @@ class _RecordLabResultScreenState
                 side: BorderSide(color: Colors.grey.shade300),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Notes
             TextFormField(
               controller: _notesController,
@@ -339,9 +339,9 @@ class _RecordLabResultScreenState
               ),
               maxLines: 3,
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Save Button
             ElevatedButton(
               onPressed: _isLoading ? null : _saveLabResult,

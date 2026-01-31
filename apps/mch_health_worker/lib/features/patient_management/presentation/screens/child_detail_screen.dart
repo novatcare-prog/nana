@@ -39,7 +39,8 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
 
   @override
   Widget build(BuildContext context) {
-    final latestGrowthAsync = ref.watch(latestGrowthRecordProvider(widget.child.id));
+    final latestGrowthAsync =
+        ref.watch(latestGrowthRecordProvider(widget.child.id));
 
     return Scaffold(
       appBar: AppBar(
@@ -63,8 +64,8 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
           _buildProfileTab(),
           _buildGrowthTab(latestGrowthAsync),
           _buildImmunizationsTab(),
-           VitaminADewormingCardScreen(child: widget.child),
-           DevelopmentalMilestonesScreen(child: widget.child),
+          VitaminADewormingCardScreen(child: widget.child),
+          DevelopmentalMilestonesScreen(child: widget.child),
         ],
       ),
     );
@@ -87,7 +88,8 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: child.sex == 'Male' ? Colors.blue : Colors.pink,
+                    backgroundColor:
+                        child.sex == 'Male' ? Colors.blue : Colors.pink,
                     child: Icon(
                       child.sex == 'Male' ? Icons.boy : Icons.girl,
                       size: 48,
@@ -101,7 +103,10 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
                       children: [
                         Text(
                           child.childName,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -112,10 +117,11 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
                         ),
                         Text(
                           'Age: ${_calculateAge(child.dateOfBirth)}',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.blue.shade900,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.blue.shade900,
+                                  ),
                         ),
                       ],
                     ),
@@ -131,15 +137,17 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
           const SizedBox(height: 12),
           _buildInfoCard(context, [
             _buildInfoRow('Date of Birth', _formatDate(child.dateOfBirth)),
-            _buildInfoRow('Birth Weight', '${child.birthWeightGrams / 1000} kg'),
+            _buildInfoRow(
+                'Birth Weight', '${child.birthWeightGrams / 1000} kg'),
             _buildInfoRow('Birth Length', '${child.birthLengthCm} cm'),
             if (child.headCircumferenceCm != null)
-              _buildInfoRow('Head Circumference', '${child.headCircumferenceCm} cm'),
+              _buildInfoRow(
+                  'Head Circumference', '${child.headCircumferenceCm} cm'),
             _buildInfoRow('Place of Birth', child.placeOfBirth),
             if (child.healthFacilityName != null)
               _buildInfoRow('Health Facility', child.healthFacilityName!),
-            if (child.gestationAtBirthWeeks != null)
-              _buildInfoRow('Gestational Age', '${child.gestationAtBirthWeeks} weeks'),
+            _buildInfoRow(
+                'Gestational Age', '${child.gestationAtBirthWeeks} weeks'),
           ]),
           const SizedBox(height: 24),
 
@@ -219,7 +227,8 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
                     child: Center(
                       child: Column(
                         children: [
-                          Icon(Icons.height, size: 48, color: Colors.grey.shade400),
+                          Icon(Icons.height,
+                              size: 48, color: Colors.grey.shade400),
                           const SizedBox(height: 8),
                           Text(
                             'No measurements recorded yet',
@@ -285,7 +294,9 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
                           const SizedBox(width: 12),
                           Expanded(
                             child: _buildMeasurementTile(
-                              latestGrowth.lengthCm != null ? 'Length' : 'Height',
+                              latestGrowth.lengthCm != null
+                                  ? 'Length'
+                                  : 'Height',
                               '${latestGrowth.lengthCm ?? latestGrowth.heightCm ?? 'N/A'} cm',
                               Icons.height,
                               Colors.blue,

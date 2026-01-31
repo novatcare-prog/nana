@@ -12,12 +12,9 @@ class LabResultRepository {
     try {
       final json = labResult.toJson();
       json.remove('id'); // Let database generate the ID
-      
-      final response = await _supabase
-          .from('lab_results')
-          .insert(json)
-          .select()
-          .single();
+
+      final response =
+          await _supabase.from('lab_results').insert(json).select().single();
 
       return LabResult.fromJson(response);
     } catch (e) {
@@ -102,7 +99,7 @@ class LabResultRepository {
   Future<List<LabResult>> getRecentLabResults() async {
     try {
       final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
-      
+
       final response = await _supabase
           .from('lab_results')
           .select()
@@ -123,7 +120,7 @@ class LabResultRepository {
       if (labResult.id == null) {
         throw Exception('Lab result ID is required for update');
       }
-      
+
       final response = await _supabase
           .from('lab_results')
           .update(labResult.toJson())
@@ -150,16 +147,17 @@ class LabResultRepository {
   Future<Map<String, int>> getLabResultStatistics() async {
     try {
       final allResults = await _supabase.from('lab_results').select();
-      final results = (allResults as List)
-          .map((json) => LabResult.fromJson(json))
-          .toList();
+      final results =
+          (allResults as List).map((json) => LabResult.fromJson(json)).toList();
 
       final abnormal = results.where((r) => r.isAbnormal).length;
-      final pending = 0; // Add if you implement pending status
-      
+      const pending = 0; // Add if you implement pending status
+
       // Count by test type
-      final hemoglobin = results.where((r) => r.testType == LabTestType.hemoglobin).length;
-      final hiv = results.where((r) => r.testType == LabTestType.hivTest).length;
+      final hemoglobin =
+          results.where((r) => r.testType == LabTestType.hemoglobin).length;
+      final hiv =
+          results.where((r) => r.testType == LabTestType.hivTest).length;
 
       return {
         'total': results.length,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
-import 'package:uuid/uuid.dart'; 
+import 'package:uuid/uuid.dart';
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/providers/facility_providers.dart';
 import '../../../../core/utils/error_helper.dart';
@@ -17,7 +17,6 @@ class PatientRegistrationScreen extends ConsumerStatefulWidget {
 
 class _PatientRegistrationScreenState
     extends ConsumerState<PatientRegistrationScreen> {
-  
   // FIXED: Instead of one key, we need one for each step
   final List<GlobalKey<FormState>> _formKeys = [
     GlobalKey<FormState>(),
@@ -103,12 +102,12 @@ class _PatientRegistrationScreenState
   Future<void> _handleSubmit() async {
     // Only validate the final step's form key here
     if (_formKeys[3].currentState!.validate()) {
-      
       final selectedFacility = ref.read(selectedFacilityProvider);
-      
-      if (selectedFacility == null || selectedFacility.id == null || selectedFacility.id!.isEmpty) {
+
+      if (selectedFacility == null || selectedFacility.id.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('❌ Error: Facility ID missing. Restart process.')),
+          const SnackBar(
+              content: Text('❌ Error: Facility ID missing. Restart process.')),
         );
         return;
       }
@@ -120,8 +119,8 @@ class _PatientRegistrationScreenState
       try {
         final profile = MaternalProfile(
           id: const Uuid().v4(), // Generate UUID
-          
-          facilityId: selectedFacility.id!,
+
+          facilityId: selectedFacility.id,
           kmhflCode: _kmhflCodeController.text,
           facilityName: _facilityNameController.text,
           ancNumber: _ancNumberController.text,
@@ -136,9 +135,8 @@ class _PatientRegistrationScreenState
           telephone: _telephoneController.text.isEmpty
               ? null
               : _telephoneController.text,
-          county: _countyController.text.isEmpty
-              ? null
-              : _countyController.text,
+          county:
+              _countyController.text.isEmpty ? null : _countyController.text,
           subCounty: _subCountyController.text.isEmpty
               ? null
               : _subCountyController.text,
@@ -225,7 +223,7 @@ class _PatientRegistrationScreenState
         currentStep: _currentStep,
         onStepContinue: () {
           // --- FIXED VALIDATION LOGIC ---
-          
+
           // 1. Validate ONLY the current step's fields
           if (!_formKeys[_currentStep].currentState!.validate()) {
             return; // Stop if the current step is invalid
@@ -247,7 +245,7 @@ class _PatientRegistrationScreenState
           // 3. Extra Logic for Step 2 (Dates)
           // We check this here because Dates are not FormFields
           if (_currentStep == 2) {
-             if (_lmp == null || _edd == null) {
+            if (_lmp == null || _edd == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('⚠️ Please select LMP and EDD dates'),
@@ -311,25 +309,28 @@ class _PatientRegistrationScreenState
                   // Searchable Facility Selector
                   Consumer(
                     builder: (context, ref, child) {
-                      final selectedFacility = ref.watch(selectedFacilityProvider);
-                      
+                      final selectedFacility =
+                          ref.watch(selectedFacilityProvider);
+
                       return SearchableFacilitySelector(
                         selectedFacilityId: selectedFacility?.id,
                         labelText: 'Select Facility *',
                         onSelected: (facility) {
                           if (facility != null) {
-                            ref.read(selectedFacilityProvider.notifier).state = facility;
+                            ref.read(selectedFacilityProvider.notifier).state =
+                                facility;
                             _kmhflCodeController.text = facility.kmhflCode;
                             _facilityNameController.text = facility.name;
                           } else {
-                            ref.read(selectedFacilityProvider.notifier).state = null;
+                            ref.read(selectedFacilityProvider.notifier).state =
+                                null;
                             _kmhflCodeController.clear();
                             _facilityNameController.clear();
                           }
                         },
-                        validator: (value) => 
-                            ref.read(selectedFacilityProvider) == null 
-                                ? 'Please select a facility' 
+                        validator: (value) =>
+                            ref.read(selectedFacilityProvider) == null
+                                ? 'Please select a facility'
                                 : null,
                       );
                     },
@@ -353,7 +354,7 @@ class _PatientRegistrationScreenState
                       labelText: 'Facility Name',
                       border: OutlineInputBorder(),
                       filled: true,
-                      fillColor: Colors.black12, 
+                      fillColor: Colors.black12,
                     ),
                   ),
                   const SizedBox(height: 16),

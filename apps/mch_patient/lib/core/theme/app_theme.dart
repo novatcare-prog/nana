@@ -7,7 +7,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primaryPink,
         primaryContainer: AppColors.primaryPinkLight,
         secondary: AppColors.accentPurple,
@@ -21,7 +21,7 @@ class AppTheme {
         onError: AppColors.white,
       ),
       scaffoldBackgroundColor: AppColors.backgroundLight,
-      
+
       // AppBar Theme
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primaryPink,
@@ -34,7 +34,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      
+
       // Card Theme
       cardTheme: CardThemeData(
         color: AppColors.cardLight,
@@ -43,7 +43,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      
+
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -64,9 +64,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
-      
+
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -83,7 +84,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
@@ -94,13 +95,13 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Floating Action Button Theme
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryPink,
         foregroundColor: AppColors.white,
       ),
-      
+
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.white,
@@ -110,7 +111,7 @@ class AppTheme {
         elevation: 8,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
       ),
-      
+
       // Text Theme
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -179,7 +180,7 @@ class AppTheme {
           color: AppColors.textPrimaryLight,
         ),
       ),
-      
+
       // Divider Theme
       dividerTheme: const DividerThemeData(
         color: AppColors.dividerLight,
@@ -193,7 +194,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      colorScheme: ColorScheme.dark(
+      colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryPink,
         primaryContainer: AppColors.primaryPinkDark,
         secondary: AppColors.accentPurple,
@@ -207,7 +208,7 @@ class AppTheme {
         onError: AppColors.white,
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,
-      
+
       // AppBar Theme
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primaryPink,
@@ -220,7 +221,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      
+
       // Card Theme
       cardTheme: CardThemeData(
         color: AppColors.cardDark,
@@ -229,7 +230,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      
+
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -250,9 +251,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
-      
+
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -269,7 +271,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
@@ -280,13 +282,13 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Floating Action Button Theme
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryPink,
         foregroundColor: AppColors.white,
       ),
-      
+
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.cardDark,
@@ -296,7 +298,7 @@ class AppTheme {
         elevation: 8,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
       ),
-      
+
       // Text Theme
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -365,7 +367,7 @@ class AppTheme {
           color: AppColors.textPrimaryDark,
         ),
       ),
-      
+
       // Divider Theme
       dividerTheme: const DividerThemeData(
         color: AppColors.dividerDark,

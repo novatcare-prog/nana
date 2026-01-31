@@ -17,10 +17,12 @@ class ANCVisitRecordingScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ANCVisitRecordingScreen> createState() => _ANCVisitRecordingScreenState();
+  ConsumerState<ANCVisitRecordingScreen> createState() =>
+      _ANCVisitRecordingScreenState();
 }
 
-class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScreen> {
+class _ANCVisitRecordingScreenState
+    extends ConsumerState<ANCVisitRecordingScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
   bool _isSubmitting = false;
@@ -89,7 +91,8 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
   }
 
   Future<void> _loadNextContactNumber() async {
-    final nextContact = await ref.read(nextContactNumberProvider(widget.patientId).future);
+    final nextContact =
+        await ref.read(nextContactNumberProvider(widget.patientId).future);
     if (mounted) {
       setState(() {
         _contactNumber = nextContact;
@@ -113,6 +116,7 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
     _healthWorkerNameController.dispose();
     super.dispose();
   }
+
   Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -139,8 +143,9 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
             (double.tryParse(_haemoglobinController.text) ?? 12) < 11);
 
         // Check for Proteinuria
-        final bool hasProtein = _urineProtein != null && _urineProtein != 'Negative';
-        
+        final bool hasProtein =
+            _urineProtein != null && _urineProtein != 'Negative';
+
         final bool currentVisitIsHighRisk = isHighBP || isLowHB || hasProtein;
         // --- END OF RISK CALCULATION ---
 
@@ -150,24 +155,36 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
           contactNumber: _contactNumber!,
           visitDate: _visitDate,
           gestationWeeks: _gestationWeeks!,
-          
           isHighRisk: currentVisitIsHighRisk,
-
-          weightKg: _weightController.text.isEmpty ? null : double.parse(_weightController.text),
-          bloodPressure: _bloodPressureController.text.isEmpty ? null : _bloodPressureController.text,
-          muacCm: _muacController.text.isEmpty ? null : double.parse(_muacController.text),
-          haemoglobin: _haemoglobinController.text.isEmpty ? null : double.parse(_haemoglobinController.text),
+          weightKg: _weightController.text.isEmpty
+              ? null
+              : double.parse(_weightController.text),
+          bloodPressure: _bloodPressureController.text.isEmpty
+              ? null
+              : _bloodPressureController.text,
+          muacCm: _muacController.text.isEmpty
+              ? null
+              : double.parse(_muacController.text),
+          haemoglobin: _haemoglobinController.text.isEmpty
+              ? null
+              : double.parse(_haemoglobinController.text),
           pallor: _pallor,
-          fundalHeight: _fundalHeightController.text.isEmpty ? null : double.parse(_fundalHeightController.text),
+          fundalHeight: _fundalHeightController.text.isEmpty
+              ? null
+              : double.parse(_fundalHeightController.text),
           presentation: _presentation,
           lie: _lie,
-          foetalHeartRate: _foetalHeartRateController.text.isEmpty ? null : int.parse(_foetalHeartRateController.text),
+          foetalHeartRate: _foetalHeartRateController.text.isEmpty
+              ? null
+              : int.parse(_foetalHeartRateController.text),
           foetalMovement: _foetalMovement,
           urineProtein: _urineProtein,
           urineGlucose: _urineGlucose,
           tdInjectionGiven: _tdInjectionGiven,
           iptpSpGiven: _iptpSpGiven,
-          ifasTabletsGiven: _ifasTabletsController.text.isEmpty ? null : int.parse(_ifasTabletsController.text),
+          ifasTabletsGiven: _ifasTabletsController.text.isEmpty
+              ? null
+              : int.parse(_ifasTabletsController.text),
           lllinGiven: _lllinGiven,
           dewormingGiven: _dewormingGiven,
           hbTested: _hbTested,
@@ -175,12 +192,20 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
           hivResult: _hivResult,
           syphilisTested: _syphilisTested,
           syphilisResult: _syphilisResult,
-          complaints: _complaintsController.text.isEmpty ? null : _complaintsController.text,
-          diagnosis: _diagnosisController.text.isEmpty ? null : _diagnosisController.text,
-          treatment: _treatmentController.text.isEmpty ? null : _treatmentController.text,
+          complaints: _complaintsController.text.isEmpty
+              ? null
+              : _complaintsController.text,
+          diagnosis: _diagnosisController.text.isEmpty
+              ? null
+              : _diagnosisController.text,
+          treatment: _treatmentController.text.isEmpty
+              ? null
+              : _treatmentController.text,
           notes: _notesController.text.isEmpty ? null : _notesController.text,
           nextVisitDate: _nextVisitDate,
-          healthWorkerName: _healthWorkerNameController.text.isEmpty ? null : _healthWorkerNameController.text,
+          healthWorkerName: _healthWorkerNameController.text.isEmpty
+              ? null
+              : _healthWorkerNameController.text,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
@@ -211,9 +236,11 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    final nextContactAsync = ref.watch(nextContactNumberProvider(widget.patientId));
+    final nextContactAsync =
+        ref.watch(nextContactNumberProvider(widget.patientId));
 
     return Scaffold(
       appBar: AppBar(
@@ -286,7 +313,8 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                       tileColor: Colors.grey[50],
                     ),
                     error: (e, s) => ListTile(
-                      title: Text('Error', style: TextStyle(color: Colors.red[700])),
+                      title: Text('Error',
+                          style: TextStyle(color: Colors.red[700])),
                       subtitle: Text('$e'),
                       tileColor: Colors.red[50],
                     ),
@@ -298,7 +326,8 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                     trailing: const Icon(Icons.calendar_today),
                     onTap: () async {
                       // FIX: Safe fallback for null LMP
-                      final firstDate = widget.patient.lmp ?? DateTime.now().subtract(const Duration(days: 300));
+                      final firstDate = widget.patient.lmp ??
+                          DateTime.now().subtract(const Duration(days: 300));
                       final date = await showDatePicker(
                         context: context,
                         initialDate: _visitDate,
@@ -320,7 +349,9 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                   const SizedBox(height: 16),
                   ListTile(
                     title: const Text('Gestation'),
-                    subtitle: Text(_gestationWeeks != null ? '$_gestationWeeks weeks' : 'Calculating...'),
+                    subtitle: Text(_gestationWeeks != null
+                        ? '$_gestationWeeks weeks'
+                        : 'Calculating...'),
                     tileColor: Colors.grey[100],
                   ),
                 ],
@@ -334,7 +365,8 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Vital Signs:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Vital Signs:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -390,10 +422,12 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                   CheckboxListTile(
                     title: const Text('Pallor'),
                     value: _pallor,
-                    onChanged: (value) => setState(() => _pallor = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _pallor = value ?? false),
                   ),
                   const SizedBox(height: 16),
-                  const Text('Physical Examination:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Physical Examination:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _fundalHeightController,
@@ -405,29 +439,34 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _presentation,
+                    initialValue: _presentation,
                     decoration: const InputDecoration(
                       labelText: 'Presentation',
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Cephalic', child: Text('Cephalic')),
+                      DropdownMenuItem(
+                          value: 'Cephalic', child: Text('Cephalic')),
                       DropdownMenuItem(value: 'Breech', child: Text('Breech')),
-                      DropdownMenuItem(value: 'Transverse', child: Text('Transverse')),
+                      DropdownMenuItem(
+                          value: 'Transverse', child: Text('Transverse')),
                     ],
                     onChanged: (value) => setState(() => _presentation = value),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _lie,
+                    initialValue: _lie,
                     decoration: const InputDecoration(
                       labelText: 'Lie',
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Longitudinal', child: Text('Longitudinal')),
-                      DropdownMenuItem(value: 'Transverse', child: Text('Transverse')),
-                      DropdownMenuItem(value: 'Oblique', child: Text('Oblique')),
+                      DropdownMenuItem(
+                          value: 'Longitudinal', child: Text('Longitudinal')),
+                      DropdownMenuItem(
+                          value: 'Transverse', child: Text('Transverse')),
+                      DropdownMenuItem(
+                          value: 'Oblique', child: Text('Oblique')),
                     ],
                     onChanged: (value) => setState(() => _lie = value),
                   ),
@@ -443,7 +482,8 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                   CheckboxListTile(
                     title: const Text('Foetal Movement'),
                     value: _foetalMovement,
-                    onChanged: (value) => setState(() => _foetalMovement = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _foetalMovement = value ?? false),
                   ),
                 ],
               ),
@@ -456,16 +496,18 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Urine Test:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Urine Test:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: _urineProtein,
+                    initialValue: _urineProtein,
                     decoration: const InputDecoration(
                       labelText: 'Urine Protein',
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Negative', child: Text('Negative')),
+                      DropdownMenuItem(
+                          value: 'Negative', child: Text('Negative')),
                       DropdownMenuItem(value: 'Trace', child: Text('Trace')),
                       DropdownMenuItem(value: '+', child: Text('+')),
                       DropdownMenuItem(value: '++', child: Text('++')),
@@ -475,13 +517,14 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _urineGlucose,
+                    initialValue: _urineGlucose,
                     decoration: const InputDecoration(
                       labelText: 'Urine Glucose',
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Negative', child: Text('Negative')),
+                      DropdownMenuItem(
+                          value: 'Negative', child: Text('Negative')),
                       DropdownMenuItem(value: 'Trace', child: Text('Trace')),
                       DropdownMenuItem(value: '+', child: Text('+')),
                       DropdownMenuItem(value: '++', child: Text('++')),
@@ -492,53 +535,63 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                   const SizedBox(height: 16),
                   const Divider(),
                   const SizedBox(height: 8),
-                  const Text('Lab Tests:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Lab Tests:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   CheckboxListTile(
                     title: const Text('Haemoglobin Tested'),
                     value: _hbTested,
-                    onChanged: (value) => setState(() => _hbTested = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _hbTested = value ?? false),
                   ),
                   CheckboxListTile(
                     title: const Text('HIV Tested'),
                     value: _hivTested,
-                    onChanged: (value) => setState(() => _hivTested = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _hivTested = value ?? false),
                   ),
                   if (_hivTested)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: DropdownButtonFormField<String>(
-                        value: _hivResult,
+                        initialValue: _hivResult,
                         decoration: const InputDecoration(
                           labelText: 'HIV Result',
                           border: OutlineInputBorder(),
                         ),
                         items: const [
-                          DropdownMenuItem(value: 'Negative', child: Text('Negative')),
-                          DropdownMenuItem(value: 'Positive', child: Text('Positive')),
+                          DropdownMenuItem(
+                              value: 'Negative', child: Text('Negative')),
+                          DropdownMenuItem(
+                              value: 'Positive', child: Text('Positive')),
                         ],
-                        onChanged: (value) => setState(() => _hivResult = value),
+                        onChanged: (value) =>
+                            setState(() => _hivResult = value),
                       ),
                     ),
                   const SizedBox(height: 8),
                   CheckboxListTile(
                     title: const Text('Syphilis Tested'),
                     value: _syphilisTested,
-                    onChanged: (value) => setState(() => _syphilisTested = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _syphilisTested = value ?? false),
                   ),
                   if (_syphilisTested)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: DropdownButtonFormField<String>(
-                        value: _syphilisResult,
+                        initialValue: _syphilisResult,
                         decoration: const InputDecoration(
                           labelText: 'Syphilis Result',
                           border: OutlineInputBorder(),
                         ),
                         items: const [
-                          DropdownMenuItem(value: 'Negative', child: Text('Negative')),
-                          DropdownMenuItem(value: 'Positive', child: Text('Positive')),
+                          DropdownMenuItem(
+                              value: 'Negative', child: Text('Negative')),
+                          DropdownMenuItem(
+                              value: 'Positive', child: Text('Positive')),
                         ],
-                        onChanged: (value) => setState(() => _syphilisResult = value),
+                        onChanged: (value) =>
+                            setState(() => _syphilisResult = value),
                       ),
                     ),
                 ],
@@ -552,26 +605,31 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Services Given:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Services Given:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   CheckboxListTile(
                     title: const Text('TD Injection'),
                     value: _tdInjectionGiven,
-                    onChanged: (value) => setState(() => _tdInjectionGiven = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _tdInjectionGiven = value ?? false),
                   ),
                   CheckboxListTile(
                     title: const Text('IPTp-SP (Malaria)'),
                     value: _iptpSpGiven,
-                    onChanged: (value) => setState(() => _iptpSpGiven = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _iptpSpGiven = value ?? false),
                   ),
                   CheckboxListTile(
                     title: const Text('LLIN (Mosquito Net)'),
                     value: _lllinGiven,
-                    onChanged: (value) => setState(() => _lllinGiven = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _lllinGiven = value ?? false),
                   ),
                   CheckboxListTile(
                     title: const Text('Deworming'),
                     value: _dewormingGiven,
-                    onChanged: (value) => setState(() => _dewormingGiven = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _dewormingGiven = value ?? false),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -641,10 +699,12 @@ class _ANCVisitRecordingScreenState extends ConsumerState<ANCVisitRecordingScree
                     trailing: const Icon(Icons.calendar_today),
                     onTap: () async {
                       // FIX: Safe fallback for null EDD
-                      final lastDate = widget.patient.edd ?? DateTime.now().add(const Duration(days: 300));
+                      final lastDate = widget.patient.edd ??
+                          DateTime.now().add(const Duration(days: 300));
                       final date = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now().add(const Duration(days: 28)),
+                        initialDate:
+                            DateTime.now().add(const Duration(days: 28)),
                         firstDate: DateTime.now(),
                         lastDate: lastDate,
                       );

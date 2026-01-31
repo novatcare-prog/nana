@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
-import '../../../../core/providers/child_provider.dart';
+
 import '../../../../core/services/photo_upload_service.dart';
 import '../../../../core/utils/error_helper.dart';
 
@@ -24,7 +24,8 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: maternalProfileAsync.when(
-        data: (profile) => _buildContent(context, ref, user, profile, authController),
+        data: (profile) =>
+            _buildContent(context, ref, user, profile, authController),
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFFE91E63)),
         ),
@@ -41,11 +42,11 @@ class ProfileScreen extends ConsumerWidget {
     dynamic authController,
   ) {
     // Use profile data if available, fallback to auth user metadata
-    final userName = profile?.clientName ?? 
-        user?.userMetadata?['full_name'] as String? ?? 
+    final userName = profile?.clientName ??
+        user?.userMetadata?['full_name'] as String? ??
         'Mama';
-    final userPhone = profile?.telephone ?? 
-        user?.userMetadata?['phone'] as String? ?? 
+    final userPhone = profile?.telephone ??
+        user?.userMetadata?['phone'] as String? ??
         '+254 7XX XXX XXX';
     final ancNumber = profile?.ancNumber ?? 'Not registered';
     final facilityName = profile?.facilityName ?? 'No facility';
@@ -85,7 +86,7 @@ class ProfileScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 20),
-                    
+
                     // Avatar with Photo Upload
                     _ProfilePhotoWidget(
                       photoUrl: profile?.photoUrl,
@@ -95,9 +96,9 @@ class ProfileScreen extends ConsumerWidget {
                         ref.invalidate(currentMaternalProfileProvider);
                       },
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Name
                     Text(
                       userName,
@@ -107,25 +108,27 @@ class ProfileScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    
+
                     // Phone
                     Text(
                       userPhone,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // ANC Number Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.4)),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.4)),
                       ),
                       child: Text(
                         "ANC: $ancNumber",
@@ -137,22 +140,21 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Facility
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.local_hospital, 
-                          size: 14, 
-                          color: Colors.white.withOpacity(0.8)
-                        ),
+                        Icon(Icons.local_hospital,
+                            size: 14,
+                            color: Colors.white.withValues(alpha: 0.8)),
                         const SizedBox(width: 4),
                         Text(
                           facilityName,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 12,
                           ),
                         ),
@@ -169,20 +171,21 @@ class ProfileScreen extends ConsumerWidget {
         SliverList(
           delegate: SliverChildListDelegate([
             const SizedBox(height: 20),
-            
+
             // PERSONAL INFO SECTION
             if (profile != null) ...[
               const _SectionHeader(title: "PERSONAL INFORMATION"),
               _ProfileInfoCard(profile: profile),
               const SizedBox(height: 24),
-              
+
               // PREGNANCY INFO
               const _SectionHeader(title: "PREGNANCY INFORMATION"),
               _PregnancyInfoCard(profile: profile),
               const SizedBox(height: 24),
-              
+
               // EMERGENCY CONTACT
-              if (profile.nextOfKinName != null || profile.nextOfKinPhone != null) ...[
+              if (profile.nextOfKinName != null ||
+                  profile.nextOfKinPhone != null) ...[
                 const _SectionHeader(title: "EMERGENCY CONTACT"),
                 _EmergencyContactCard(profile: profile),
                 const SizedBox(height: 24),
@@ -208,6 +211,14 @@ class ProfileScreen extends ConsumerWidget {
                   subtitle: "View registered children",
                   onTap: () => context.go('/children'),
                 ),
+                const _Divider(),
+                _SettingsTile(
+                  icon: Icons.qr_code,
+                  color: Colors.blue,
+                  title: "Share Medical Records",
+                  subtitle: "Generate QR code for health workers",
+                  onTap: () => context.push('/share-records'),
+                ),
               ],
             ),
             const SizedBox(height: 24),
@@ -221,10 +232,12 @@ class ProfileScreen extends ConsumerWidget {
                   color: Colors.blue,
                   title: "Language / Lugha",
                   subtitle: "English",
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                  trailing: const Icon(Icons.arrow_forward_ios,
+                      size: 14, color: Colors.grey),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Language settings coming soon')),
+                      const SnackBar(
+                          content: Text('Language settings coming soon')),
                     );
                   },
                 ),
@@ -295,18 +308,20 @@ class ProfileScreen extends ConsumerWidget {
                   }
                 },
                 icon: const Icon(Icons.logout, color: Colors.red),
-                label: const Text("Sign Out", style: TextStyle(color: Colors.red)),
+                label:
+                    const Text("Sign Out", style: TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                   side: const BorderSide(color: Colors.red),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   backgroundColor: Colors.white,
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // VERSION INFO
             const Center(
               child: Text(
@@ -405,11 +420,12 @@ class _EmergencyNumber extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: color.withOpacity(0.1),
+        backgroundColor: color.withValues(alpha: 0.1),
         child: Icon(icon, color: color),
       ),
       title: Text(label),
-      subtitle: Text(number, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle:
+          Text(number, style: const TextStyle(fontWeight: FontWeight.bold)),
       trailing: IconButton(
         icon: const Icon(Icons.call, color: Colors.green),
         onPressed: () {
@@ -429,30 +445,43 @@ class _ProfileInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Column(
         children: [
-          _InfoRow(icon: Icons.badge, label: 'ID Number', value: profile.idNumber ?? 'Not provided'),
+          _InfoRow(
+              icon: Icons.badge,
+              label: 'ID Number',
+              value: profile.idNumber ?? 'Not provided'),
           const Divider(height: 20),
-          _InfoRow(icon: Icons.cake, label: 'Age', value: '${profile.age} years'),
+          _InfoRow(
+              icon: Icons.cake, label: 'Age', value: '${profile.age} years'),
           const Divider(height: 20),
-          _InfoRow(icon: Icons.location_on, label: 'County', value: profile.county ?? 'Not provided'),
+          _InfoRow(
+              icon: Icons.location_on,
+              label: 'County',
+              value: profile.county ?? 'Not provided'),
           const Divider(height: 20),
-          _InfoRow(icon: Icons.location_city, label: 'Sub-County', value: profile.subCounty ?? 'Not provided'),
+          _InfoRow(
+              icon: Icons.location_city,
+              label: 'Sub-County',
+              value: profile.subCounty ?? 'Not provided'),
         ],
       ),
     );
@@ -468,38 +497,54 @@ class _PregnancyInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Column(
         children: [
-          _InfoRow(icon: Icons.pregnant_woman, label: 'Gravida', value: '${profile.gravida ?? "--"}'),
+          _InfoRow(
+              icon: Icons.pregnant_woman,
+              label: 'Gravida',
+              value: '${profile.gravida ?? "--"}'),
           const Divider(height: 20),
-          _InfoRow(icon: Icons.child_friendly, label: 'Parity', value: '${profile.parity ?? "--"}'),
+          _InfoRow(
+              icon: Icons.child_friendly,
+              label: 'Parity',
+              value: '${profile.parity ?? "--"}'),
           if (profile.lmp != null) ...[
             const Divider(height: 20),
-            _InfoRow(icon: Icons.event, label: 'Last Period (LMP)', 
-              value: DateFormat('d MMM yyyy').format(profile.lmp!)),
+            _InfoRow(
+                icon: Icons.event,
+                label: 'Last Period (LMP)',
+                value: DateFormat('d MMM yyyy').format(profile.lmp!)),
           ],
           if (profile.edd != null) ...[
             const Divider(height: 20),
-            _InfoRow(icon: Icons.celebration, label: 'Due Date (EDD)', 
-              value: DateFormat('d MMM yyyy').format(profile.edd!)),
+            _InfoRow(
+                icon: Icons.celebration,
+                label: 'Due Date (EDD)',
+                value: DateFormat('d MMM yyyy').format(profile.edd!)),
           ],
           const Divider(height: 20),
-          _InfoRow(icon: Icons.bloodtype, label: 'Blood Group', value: profile.bloodGroup?.label ?? 'Not tested'),
+          _InfoRow(
+              icon: Icons.bloodtype,
+              label: 'Blood Group',
+              value: profile.bloodGroup?.label ?? 'Not tested'),
         ],
       ),
     );
@@ -515,27 +560,31 @@ class _EmergencyContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.red.shade700 : Colors.red.shade100),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+            color: isDark ? Colors.red.shade700 : Colors.red.shade100),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Column(
         children: [
           _InfoRow(
-            icon: Icons.person, 
-            label: 'Next of Kin', 
+            icon: Icons.person,
+            label: 'Next of Kin',
             value: profile.nextOfKinName ?? 'Not provided',
           ),
           if (profile.nextOfKinPhone != null) ...[
@@ -545,7 +594,7 @@ class _EmergencyContactCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.phone, color: Colors.green, size: 20),
@@ -578,8 +627,8 @@ class _EmergencyContactCard extends StatelessWidget {
           if (profile.nextOfKinRelationship != null) ...[
             const Divider(height: 20),
             _InfoRow(
-              icon: Icons.family_restroom, 
-              label: 'Relationship', 
+              icon: Icons.family_restroom,
+              label: 'Relationship',
               value: profile.nextOfKinRelationship!,
             ),
           ],
@@ -608,7 +657,7 @@ class _InfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.pink.withOpacity(0.1),
+            color: Colors.pink.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFFE91E63), size: 20),
@@ -620,11 +669,17 @@ class _InfoRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600]),
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).textTheme.bodySmall?.color ??
+                        Colors.grey[600]),
               ),
               Text(
                 value,
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color),
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
             ],
           ),
@@ -664,19 +719,22 @@ class _SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Column(children: children),
     );
@@ -708,16 +766,24 @@ class _SettingsTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: color, size: 20),
       ),
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Theme.of(context).textTheme.bodyLarge?.color)),
-      subtitle: subtitle != null 
-        ? Text(subtitle!, style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color)) 
-        : null,
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+      title: Text(title,
+          style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              color: Theme.of(context).textTheme.bodyLarge?.color)),
+      subtitle: subtitle != null
+          ? Text(subtitle!,
+              style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).textTheme.bodySmall?.color))
+          : null,
+      trailing: trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
     );
   }
 }
@@ -764,13 +830,15 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
               const Icon(Icons.info_outline, color: Colors.white),
               const SizedBox(width: 12),
               const Expanded(
-                child: Text('Photo upload is available on the mobile app. Download the app to update your photo.'),
+                child: Text(
+                    'Photo upload is available on the mobile app. Download the app to update your photo.'),
               ),
             ],
           ),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 4),
         ),
@@ -930,17 +998,20 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
       if (mounted) {
         String message = 'Could not upload photo. Please try again.';
         final error = e.toString().toLowerCase();
-        
-        if (error.contains('network') || error.contains('connection') || error.contains('socket')) {
+
+        if (error.contains('network') ||
+            error.contains('connection') ||
+            error.contains('socket')) {
           message = 'No internet connection. Please check and try again.';
         } else if (error.contains('storage') || error.contains('bucket')) {
           message = 'Storage not available. Please contact support.';
         } else if (error.contains('permission')) {
-          message = 'Camera or storage permission denied. Please enable in settings.';
+          message =
+              'Camera or storage permission denied. Please enable in settings.';
         } else if (error.contains('too large') || error.contains('size')) {
           message = 'Photo is too large. Please choose a smaller image.';
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -952,7 +1023,8 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
             ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -978,7 +1050,7 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
 
       if (success && widget.photoUrl != null) {
         await _photoService.deleteOldPhoto(widget.photoUrl);
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -1017,8 +1089,8 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
               backgroundImage: _getBackgroundImage(),
               child: _shouldShowInitial()
                   ? Text(
-                      widget.userName.isNotEmpty 
-                          ? widget.userName[0].toUpperCase() 
+                      widget.userName.isNotEmpty
+                          ? widget.userName[0].toUpperCase()
                           : "M",
                       style: const TextStyle(
                         fontSize: 36,
@@ -1029,7 +1101,7 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
                   : null,
             ),
           ),
-          
+
           // Loading Overlay
           if (_isUploading)
             Positioned.fill(
@@ -1050,7 +1122,7 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
                 ),
               ),
             ),
-          
+
           // Camera Icon Badge
           Positioned(
             right: 0,
@@ -1079,17 +1151,17 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
     if (_pendingImage != null) {
       return FileImage(_pendingImage!);
     }
-    
+
     // Show existing photo from URL
     if (widget.photoUrl != null && widget.photoUrl!.isNotEmpty) {
       return NetworkImage(widget.photoUrl!);
     }
-    
+
     return null;
   }
 
   bool _shouldShowInitial() {
-    return _pendingImage == null && 
-           (widget.photoUrl == null || widget.photoUrl!.isEmpty);
+    return _pendingImage == null &&
+        (widget.photoUrl == null || widget.photoUrl!.isEmpty);
   }
 }

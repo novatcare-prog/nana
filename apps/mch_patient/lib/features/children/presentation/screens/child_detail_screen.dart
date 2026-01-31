@@ -30,7 +30,7 @@ class ChildDetailScreen extends ConsumerWidget {
             ),
           );
         }
-        
+
         return _buildChildDetail(context, child);
       },
       loading: () => Scaffold(
@@ -51,7 +51,7 @@ class ChildDetailScreen extends ConsumerWidget {
 
   Widget _buildChildDetail(BuildContext context, ChildProfile child) {
     final isMale = child.sex.toLowerCase() == 'male';
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -78,7 +78,7 @@ class ChildDetailScreen extends ConsumerWidget {
             const SizedBox(height: 16),
 
             // Quick Actions
-            _QuickActionsSection(childId: child.id!),
+            _QuickActionsSection(childId: child.id),
 
             const SizedBox(height: 16),
 
@@ -192,7 +192,7 @@ class _ChildProfileHeader extends StatelessWidget {
     final now = DateTime.now();
     final difference = now.difference(birthDate);
     final days = difference.inDays;
-    
+
     if (days < 0) return 'Not born yet';
     if (days < 30) return '$days days old';
     if (days < 120) return '${(days / 7).floor()} weeks old';
@@ -200,7 +200,7 @@ class _ChildProfileHeader extends StatelessWidget {
       final months = (days / 30).floor();
       return '$months ${months == 1 ? 'month' : 'months'} old';
     }
-    
+
     final years = days ~/ 365;
     final remainingMonths = ((days % 365) / 30).floor();
     if (remainingMonths > 0) {
@@ -244,7 +244,7 @@ class _QuickStatsSection extends StatelessWidget {
             child: _StatCard(
               icon: Icons.circle_outlined,
               label: 'Head Circ.',
-              value: child.headCircumferenceCm != null 
+              value: child.headCircumferenceCm != null
                   ? '${child.headCircumferenceCm!.toStringAsFixed(1)} cm'
                   : 'N/A',
               color: AppColors.warning,
@@ -290,7 +290,7 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 11,
                 color: AppColors.grey600,
               ),
@@ -383,10 +383,12 @@ class _FamilyDetailsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Only show if there's family data
-    if (child.motherName == null && child.fatherName == null && child.guardianName == null) {
+    if (child.motherName == null &&
+        child.fatherName == null &&
+        child.guardianName == null) {
       return const SizedBox.shrink();
     }
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -481,15 +483,16 @@ class _HealthStatusSection extends StatelessWidget {
                   const Divider(height: 24),
                   _HealthIndicator(
                     label: 'TB Screening',
-                    value: child.tbScreened == true 
+                    value: child.tbScreened == true
                         ? (child.tbScreeningResult ?? 'Done')
                         : 'Not Screened',
-                    isPositive: child.tbScreeningResult?.toLowerCase() != 'positive',
+                    isPositive:
+                        child.tbScreeningResult?.toLowerCase() != 'positive',
                   ),
                   const Divider(height: 24),
                   _HealthIndicator(
                     label: 'Breastfeeding',
-                    value: child.breastfeedingWell == true 
+                    value: child.breastfeedingWell == true
                         ? 'Breastfeeding Well'
                         : child.breastfeedingPoorly == true
                             ? 'Breastfeeding Poorly'
@@ -564,7 +567,7 @@ class _HealthIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isPositive ? AppColors.success : AppColors.warning;
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

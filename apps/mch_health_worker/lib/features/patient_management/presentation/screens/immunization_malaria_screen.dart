@@ -20,7 +20,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final immunizationsAsync = ref.watch(patientImmunizationsProvider(patientId));
+    final immunizationsAsync =
+        ref.watch(patientImmunizationsProvider(patientId));
     final malariaAsync = ref.watch(patientMalariaRecordsProvider(patientId));
 
     return Scaffold(
@@ -60,7 +61,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.vaccines, color: Theme.of(context).colorScheme.primary),
+                  Icon(Icons.vaccines,
+                      color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   const Text(
                     'Tetanus Toxoid (TT)',
@@ -102,7 +104,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.health_and_safety, color: Theme.of(context).colorScheme.primary),
+                  Icon(Icons.health_and_safety,
+                      color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   const Text(
                     'Malaria Prevention (IPTp)',
@@ -140,7 +143,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTTSection(BuildContext context, List<MaternalImmunization> immunizations) {
+  Widget _buildTTSection(
+      BuildContext context, List<MaternalImmunization> immunizations) {
     if (immunizations.isEmpty) {
       return Card(
         child: Padding(
@@ -173,8 +177,9 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
   }
 
   Widget _buildTTProgress(List<MaternalImmunization> immunizations) {
-    final maxDose = immunizations.map((e) => e.ttDose).reduce((a, b) => a > b ? a : b);
-    
+    final maxDose =
+        immunizations.map((e) => e.ttDose).reduce((a, b) => a > b ? a : b);
+
     return Card(
       color: Colors.green.shade50,
       child: Padding(
@@ -240,7 +245,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMalariaSection(BuildContext context, List<MalariaPreventionRecord> records) {
+  Widget _buildMalariaSection(
+      BuildContext context, List<MalariaPreventionRecord> records) {
     if (records.isEmpty) {
       return Card(
         child: Padding(
@@ -248,7 +254,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
           child: Center(
             child: Column(
               children: [
-                Icon(Icons.health_and_safety, size: 48, color: Colors.grey[400]),
+                Icon(Icons.health_and_safety,
+                    size: 48, color: Colors.grey[400]),
                 const SizedBox(height: 8),
                 Text(
                   'No IPTp doses recorded',
@@ -314,14 +321,15 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
             if (hasITN) ...[
               const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.green.shade100,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(Icons.check_circle, size: 16, color: Colors.green),
                     SizedBox(width: 4),
                     Text('ITN Provided', style: TextStyle(fontSize: 12)),

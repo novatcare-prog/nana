@@ -52,7 +52,8 @@ class ChildbirthRecordRepository {
   }
 
   /// Get childbirth records for a patient
-  Future<List<ChildbirthRecord>> getRecordsByPatientId(String maternalProfileId) async {
+  Future<List<ChildbirthRecord>> getRecordsByPatientId(
+      String maternalProfileId) async {
     try {
       final response = await _supabase
           .from('childbirth_records')
@@ -102,10 +103,7 @@ class ChildbirthRecordRepository {
   /// Delete childbirth record
   Future<void> deleteRecord(String id) async {
     try {
-      await _supabase
-          .from('childbirth_records')
-          .delete()
-          .eq('id', id);
+      await _supabase.from('childbirth_records').delete().eq('id', id);
     } catch (e) {
       throw Exception('Failed to delete childbirth record: $e');
     }
@@ -119,7 +117,8 @@ class ChildProfileRepository {
   ChildProfileRepository(this._supabase);
 
   /// Get all children for a mother
-  Future<List<ChildProfile>> getChildrenByMotherId(String maternalProfileId) async {
+  Future<List<ChildProfile>> getChildrenByMotherId(
+      String maternalProfileId) async {
     try {
       final response = await _supabase
           .from('child_profiles')
@@ -139,11 +138,8 @@ class ChildProfileRepository {
   /// Get single child profile
   Future<ChildProfile?> getChildById(String id) async {
     try {
-      final response = await _supabase
-          .from('child_profiles')
-          .select()
-          .eq('id', id)
-          .single();
+      final response =
+          await _supabase.from('child_profiles').select().eq('id', id).single();
 
       return ChildProfile.fromJson(response);
     } catch (e) {
@@ -154,14 +150,10 @@ class ChildProfileRepository {
   /// Update child profile
   Future<ChildProfile> updateChild(ChildProfile child) async {
     try {
-      if (child.id == null) {
-        throw Exception('Child ID is required for update');
-      }
-
       final response = await _supabase
           .from('child_profiles')
           .update(child.toJson())
-          .eq('id', child.id!)
+          .eq('id', child.id)
           .select()
           .single();
 
@@ -179,11 +171,8 @@ class ChildProfileRepository {
       json.remove('created_at');
       json.remove('updated_at');
 
-      final response = await _supabase
-          .from('child_profiles')
-          .insert(json)
-          .select()
-          .single();
+      final response =
+          await _supabase.from('child_profiles').insert(json).select().single();
 
       return ChildProfile.fromJson(response);
     } catch (e) {
@@ -211,10 +200,10 @@ class ChildProfileRepository {
   /// Deactivate child profile (soft delete)
   Future<void> deactivateChild(String id) async {
     try {
-      await _supabase
-          .from('child_profiles')
-          .update({'is_active': false, 'updated_at': DateTime.now().toIso8601String()})
-          .eq('id', id);
+      await _supabase.from('child_profiles').update({
+        'is_active': false,
+        'updated_at': DateTime.now().toIso8601String()
+      }).eq('id', id);
     } catch (e) {
       throw Exception('Failed to deactivate child: $e');
     }
@@ -223,10 +212,7 @@ class ChildProfileRepository {
   /// Delete child profile (hard delete)
   Future<void> deleteChild(String id) async {
     try {
-      await _supabase
-          .from('child_profiles')
-          .delete()
-          .eq('id', id);
+      await _supabase.from('child_profiles').delete().eq('id', id);
     } catch (e) {
       throw Exception('Failed to delete child: $e');
     }

@@ -64,3 +64,6 @@ export 'src/data/repositories/developmental_milestone_repository.dart';
 // Maternal Health - Postnatal Care
 export 'src/models/maternal/postnatal_visit.dart';
 export 'src/data/repositories/postnatal_visit_repository.dart';
+
+// Sharing
+export 'src/models/sharing/shared_patient_data.dart';

@@ -20,41 +20,41 @@ class AddMilestoneScreen extends ConsumerStatefulWidget {
 
 class _AddMilestoneScreenState extends ConsumerState<AddMilestoneScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   DateTime _assessmentDate = DateTime.now();
-  
+
   // Motor Skills
   bool _motorGrossAppropriate = true;
   String _motorGrossNotes = '';
   bool _motorFineAppropriate = true;
   String _motorFineNotes = '';
-  
+
   // Language
   bool _languageAppropriate = true;
   String _languageNotes = '';
-  
+
   // Social/Emotional
   bool _socialAppropriate = true;
   String _socialNotes = '';
-  
+
   // Cognitive
   bool _cognitiveAppropriate = true;
   String _cognitiveNotes = '';
-  
+
   // Red Flags
   bool _redFlagsPresent = false;
   String _redFlagsDescription = '';
-  
+
   // Intervention
   bool _interventionNeeded = false;
   String _interventionPlan = '';
   bool _referralMade = false;
   String _referralTo = '';
-  
+
   // Overall
   String _overallStatus = 'On Track';
   String _generalNotes = '';
-  
+
   bool _isLoading = false;
 
   int get _ageInMonths {
@@ -74,21 +74,25 @@ class _AddMilestoneScreenState extends ConsumerState<AddMilestoneScreen> {
 
     try {
       final userProfile = ref.read(currentUserProfileProvider).value;
-      
+
       // Calculate next assessment date (based on age)
       DateTime? nextAssessmentDate;
       if (_ageInMonths < 3) {
         // Next assessment in 1 month for young infants
-        nextAssessmentDate = DateTime(_assessmentDate.year, _assessmentDate.month + 1, _assessmentDate.day);
+        nextAssessmentDate = DateTime(_assessmentDate.year,
+            _assessmentDate.month + 1, _assessmentDate.day);
       } else if (_ageInMonths < 12) {
         // Next assessment in 3 months
-        nextAssessmentDate = DateTime(_assessmentDate.year, _assessmentDate.month + 3, _assessmentDate.day);
+        nextAssessmentDate = DateTime(_assessmentDate.year,
+            _assessmentDate.month + 3, _assessmentDate.day);
       } else if (_ageInMonths < 24) {
         // Next assessment in 6 months
-        nextAssessmentDate = DateTime(_assessmentDate.year, _assessmentDate.month + 6, _assessmentDate.day);
+        nextAssessmentDate = DateTime(_assessmentDate.year,
+            _assessmentDate.month + 6, _assessmentDate.day);
       } else {
         // Next assessment in 12 months for older children
-        nextAssessmentDate = DateTime(_assessmentDate.year + 1, _assessmentDate.month, _assessmentDate.day);
+        nextAssessmentDate = DateTime(_assessmentDate.year + 1,
+            _assessmentDate.month, _assessmentDate.day);
       }
 
       final milestone = DevelopmentalMilestone(
@@ -108,11 +112,16 @@ class _AddMilestoneScreenState extends ConsumerState<AddMilestoneScreen> {
         cognitiveAppropriate: _cognitiveAppropriate,
         cognitiveNotes: _cognitiveNotes.isNotEmpty ? _cognitiveNotes : null,
         redFlagsPresent: _redFlagsPresent,
-        redFlagsDescription: _redFlagsPresent && _redFlagsDescription.isNotEmpty ? _redFlagsDescription : null,
+        redFlagsDescription: _redFlagsPresent && _redFlagsDescription.isNotEmpty
+            ? _redFlagsDescription
+            : null,
         interventionNeeded: _interventionNeeded,
-        interventionPlan: _interventionNeeded && _interventionPlan.isNotEmpty ? _interventionPlan : null,
+        interventionPlan: _interventionNeeded && _interventionPlan.isNotEmpty
+            ? _interventionPlan
+            : null,
         referralMade: _referralMade,
-        referralTo: _referralMade && _referralTo.isNotEmpty ? _referralTo : null,
+        referralTo:
+            _referralMade && _referralTo.isNotEmpty ? _referralTo : null,
         nextAssessmentDate: nextAssessmentDate,
         overallStatus: _overallStatus,
         generalNotes: _generalNotes.isNotEmpty ? _generalNotes : null,
@@ -169,7 +178,8 @@ class _AddMilestoneScreenState extends ConsumerState<AddMilestoneScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('DOB: ${DateFormat('dd/MM/yyyy').format(widget.child.dateOfBirth)}'),
+                    Text(
+                        'DOB: ${DateFormat('dd/MM/yyyy').format(widget.child.dateOfBirth)}'),
                     Text('Age: $_ageInMonths months ($_ageInWeeks weeks)'),
                   ],
                 ),
@@ -182,7 +192,8 @@ class _AddMilestoneScreenState extends ConsumerState<AddMilestoneScreen> {
               child: ListTile(
                 leading: Icon(Icons.calendar_today, color: Colors.purple[700]),
                 title: const Text('Assessment Date'),
-                subtitle: Text(DateFormat('dd/MM/yyyy').format(_assessmentDate)),
+                subtitle:
+                    Text(DateFormat('dd/MM/yyyy').format(_assessmentDate)),
                 trailing: const Icon(Icons.edit),
                 onTap: () async {
                   final date = await showDatePicker(
@@ -389,14 +400,19 @@ class _AddMilestoneScreenState extends ConsumerState<AddMilestoneScreen> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
-                      value: _overallStatus,
+                      initialValue: _overallStatus,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'On Track', child: Text('On Track')),
-                        DropdownMenuItem(value: 'Needs Monitoring', child: Text('Needs Monitoring')),
-                        DropdownMenuItem(value: 'Needs Intervention', child: Text('Needs Intervention')),
+                        DropdownMenuItem(
+                            value: 'On Track', child: Text('On Track')),
+                        DropdownMenuItem(
+                            value: 'Needs Monitoring',
+                            child: Text('Needs Monitoring')),
+                        DropdownMenuItem(
+                            value: 'Needs Intervention',
+                            child: Text('Needs Intervention')),
                       ],
                       onChanged: (value) {
                         setState(() => _overallStatus = value!);

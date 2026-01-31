@@ -56,7 +56,8 @@ class GrowthChartsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, ChildProfile child, List<GrowthRecord> records) {
+  Widget _buildContent(
+      BuildContext context, ChildProfile child, List<GrowthRecord> records) {
     if (records.isEmpty) {
       return Center(
         child: Padding(
@@ -70,7 +71,8 @@ class GrowthChartsScreen extends ConsumerWidget {
                   color: Colors.grey.shade100,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.show_chart, size: 48, color: Colors.grey.shade400),
+                child: Icon(Icons.show_chart,
+                    size: 48, color: Colors.grey.shade400),
               ),
               const SizedBox(height: 24),
               Text(
@@ -85,7 +87,9 @@ class GrowthChartsScreen extends ConsumerWidget {
               Text(
                 'Growth measurements will appear here after your child\'s health checkups.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                    fontSize: 14),
               ),
             ],
           ),
@@ -94,7 +98,8 @@ class GrowthChartsScreen extends ConsumerWidget {
     }
 
     // Calculate age in months
-    final ageInMonths = DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
+    final ageInMonths =
+        DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
 
     // Get the latest record for summary
     final latestRecord = records.first;
@@ -148,7 +153,7 @@ class _GrowthSummaryHeader extends StatelessWidget {
     // Determine nutritional status color
     Color statusColor = Colors.green;
     String statusText = latestRecord.nutritionalStatus ?? 'Normal';
-    
+
     if (latestRecord.edemaPresent) {
       statusColor = Colors.red;
       statusText = 'Needs Attention';
@@ -183,7 +188,7 @@ class _GrowthSummaryHeader extends StatelessWidget {
             '$ageInMonths months old',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 20),
@@ -201,8 +206,10 @@ class _GrowthSummaryHeader extends StatelessWidget {
               Expanded(
                 child: _StatItem(
                   icon: Icons.height,
-                  label: latestRecord.measuredLying == true ? 'Length' : 'Height',
-                  value: '${(latestRecord.lengthCm ?? latestRecord.heightCm ?? 0).toStringAsFixed(1)} cm',
+                  label:
+                      latestRecord.measuredLying == true ? 'Length' : 'Height',
+                  value:
+                      '${(latestRecord.lengthCm ?? latestRecord.heightCm ?? 0).toStringAsFixed(1)} cm',
                 ),
               ),
               if (latestRecord.headCircumferenceCm != null)
@@ -210,7 +217,8 @@ class _GrowthSummaryHeader extends StatelessWidget {
                   child: _StatItem(
                     icon: Icons.circle_outlined,
                     label: 'Head',
-                    value: '${latestRecord.headCircumferenceCm!.toStringAsFixed(1)} cm',
+                    value:
+                        '${latestRecord.headCircumferenceCm!.toStringAsFixed(1)} cm',
                   ),
                 ),
             ],
@@ -222,9 +230,9 @@ class _GrowthSummaryHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.8),
+              color: statusColor.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.8)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -255,7 +263,7 @@ class _GrowthSummaryHeader extends StatelessWidget {
             'Last measured on ${DateFormat('d MMM yyyy').format(latestRecord.measurementDate)}',
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -294,7 +302,7 @@ class _StatItem extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 11,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -419,7 +427,7 @@ class _GrowthIndicatorRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: statusColor.withOpacity(0.8),
+            color: statusColor.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -485,7 +493,7 @@ class _MuacIndicatorRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: statusColor.withOpacity(0.8),
+            color: statusColor.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -516,8 +524,10 @@ class _GrowthChartSection extends StatelessWidget {
 
     // Get weight trend data (last 6 records)
     final recentRecords = records.take(6).toList().reversed.toList();
-    final maxWeight = recentRecords.map((r) => r.weightKg).reduce((a, b) => a > b ? a : b);
-    final minWeight = recentRecords.map((r) => r.weightKg).reduce((a, b) => a < b ? a : b);
+    final maxWeight =
+        recentRecords.map((r) => r.weightKg).reduce((a, b) => a > b ? a : b);
+    final minWeight =
+        recentRecords.map((r) => r.weightKg).reduce((a, b) => a < b ? a : b);
     final range = maxWeight - minWeight;
 
     return Padding(
@@ -545,7 +555,8 @@ class _GrowthChartSection extends StatelessWidget {
                       children: recentRecords.asMap().entries.map((entry) {
                         final record = entry.value;
                         final normalizedHeight = range > 0
-                            ? ((record.weightKg - minWeight) / range * 0.8) + 0.2
+                            ? ((record.weightKg - minWeight) / range * 0.8) +
+                                0.2
                             : 0.5;
 
                         return Expanded(
@@ -615,7 +626,9 @@ class _GrowthHistorySection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          ...records.take(5).map((record) => _GrowthHistoryCard(record: record)),
+          ...records
+              .take(5)
+              .map((record) => _GrowthHistoryCard(record: record)),
           if (records.length > 5)
             Center(
               child: TextButton(
@@ -652,7 +665,7 @@ class _GrowthHistoryCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      color: alertColor?.withOpacity(0.8),
+      color: alertColor?.withValues(alpha: 0.8),
       shape: alertColor != null
           ? RoundedRectangleBorder(
               side: BorderSide(color: alertColor),
@@ -668,7 +681,7 @@ class _GrowthHistoryCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: const Color(0xFF2196F3).withOpacity(0.8),
+                color: const Color(0xFF2196F3).withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(

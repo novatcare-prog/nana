@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
-import 'package:uuid/uuid.dart'; 
+import 'package:uuid/uuid.dart';
 import '../../../../core/providers/childbirth_providers.dart';
 
 /// Record Delivery Screen - MCH Handbook Page 15
@@ -16,7 +16,8 @@ class RecordDeliveryScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<RecordDeliveryScreen> createState() => _RecordDeliveryScreenState();
+  ConsumerState<RecordDeliveryScreen> createState() =>
+      _RecordDeliveryScreenState();
 }
 
 class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
@@ -108,17 +109,25 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         maternalProfileId: widget.patientId,
         deliveryDate: _deliveryDate,
         deliveryTime: _deliveryTimeController.text,
-        durationOfPregnancyWeeks: int.parse(_durationOfPregnancyController.text),
+        durationOfPregnancyWeeks:
+            int.parse(_durationOfPregnancyController.text),
         placeOfDelivery: _placeOfDelivery,
-        healthFacilityName: _facilityNameController.text.isEmpty ? null : _facilityNameController.text,
+        healthFacilityName: _facilityNameController.text.isEmpty
+            ? null
+            : _facilityNameController.text,
         attendant: _attendant,
         modeOfDelivery: _modeOfDelivery,
         skinToSkinImmediate: _skinToSkin,
-        apgarScore1Min: _apgar1Controller.text.isEmpty ? null : _apgar1Controller.text,
-        apgarScore5Min: _apgar5Controller.text.isEmpty ? null : _apgar5Controller.text,
-        apgarScore10Min: _apgar10Controller.text.isEmpty ? null : _apgar10Controller.text,
+        apgarScore1Min:
+            _apgar1Controller.text.isEmpty ? null : _apgar1Controller.text,
+        apgarScore5Min:
+            _apgar5Controller.text.isEmpty ? null : _apgar5Controller.text,
+        apgarScore10Min:
+            _apgar10Controller.text.isEmpty ? null : _apgar10Controller.text,
         resuscitationDone: _resuscitation,
-        bloodLossMl: _bloodLossController.text.isEmpty ? null : double.parse(_bloodLossController.text),
+        bloodLossMl: _bloodLossController.text.isEmpty
+            ? null
+            : double.parse(_bloodLossController.text),
         preEclampsia: _preEclampsia,
         eclampsia: _eclampsia,
         pph: _pph,
@@ -129,11 +138,15 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         misoprostolGiven: _misoprostol,
         heatStableCarbetocin: _carbetocin,
         haartGiven: _haart,
-        haartRegimen: _haartRegimenController.text.isEmpty ? null : _haartRegimenController.text,
+        haartRegimen: _haartRegimenController.text.isEmpty
+            ? null
+            : _haartRegimenController.text,
         otherDrugs: null,
         birthWeightGrams: double.parse(_birthWeightController.text),
         birthLengthCm: double.parse(_birthLengthController.text),
-        headCircumferenceCm: _headCircumferenceController.text.isEmpty ? null : double.parse(_headCircumferenceController.text),
+        headCircumferenceCm: _headCircumferenceController.text.isEmpty
+            ? null
+            : double.parse(_headCircumferenceController.text),
         babyCondition: _babyCondition,
         chxGiven: _chx,
         vitaminKGiven: _vitaminK,
@@ -142,7 +155,9 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         arvProphylaxisGiven: _arvProphylaxis,
         earlyInitiationBreastfeeding: _earlyBreastfeeding,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
-        conductedBy: _conductedByController.text.isEmpty ? null : _conductedByController.text,
+        conductedBy: _conductedByController.text.isEmpty
+            ? null
+            : _conductedByController.text,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -154,18 +169,18 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         childName: _childNameController.text,
         sex: _babySex,
         dateOfBirth: _deliveryDate,
-        
+
         // Required parameters that were missing:
         dateFirstSeen: _deliveryDate,
         gestationAtBirthWeeks: int.parse(_durationOfPregnancyController.text),
 
         birthWeightGrams: double.parse(_birthWeightController.text),
         birthLengthCm: double.parse(_birthLengthController.text),
-        headCircumferenceCm: _headCircumferenceController.text.isEmpty 
-            ? null 
+        headCircumferenceCm: _headCircumferenceController.text.isEmpty
+            ? null
             : double.parse(_headCircumferenceController.text),
         placeOfBirth: _placeOfDelivery,
-        
+
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -269,7 +284,8 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         children: [
           ListTile(
             title: const Text('Delivery Date *'),
-            subtitle: Text("${_deliveryDate.day}/${_deliveryDate.month}/${_deliveryDate.year}"),
+            subtitle: Text(
+                "${_deliveryDate.day}/${_deliveryDate.month}/${_deliveryDate.year}"),
             trailing: const Icon(Icons.calendar_today),
             onTap: () async {
               final date = await showDatePicker(
@@ -305,13 +321,14 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _placeOfDelivery,
+            initialValue: _placeOfDelivery,
             decoration: const InputDecoration(
               labelText: 'Place of Delivery *',
               border: OutlineInputBorder(),
             ),
             items: ['Health facility', 'Home', 'Other']
-                .map((place) => DropdownMenuItem(value: place, child: Text(place)))
+                .map((place) =>
+                    DropdownMenuItem(value: place, child: Text(place)))
                 .toList(),
             onChanged: (value) => setState(() => _placeOfDelivery = value!),
           ),
@@ -326,7 +343,7 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
             ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _attendant,
+            initialValue: _attendant,
             decoration: const InputDecoration(
               labelText: 'Attendant',
               border: OutlineInputBorder(),
@@ -338,7 +355,7 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _modeOfDelivery,
+            initialValue: _modeOfDelivery,
             decoration: const InputDecoration(
               labelText: 'Mode of Delivery *',
               border: OutlineInputBorder(),
@@ -366,14 +383,16 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
             onChanged: (value) => setState(() => _skinToSkin = value ?? false),
           ),
           const SizedBox(height: 16),
-          const Text('APGAR Scores:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('APGAR Scores:',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: TextFormField(
                   controller: _apgar1Controller,
-                  decoration: const InputDecoration(labelText: '1 Min', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                      labelText: '1 Min', border: OutlineInputBorder()),
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -381,7 +400,8 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _apgar5Controller,
-                  decoration: const InputDecoration(labelText: '5 Min', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                      labelText: '5 Min', border: OutlineInputBorder()),
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -389,7 +409,8 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _apgar10Controller,
-                  decoration: const InputDecoration(labelText: '10 Min', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                      labelText: '10 Min', border: OutlineInputBorder()),
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -399,19 +420,23 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
           CheckboxListTile(
             title: const Text('Resuscitation Done'),
             value: _resuscitation,
-            onChanged: (value) => setState(() => _resuscitation = value ?? false),
+            onChanged: (value) =>
+                setState(() => _resuscitation = value ?? false),
           ),
           TextFormField(
             controller: _bloodLossController,
-            decoration: const InputDecoration(labelText: 'Blood Loss (ml)', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Blood Loss (ml)', border: OutlineInputBorder()),
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 16),
-          const Text('Complications:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Complications:',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           CheckboxListTile(
             title: const Text('Pre-eclampsia'),
             value: _preEclampsia,
-            onChanged: (value) => setState(() => _preEclampsia = value ?? false),
+            onChanged: (value) =>
+                setState(() => _preEclampsia = value ?? false),
           ),
           CheckboxListTile(
             title: const Text('Eclampsia'),
@@ -426,10 +451,12 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
           CheckboxListTile(
             title: const Text('Obstructed Labour'),
             value: _obstructedLabour,
-            onChanged: (value) => setState(() => _obstructedLabour = value ?? false),
+            onChanged: (value) =>
+                setState(() => _obstructedLabour = value ?? false),
           ),
           const SizedBox(height: 16),
-          const Text('Drugs Administered:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Drugs Administered:',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           CheckboxListTile(
             title: const Text('Oxytocin'),
             value: _oxytocin,
@@ -455,7 +482,8 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextFormField(
                 controller: _haartRegimenController,
-                decoration: const InputDecoration(labelText: 'HAART Regimen', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'HAART Regimen', border: OutlineInputBorder()),
               ),
             ),
         ],
@@ -472,38 +500,48 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         children: [
           TextFormField(
             controller: _childNameController,
-            decoration: const InputDecoration(labelText: 'Baby Name *', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Baby Name *', border: OutlineInputBorder()),
             validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _babySex,
-            decoration: const InputDecoration(labelText: 'Sex *', border: OutlineInputBorder()),
-            items: ['Male', 'Female'].map((sex) => DropdownMenuItem(value: sex, child: Text(sex))).toList(),
+            initialValue: _babySex,
+            decoration: const InputDecoration(
+                labelText: 'Sex *', border: OutlineInputBorder()),
+            items: ['Male', 'Female']
+                .map((sex) => DropdownMenuItem(value: sex, child: Text(sex)))
+                .toList(),
             onChanged: (value) => setState(() => _babySex = value!),
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _birthWeightController,
-            decoration: const InputDecoration(labelText: 'Birth Weight (grams) *', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Birth Weight (grams) *',
+                border: OutlineInputBorder()),
             keyboardType: TextInputType.number,
             validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _birthLengthController,
-            decoration: const InputDecoration(labelText: 'Birth Length (cm) *', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Birth Length (cm) *', border: OutlineInputBorder()),
             keyboardType: TextInputType.number,
             validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _headCircumferenceController,
-            decoration: const InputDecoration(labelText: 'Head Circumference (cm)', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Head Circumference (cm)',
+                border: OutlineInputBorder()),
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 16),
-          const Text('Drugs Given to Baby:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Drugs Given to Baby:',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           CheckboxListTile(
             title: const Text('CHX (Chlorhexidine 7.1%)'),
             value: _chx,
@@ -528,18 +566,21 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
           CheckboxListTile(
             title: const Text('Early Breastfeeding (Within 1 hour)'),
             value: _earlyBreastfeeding,
-            onChanged: (value) => setState(() => _earlyBreastfeeding = value ?? false),
+            onChanged: (value) =>
+                setState(() => _earlyBreastfeeding = value ?? false),
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _notesController,
-            decoration: const InputDecoration(labelText: 'Notes', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Notes', border: OutlineInputBorder()),
             maxLines: 3,
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _conductedByController,
-            decoration: const InputDecoration(labelText: 'Conducted By', border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+                labelText: 'Conducted By', border: OutlineInputBorder()),
           ),
         ],
       ),

@@ -4,7 +4,7 @@ import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/utils/error_helper.dart';
 import 'patient_registration_screen.dart';
-import 'patient_detail_screen.dart';
+
 import '/../../core/widgets/offline_indicator.dart';
 import '../widgets/patient_card.dart';
 
@@ -30,20 +30,6 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
     super.dispose();
   }
 
-  /// Helper method to get high risk reasons for a patient
-  /// Based on MOH MCH Handbook 2020 - Page 26
-  List<String> _getHighRiskReasons(MaternalProfile patient) {
-    List<String> reasons = [];
-    
-    if (patient.diabetes == true) reasons.add('Diabetes');
-    if (patient.hypertension == true) reasons.add('Hypertension');
-    if (patient.previousCs == true) reasons.add('Previous CS');
-    if (patient.age > 35) reasons.add('Age >35');
-    if (patient.age < 18) reasons.add('Age <18');
-    
-    return reasons;
-  }
-
   bool _isHighRisk(MaternalProfile patient) {
     return patient.diabetes == true ||
         patient.hypertension == true ||
@@ -64,13 +50,17 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
           style: const TextStyle(color: Color.fromARGB(255, 7, 0, 0)),
           decoration: InputDecoration(
             hintText: 'Search patients...',
-            hintStyle: TextStyle(color: const Color.fromARGB(255, 4, 104, 186).withOpacity(0.7)),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(22), // Rounded corners
-      borderSide: BorderSide(width: 1, color: Color(0xFF2196F3))),
+            hintStyle: TextStyle(
+                color: const Color.fromARGB(255, 4, 104, 186)
+                    .withValues(alpha: 0.7)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(22), // Rounded corners
+                borderSide: BorderSide(width: 1, color: Color(0xFF2196F3))),
             prefixIcon: const Icon(Icons.search, color: Color(0xFF2196F3)),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.clear, color: Color.fromARGB(255, 45, 4, 169)),
+                    icon: const Icon(Icons.clear,
+                        color: Color.fromARGB(255, 45, 4, 169)),
                     onPressed: () {
                       _searchController.clear();
                       setState(() {
@@ -87,31 +77,31 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
           },
         ),
         actions: [
-  const OfflineIndicator(),
-  const SizedBox(width: 8),
-  const SyncButton(),
-  const SizedBox(width: 8),
-  IconButton(
-    icon: const Icon(Icons.refresh),
-    tooltip: 'Refresh',
-    onPressed: () => ref.invalidate(maternalProfilesProvider),
-  ),
-  PopupMenuButton<String>(
-    icon: const Icon(Icons.filter_list),
-    tooltip: 'Filter patients',
-    onSelected: (value) {
-      setState(() {
-        _filterBy = value;
-      });
-    },
-    itemBuilder: (context) => [
-      const PopupMenuItem(value: 'All', child: Text('All Patients')),
-      const PopupMenuItem(value: 'High Risk', child: Text('High Risk')),
-      const PopupMenuItem(value: 'Due Soon', child: Text('Due Soon')),
-      const PopupMenuItem(value: 'Active', child: Text('Active')),
-    ],
-  ),
-],
+          const OfflineIndicator(),
+          const SizedBox(width: 8),
+          const SyncButton(),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: () => ref.invalidate(maternalProfilesProvider),
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.filter_list),
+            tooltip: 'Filter patients',
+            onSelected: (value) {
+              setState(() {
+                _filterBy = value;
+              });
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'All', child: Text('All Patients')),
+              const PopupMenuItem(value: 'High Risk', child: Text('High Risk')),
+              const PopupMenuItem(value: 'Due Soon', child: Text('Due Soon')),
+              const PopupMenuItem(value: 'Active', child: Text('Active')),
+            ],
+          ),
+        ],
       ),
       body: profilesAsync.when(
         data: (profiles) {
@@ -119,8 +109,9 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
           var filteredProfiles = profiles.where((profile) {
             // Search filter
             if (_searchQuery.isNotEmpty) {
-              final matchesSearch = profile.clientName.toLowerCase().contains(_searchQuery) ||
-                  profile.ancNumber.toLowerCase().contains(_searchQuery);
+              final matchesSearch =
+                  profile.clientName.toLowerCase().contains(_searchQuery) ||
+                      profile.ancNumber.toLowerCase().contains(_searchQuery);
               if (!matchesSearch) return false;
             }
 
@@ -130,7 +121,8 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
                 return _isHighRisk(profile);
               case 'Due Soon':
                 if (profile.edd == null) return false;
-                final daysUntilDue = profile.edd!.difference(DateTime.now()).inDays;
+                final daysUntilDue =
+                    profile.edd!.difference(DateTime.now()).inDays;
                 return daysUntilDue >= 0 && daysUntilDue <= 30;
               case 'Active':
                 return profile.edd?.isAfter(DateTime.now()) ?? false;
@@ -145,7 +137,9 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    _searchQuery.isEmpty ? Icons.people_outline : Icons.search_off,
+                    _searchQuery.isEmpty
+                        ? Icons.people_outline
+                        : Icons.search_off,
                     size: 64,
                     color: Colors.grey,
                   ),
@@ -180,7 +174,8 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
             children: [
               // COMPRESSED Summary Bar (single row of chips)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Row(
                   children: [
@@ -272,9 +267,9 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -300,151 +295,5 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildPatientCard(BuildContext context, MaternalProfile patient) {
-    final daysUntilDue = patient.edd?.difference(DateTime.now()).inDays;
-    final isHighRisk = _isHighRisk(patient);
-    final highRiskReasons = _getHighRiskReasons(patient);
-    final isDueSoon = daysUntilDue != null && daysUntilDue >= 0 && daysUntilDue <= 30;
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      elevation: isHighRisk ? 2 : 1,
-      child: ListTile(
-        // IMPROVED AVATAR - Neutral colors for default, red only for high risk
-        leading: CircleAvatar(
-          backgroundColor: isHighRisk
-              ? Colors.red
-              : isDueSoon
-                  ? Colors.orange
-                  : Colors.grey[400], // Neutral grey instead of blue
-          child: Text(
-            patient.clientName.isNotEmpty 
-                ? patient.clientName.substring(0, 1).toUpperCase()
-                : '?',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        title: Text(
-          patient.clientName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // IMPROVED ANC DISPLAY - Show "Not Assigned" if empty
-            Text(
-              patient.ancNumber.isNotEmpty 
-                  ? 'ANC: ${patient.ancNumber} • Age: ${patient.age}'
-                  : 'ANC: Not Assigned • Age: ${patient.age}',
-            ),
-            Text(
-              patient.edd != null
-                  ? 'EDD: ${_formatDate(patient.edd!)} (${daysUntilDue ?? 0} days)'
-                  : 'EDD: Not set',
-            ),
-            // IMPROVED HIGH RISK DISPLAY - Show specific reasons
-            if (isHighRisk && highRiskReasons.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning, size: 16, color: Colors.red),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        'High Risk: ${highRiskReasons.join(", ")}',
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) {
-            switch (value) {
-              case 'view':
-                // ✅ FIXED: Navigate to patient detail screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PatientDetailScreen(
-                      patientId: patient.id!,
-                    ),
-                  ),
-                );
-                break;
-              case 'visit':
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Record visit for ${patient.clientName} - Coming soon'),
-                  ),
-                );
-                break;
-              case 'edit':
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Edit patient - Coming soon')),
-                );
-                break;
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'view',
-              child: Row(
-                children: [
-                  Icon(Icons.visibility),
-                  SizedBox(width: 8),
-                  Text('View Details'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'visit',
-              child: Row(
-                children: [
-                  Icon(Icons.add_circle),
-                  SizedBox(width: 8),
-                  Text('Record Visit'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit),
-                  SizedBox(width: 8),
-                  Text('Edit'),
-                ],
-              ),
-            ),
-          ],
-        ),
-        // ✅ FIXED: Navigate to patient detail screen on tap
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PatientDetailScreen(
-                patientId: patient.id!,
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }

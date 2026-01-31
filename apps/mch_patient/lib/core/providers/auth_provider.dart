@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // Import from shared mch_core package
-import 'package:mch_core/mch_core.dart';
 
 // Supabase client provider
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -28,7 +27,7 @@ final currentUserProvider = Provider<User?>((ref) {
 final isPatientProvider = Provider<bool>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user == null) return false;
-  
+
   final role = user.userMetadata?['role'] as String?;
   return role == 'patient';
 });
@@ -54,14 +53,15 @@ class AuthController {
       email: email,
       password: password,
     );
-    
+
     // Verify user is a patient
     final role = response.user?.userMetadata?['role'] as String?;
     if (role != 'patient') {
       await _supabase.auth.signOut();
-      throw Exception('This app is for patients only. Please use the Health Worker app.');
+      throw Exception(
+          'This app is for patients only. Please use the Health Worker app.');
     }
-    
+
     return response;
   }
 
@@ -73,19 +73,20 @@ class AuthController {
     // For phone login, we use email as phone@mchkenya.app
     // This allows us to use password auth while supporting phone numbers
     final emailFromPhone = '${phone.replaceAll('+', '')}@mchkenya.app';
-    
+
     final response = await _supabase.auth.signInWithPassword(
       email: emailFromPhone,
       password: password,
     );
-    
+
     // Verify user is a patient
     final role = response.user?.userMetadata?['role'] as String?;
     if (role != 'patient') {
       await _supabase.auth.signOut();
-      throw Exception('This app is for patients only. Please use the Health Worker app.');
+      throw Exception(
+          'This app is for patients only. Please use the Health Worker app.');
     }
-    
+
     return response;
   }
 
@@ -129,40 +130,44 @@ class AuthController {
   }) async {
     try {
       // First, verify the OTP token
-      print('🔐 Attempting OTP verification for: $email with token: ${token.substring(0, 2)}...');
-      
+      print(
+          '🔐 Attempting OTP verification for: $email with token: ${token.substring(0, 2)}...');
+
       final response = await _supabase.auth.verifyOTP(
         email: email,
         token: token,
         type: OtpType.recovery,
       );
-      
-      print('🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
-      
+
+      print(
+          '🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
+
       if (response.user == null) {
         throw Exception('Invalid or expired code. Please request a new one.');
       }
-      
+
       // Then update the password
       print('🔐 Updating password...');
       await _supabase.auth.updateUser(
         UserAttributes(password: newPassword),
       );
       print('🔐 Password updated successfully!');
-      
     } catch (e) {
       print('🔐 Password reset error: $e');
-      
+
       // Re-throw with more specific messages
       final errorStr = e.toString().toLowerCase();
-      if (errorStr.contains('otp_expired') || (errorStr.contains('otp') && errorStr.contains('expired'))) {
+      if (errorStr.contains('otp_expired') ||
+          (errorStr.contains('otp') && errorStr.contains('expired'))) {
         throw Exception('Code has expired. Please request a new one.');
       } else if (errorStr.contains('invalid') || errorStr.contains('otp')) {
         throw Exception('Invalid code. Please check and try again.');
       } else if (errorStr.contains('same_password')) {
-        throw Exception('New password must be different from your current password.');
+        throw Exception(
+            'New password must be different from your current password.');
       } else if (errorStr.contains('weak')) {
-        throw Exception('Password is too weak. Please use a stronger password.');
+        throw Exception(
+            'Password is too weak. Please use a stronger password.');
       }
       rethrow;
     }
@@ -199,17 +204,17 @@ class AuthController {
   Map<String, dynamic>? get userMetadata {
     return _supabase.auth.currentUser?.userMetadata;
   }
-  
+
   // Get user full name
   String? get userFullName {
     return _supabase.auth.currentUser?.userMetadata?['full_name'] as String?;
   }
-  
+
   // Get user phone
   String? get userPhone {
     return _supabase.auth.currentUser?.userMetadata?['phone'] as String?;
   }
-  
+
   // Get user ID number (National ID)
   String? get userIdNumber {
     return _supabase.auth.currentUser?.userMetadata?['id_number'] as String?;

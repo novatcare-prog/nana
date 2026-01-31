@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For status bar styling
-import 'package:mch_health_worker/main.dart'; 
+import 'package:mch_health_worker/main.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -9,7 +9,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -17,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    
+
     // 1. Hide status bar for full immersion (Optional)
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
@@ -28,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     // Smooth fade in
     _fadeAnimation = CurvedAnimation(
-      parent: _controller, 
+      parent: _controller,
       curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
     );
 
@@ -45,12 +46,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (mounted) {
         // Restore status bar overlay if you hid it
         // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        
+
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             pageBuilder: (_, __, ___) => const AuthGate(),
             transitionDuration: const Duration(milliseconds: 800),
-            transitionsBuilder: (_, a, __, c) => FadeTransition(opacity: a, child: c),
+            transitionsBuilder: (_, a, __, c) =>
+                FadeTransition(opacity: a, child: c),
           ),
         );
       }
@@ -89,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ScaleTransition(
                   scale: _scaleAnimation,
                   child: Container(
-                    height: 180, 
+                    height: 180,
                     width: 180,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -105,10 +107,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     padding: EdgeInsets.zero,
                     child: ClipOval(
                       child: Image.asset(
-                        'assets/images/BLUE_app_launcher_ICON-01.png', 
+                        'assets/images/BLUE_app_launcher_ICON-01.png',
                         fit: BoxFit.cover,
                         // If the logo fails to load, this prevents a crash
-                        errorBuilder: (c, o, s) => const Icon(Icons.local_hospital, size: 60, color: Colors.blue),
+                        errorBuilder: (c, o, s) => const Icon(
+                            Icons.local_hospital,
+                            size: 60,
+                            color: Colors.blue),
                       ),
                     ),
                   ),
@@ -121,12 +126,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   opacity: _fadeAnimation,
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         'Nana',
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF2196F3), // Match your logo blue exactly
+                          color:
+                              Color(0xFF2196F3), // Match your logo blue exactly
                           // ✅ FIX: Height property prevents clipping of 'g', 'y', etc.
                           height: 1.2,
                           letterSpacing: -0.5,
@@ -160,7 +166,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 40),
               ],
             ),

@@ -20,7 +20,7 @@ class AddVitaminAScreen extends ConsumerStatefulWidget {
 
 class _AddVitaminAScreenState extends ConsumerState<AddVitaminAScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   DateTime _dateGiven = DateTime.now();
   int? _doseNumber;
   int _dosageIU = 100000;
@@ -49,7 +49,7 @@ class _AddVitaminAScreenState extends ConsumerState<AddVitaminAScreen> {
 
     try {
       final userProfile = ref.read(currentUserProfileProvider).value;
-      
+
       // Calculate next dose date (6 months later)
       final nextDoseDate = DateTime(
         _dateGiven.year,
@@ -120,7 +120,8 @@ class _AddVitaminAScreenState extends ConsumerState<AddVitaminAScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('DOB: ${DateFormat('dd/MM/yyyy').format(widget.child.dateOfBirth)}'),
+                    Text(
+                        'DOB: ${DateFormat('dd/MM/yyyy').format(widget.child.dateOfBirth)}'),
                     Text('Age: $_ageInMonths months'),
                   ],
                 ),
@@ -166,7 +167,7 @@ class _AddVitaminAScreenState extends ConsumerState<AddVitaminAScreen> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<int>(
-                      value: _doseNumber,
+                      initialValue: _doseNumber,
                       decoration: const InputDecoration(
                         hintText: 'Select dose number',
                         border: OutlineInputBorder(),

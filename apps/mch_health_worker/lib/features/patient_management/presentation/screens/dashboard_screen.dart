@@ -6,6 +6,7 @@ import '/core/widgets/offline_indicator.dart';
 import 'patient_detail_screen.dart';
 import 'patient_registration_screen.dart';
 import 'patient_list_screen.dart';
+import '../../../external_patient/presentation/screens/qrcode_scanner_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   final Widget? drawer;
@@ -63,7 +64,8 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Error loading data: $error', textAlign: TextAlign.center),
+                child: Text('Error loading data: $error',
+                    textAlign: TextAlign.center),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -89,7 +91,8 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDashboard(BuildContext context, WidgetRef ref, List<MaternalProfile> profiles) {
+  Widget _buildDashboard(
+      BuildContext context, WidgetRef ref, List<MaternalProfile> profiles) {
     final totalPatients = profiles.length;
     final today = DateTime.now();
     final theme = Theme.of(context);
@@ -134,7 +137,8 @@ class DashboardScreen extends ConsumerWidget {
                       Text(
                         'Today',
                         style: TextStyle(
-                          color: colorScheme.onPrimaryContainer.withOpacity(0.9), // White-ish
+                          color: colorScheme.onPrimaryContainer
+                              .withOpacity(0.9), // White-ish
                         ),
                       ),
                     ],
@@ -214,13 +218,13 @@ class DashboardScreen extends ConsumerWidget {
                     );
                   },
                   icon: const Icon(Icons.search),
-                  label: const Text('Search Patients'),
+                  label: const Text('Search'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
@@ -232,9 +236,29 @@ class DashboardScreen extends ConsumerWidget {
                     );
                   },
                   icon: const Icon(Icons.list),
-                  label: const Text('All Patients'),
+                  label: const Text('All'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const QrCodeScannerScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const Text('Scan'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: Colors.purple.shade50,
+                    foregroundColor: Colors.purple,
                   ),
                 ),
               ),
@@ -343,7 +367,7 @@ class DashboardScreen extends ConsumerWidget {
     IconData icon,
     Color color,
   ) {
-    // FIX: Removed 'color: Colors.white'. 
+    // FIX: Removed 'color: Colors.white'.
     // Now it uses Theme.of(context).cardTheme.color (White in Light, Grey in Dark)
     return Card(
       surfaceTintColor: Colors.transparent,
@@ -377,7 +401,7 @@ class DashboardScreen extends ConsumerWidget {
     final isHighRisk = _isHighRisk(patient);
     final highRiskReasons = _getHighRiskReasons(patient);
 
-    // FIX: Removed 'color: Colors.white'. 
+    // FIX: Removed 'color: Colors.white'.
     return Card(
       surfaceTintColor: Colors.transparent,
       margin: const EdgeInsets.only(bottom: 8),
@@ -385,10 +409,11 @@ class DashboardScreen extends ConsumerWidget {
         leading: CircleAvatar(
           backgroundColor: isHighRisk ? Colors.red : Colors.grey[400],
           child: Text(
-            patient.clientName.isNotEmpty 
-                ? patient.clientName.substring(0, 1).toUpperCase() 
+            patient.clientName.isNotEmpty
+                ? patient.clientName.substring(0, 1).toUpperCase()
                 : '?',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         title: Text(
@@ -399,15 +424,13 @@ class DashboardScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              patient.ancNumber.isNotEmpty 
+              patient.ancNumber.isNotEmpty
                   ? 'ANC: ${patient.ancNumber}'
                   : 'ANC: Not Assigned',
             ),
-            Text(
-              patient.edd != null 
-                  ? 'EDD: ${_formatDate(patient.edd!)} (${daysUntilDue ?? 0} days)'
-                  : 'EDD: Not set'
-            ),
+            Text(patient.edd != null
+                ? 'EDD: ${_formatDate(patient.edd!)} (${daysUntilDue ?? 0} days)'
+                : 'EDD: Not set'),
             if (isHighRisk && highRiskReasons.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
@@ -450,11 +473,21 @@ class DashboardScreen extends ConsumerWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    
+
     return '${days[date.weekday - 1]}, ${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 }

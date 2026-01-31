@@ -6,8 +6,6 @@ import '../../../../core/providers/vitamin_a_deworming_providers.dart';
 import 'vitamin_a_screen.dart';
 import 'deworming_screen.dart';
 
-
-
 class VitaminADewormingCardScreen extends ConsumerWidget {
   final ChildProfile child;
 
@@ -19,7 +17,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vitaminARecords = ref.watch(vitaminARecordsByChildProvider(child.id));
-    final dewormingRecords = ref.watch(dewormingRecordsByChildProvider(child.id));
+    final dewormingRecords =
+        ref.watch(dewormingRecordsByChildProvider(child.id));
 
     return Scaffold(
       appBar: AppBar(
@@ -62,8 +61,9 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
   }
 
   Widget _buildChildInfoCard(BuildContext context) {
-    final ageInMonths = DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
-    
+    final ageInMonths =
+        DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -71,11 +71,13 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: child.sex == 'Male' ? Colors.blue[100] : Colors.pink[100],
+              backgroundColor:
+                  child.sex == 'Male' ? Colors.blue[100] : Colors.pink[100],
               child: Icon(
                 child.sex == 'Male' ? Icons.boy : Icons.girl,
                 size: 35,
-                color: child.sex == 'Male' ? Colors.blue[700] : Colors.pink[700],
+                color:
+                    child.sex == 'Male' ? Colors.blue[700] : Colors.pink[700],
               ),
             ),
             const SizedBox(width: 16),
@@ -143,7 +145,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
   ) {
     return recordsAsync.when(
       data: (records) {
-        final ageInMonths = DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
+        final ageInMonths =
+            DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
         final isEligible = ageInMonths >= 6 && ageInMonths <= 59;
         final totalDoses = records.length;
         final lastDose = records.isNotEmpty ? records.first : null;
@@ -157,7 +160,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
               children: [
                 // Eligibility Status
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: isEligible ? Colors.green[50] : Colors.grey[200],
                     borderRadius: BorderRadius.circular(20),
@@ -182,7 +186,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
                                 : 'No longer eligible (> 59 months)',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isEligible ? Colors.green[700] : Colors.grey[700],
+                          color:
+                              isEligible ? Colors.green[700] : Colors.grey[700],
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -235,9 +240,12 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildScheduleItem('6 months: 100,000 IU', totalDoses >= 1),
-                      _buildScheduleItem('12, 18, 24, 30 months: 200,000 IU', totalDoses >= 2),
-                      _buildScheduleItem('36, 42, 48, 54 months: 200,000 IU', totalDoses >= 6),
+                      _buildScheduleItem(
+                          '6 months: 100,000 IU', totalDoses >= 1),
+                      _buildScheduleItem(
+                          '12, 18, 24, 30 months: 200,000 IU', totalDoses >= 2),
+                      _buildScheduleItem(
+                          '36, 42, 48, 54 months: 200,000 IU', totalDoses >= 6),
                     ],
                   ),
                 ),
@@ -252,7 +260,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddVitaminAScreen(child: this.child),
+                            builder: (context) =>
+                                AddVitaminAScreen(child: child),
                           ),
                         );
                       },
@@ -292,7 +301,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
   ) {
     return recordsAsync.when(
       data: (records) {
-        final ageInMonths = DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
+        final ageInMonths =
+            DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
         final isEligible = ageInMonths >= 12 && ageInMonths <= 59;
         final totalDoses = records.length;
         final lastDose = records.isNotEmpty ? records.first : null;
@@ -306,7 +316,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
               children: [
                 // Eligibility Status
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: isEligible ? Colors.green[50] : Colors.grey[200],
                     borderRadius: BorderRadius.circular(20),
@@ -331,7 +342,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
                                 : 'No longer eligible (> 59 months)',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isEligible ? Colors.green[700] : Colors.grey[700],
+                          color:
+                              isEligible ? Colors.green[700] : Colors.grey[700],
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -384,7 +396,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildScheduleItem('Every 6 months from 12-59 months', totalDoses >= 1),
+                      _buildScheduleItem(
+                          'Every 6 months from 12-59 months', totalDoses >= 1),
                       const SizedBox(height: 4),
                       const Text(
                         'Drug: Albendazole 400mg or Mebendazole 500mg',
@@ -407,7 +420,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddDewormingScreen(child: this.child),
+                            builder: (context) =>
+                                AddDewormingScreen(child: child),
                           ),
                         );
                       },
@@ -440,7 +454,8 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildInfoTile(String label, String value, IconData icon, Color color) {
+  Widget _buildInfoTile(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(

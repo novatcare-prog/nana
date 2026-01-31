@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -13,6 +14,7 @@ import '../../features/maternal/presentation/screens/anc_visit_history_screen.da
 import '../../features/appointments/presentation/screens/appointments_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/sharing/presentation/screens/share_records_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/home/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -20,8 +22,11 @@ import '../../../../core/providers/auth_provider.dart';
 
 // Router provider
 final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authStateProvider.stream);
+
   return GoRouter(
-    initialLocation: '/',  // Start at splash screen
+    refreshListenable: GoRouterRefreshStream(authState),
+    initialLocation: '/', // Start at splash screen
     redirect: (context, state) {
       // Don't redirect if on splash - it handles initialization
       if (state.matchedLocation == '/') {
@@ -37,15 +42,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/';
       }
 
-      final isOnAuth = state.matchedLocation == '/login' || 
-                       state.matchedLocation == '/signup' ||
-                       state.matchedLocation == '/forgot-password';
+      final isOnAuth = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/signup' ||
+          state.matchedLocation == '/forgot-password';
 
       // If not authenticated and trying to access protected route, redirect to login
       if (!isAuthenticated && !isOnAuth) {
         return '/login';
       }
-      
+
       // If authenticated and trying to access auth screens, redirect to home
       if (isAuthenticated && isOnAuth) {
         return '/home';
@@ -91,29 +96,29 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/home',
             name: 'home',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const HomeWrapper(),
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: HomeWrapper(),
             ),
           ),
           GoRoute(
             path: '/children',
             name: 'children',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const ChildrenListScreen(),
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ChildrenListScreen(),
             ),
           ),
           GoRoute(
             path: '/appointments',
             name: 'appointments',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const AppointmentsScreen(),
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: AppointmentsScreen(),
             ),
           ),
           GoRoute(
             path: '/profile',
             name: 'profile',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const ProfileScreen(),
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ProfileScreen(),
             ),
           ),
         ],
@@ -128,7 +133,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return ChildDetailScreen(childId: childId);
         },
       ),
-      
+
       // Vaccination Schedule Route
       GoRoute(
         path: '/child/:id/vaccinations',
@@ -138,7 +143,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return VaccinationScheduleScreen(childId: childId);
         },
       ),
-      
+
       // Growth Charts Route
       GoRoute(
         path: '/child/:id/growth',
@@ -148,7 +153,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return GrowthChartsScreen(childId: childId);
         },
       ),
-      
+
       // Visit History Route
       GoRoute(
         path: '/child/:id/visits',
@@ -158,23 +163,48 @@ final routerProvider = Provider<GoRouter>((ref) {
           return VisitHistoryScreen(childId: childId);
         },
       ),
-      
+
       // ANC Visit History Route
       GoRoute(
         path: '/anc-visits',
         name: 'ancVisits',
         builder: (context, state) => const AncVisitHistoryScreen(),
       ),
-      
+
       // Settings Route
       GoRoute(
         path: '/settings',
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
       ),
+
+      // Share Records Route
+      GoRoute(
+        path: '/share-records',
+        name: 'share-records',
+        builder: (context, state) => const ShareRecordsScreen(),
+      ),
     ],
   );
 });
+
+/// Convert a Stream to a Listenable for GoRouter refreshListenable
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (dynamic _) => notifyListeners(),
+        );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
 
 // Main Shell with Bottom Navigation
 class MainShell extends StatelessWidget {

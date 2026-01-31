@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_providers.dart';
 import '../../../../core/widgets/searchable_facility_selector.dart';
 
@@ -13,11 +12,11 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controllers
   late TextEditingController _fullNameController;
   late TextEditingController _phoneController;
-  
+
   String? _selectedFacilityId;
   bool _isLoading = false;
   bool _hasChanges = false;
@@ -27,7 +26,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.initState();
     _fullNameController = TextEditingController();
     _phoneController = TextEditingController();
-    
+
     // Load current profile data
     _loadProfileData();
   }
@@ -68,8 +67,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       await authService.updateUserProfile(
         userId: profile.id,
         fullName: _fullNameController.text.trim(),
-        phone: _phoneController.text.trim().isEmpty 
-            ? null 
+        phone: _phoneController.text.trim().isEmpty
+            ? null
             : _phoneController.text.trim(),
         facilityId: _selectedFacilityId,
       );
@@ -210,7 +209,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             _onFieldChanged();
                           },
                           validator: (value) {
-                            if (_selectedFacilityId == null || _selectedFacilityId!.isEmpty) {
+                            if (_selectedFacilityId == null ||
+                                _selectedFacilityId!.isEmpty) {
                               return 'Please select a facility';
                             }
                             return null;
@@ -238,9 +238,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         // Security Section
                         Text(
                           'Security',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 16),
 
@@ -303,7 +304,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget _buildAvatarSection(dynamic profile) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
@@ -311,7 +312,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: isDark 
+          colors: isDark
               ? [
                   theme.colorScheme.primary.withOpacity(0.3),
                   theme.colorScheme.surface,
@@ -340,9 +341,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundColor: isDark 
-                      ? theme.colorScheme.primary 
-                      : Colors.white,
+                  backgroundColor:
+                      isDark ? theme.colorScheme.primary : Colors.white,
                   child: Text(
                     profile.fullName.isNotEmpty
                         ? profile.fullName[0].toUpperCase()
@@ -350,14 +350,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: isDark 
-                          ? Colors.white 
-                          : theme.colorScheme.primary,
+                      color: isDark ? Colors.white : theme.colorScheme.primary,
                     ),
                   ),
                 ),
               ),
-              
+
               // Camera Button
               Positioned(
                 bottom: 0,
@@ -376,7 +374,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       color: theme.colorScheme.secondary,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isDark ? theme.colorScheme.surface : Colors.white,
+                        color:
+                            isDark ? theme.colorScheme.surface : Colors.white,
                         width: 2,
                       ),
                       boxShadow: [
@@ -397,9 +396,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Name
           Text(
             profile.fullName,
@@ -410,19 +409,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // Role Badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: isDark 
-                  ? theme.colorScheme.primaryContainer 
+              color: isDark
+                  ? theme.colorScheme.primaryContainer
                   : Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark 
+                color: isDark
                     ? theme.colorScheme.primary.withOpacity(0.5)
                     : Colors.white.withOpacity(0.3),
               ),
@@ -433,9 +432,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: isDark 
-                    ? theme.colorScheme.primary 
-                    : Colors.white,
+                color: isDark ? theme.colorScheme.primary : Colors.white,
               ),
             ),
           ),

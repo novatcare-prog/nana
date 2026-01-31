@@ -51,7 +51,8 @@ class ImmunizationCardScreen extends ConsumerWidget {
       body: immunizationsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
-          child: Text('Error: $error', style: const TextStyle(color: Colors.red)),
+          child:
+              Text('Error: $error', style: const TextStyle(color: Colors.red)),
         ),
         data: (immunizations) {
           return SingleChildScrollView(
@@ -227,8 +228,10 @@ class ImmunizationCardScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildSummaryItem('Total Doses', '$totalVaccines', Icons.vaccines),
-                _buildSummaryItem('Vaccine Types', '$vaccineTypes', Icons.medical_services),
+                _buildSummaryItem(
+                    'Total Doses', '$totalVaccines', Icons.vaccines),
+                _buildSummaryItem(
+                    'Vaccine Types', '$vaccineTypes', Icons.medical_services),
               ],
             ),
           ],
@@ -295,7 +298,7 @@ class ImmunizationCardScreen extends ConsumerWidget {
             expectedDoses,
             isComplete,
           );
-        }).toList(),
+        }),
       ],
     );
   }

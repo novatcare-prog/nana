@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/error_helper.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
   final String? code;
-  
+
   const ResetPasswordScreen({super.key, this.code});
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -38,11 +38,12 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       // Check if user is authenticated (required for updatePassword)
       final authController = ref.read(authControllerProvider);
       final currentUser = authController.currentUser;
-      
+
       if (currentUser == null) {
-        throw Exception('Session expired. Please use the forgot password flow again.');
+        throw Exception(
+            'Session expired. Please use the forgot password flow again.');
       }
-      
+
       await authController.updatePassword(
         newPassword: _passwordController.text,
       );
@@ -54,22 +55,25 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             backgroundColor: AppColors.success,
           ),
         );
-        
+
         // Navigate to login
         context.go('/login');
       }
     } catch (e) {
       setState(() => _isLoading = false);
-      
+
       if (mounted) {
         // Show more descriptive error
         String message = 'Something went wrong. Please try again.';
-        if (e.toString().contains('Session expired') || e.toString().contains('not authenticated')) {
-          message = 'Session expired. Please go back to login and use "Forgot Password" again.';
+        if (e.toString().contains('Session expired') ||
+            e.toString().contains('not authenticated')) {
+          message =
+              'Session expired. Please go back to login and use "Forgot Password" again.';
         } else if (e.toString().contains('same_password')) {
-          message = 'New password must be different from your current password.';
+          message =
+              'New password must be different from your current password.';
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -81,7 +85,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             duration: const Duration(seconds: 5),
           ),
         );
@@ -110,7 +115,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 20),
-                
+
                 // Icon
                 Container(
                   width: 120,
@@ -136,9 +141,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     color: Colors.white,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Title
                 const Text(
                   'Reset Password',
@@ -149,9 +154,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Subtitle
                 Text(
                   'Enter your new password below',
@@ -162,9 +167,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 40),
-                
+
                 // New Password Field
                 TextFormField(
                   controller: _passwordController,
@@ -179,7 +184,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     hintText: 'Enter new password',
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.lock_outlined, color: Colors.grey[600]),
+                    prefixIcon:
+                        Icon(Icons.lock_outlined, color: Colors.grey[600]),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -200,7 +206,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFFF6B9D), width: 2),
+                      borderSide:
+                          const BorderSide(color: Color(0xFFFF6B9D), width: 2),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -215,9 +222,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Confirm Password Field
                 TextFormField(
                   controller: _confirmPasswordController,
@@ -232,7 +239,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     hintText: 'Re-enter new password',
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.lock_outlined, color: Colors.grey[600]),
+                    prefixIcon:
+                        Icon(Icons.lock_outlined, color: Colors.grey[600]),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
@@ -241,7 +249,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         color: Colors.grey[600],
                       ),
                       onPressed: () {
-                        setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                        setState(() =>
+                            _obscureConfirmPassword = !_obscureConfirmPassword);
                       },
                     ),
                     border: OutlineInputBorder(
@@ -253,7 +262,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFFF6B9D), width: 2),
+                      borderSide:
+                          const BorderSide(color: Color(0xFFFF6B9D), width: 2),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -268,9 +278,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Password Requirements
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -287,7 +297,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                          Icon(Icons.info_outline,
+                              color: Colors.blue[700], size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'Password Requirements:',
@@ -302,15 +313,16 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       const SizedBox(height: 12),
                       _buildRequirement('At least 6 characters'),
                       const SizedBox(height: 6),
-                      _buildRequirement('Contains letters and numbers (recommended)'),
+                      _buildRequirement(
+                          'Contains letters and numbers (recommended)'),
                       const SizedBox(height: 6),
                       _buildRequirement('Passwords must match'),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Reset Button
                 SizedBox(
                   height: 56,
@@ -331,7 +343,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                             width: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           )
                         : const Text(
@@ -343,9 +356,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                           ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Back to Login
                 Center(
                   child: TextButton(

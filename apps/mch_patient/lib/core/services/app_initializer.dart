@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'notification_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// App Initializer Service
 /// Handles all app initialization in one place with progress tracking
@@ -24,10 +25,12 @@ class AppInitializer {
   /// Supabase configuration from compile-time environment variables
   /// Set via --dart-define during build for better security
   static const String _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  static const String _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  static const String _supabaseAnonKey =
+      String.fromEnvironment('SUPABASE_ANON_KEY');
 
   /// Initialize all app services
   /// Returns true if successful, false if failed
+
   Future<bool> initialize({
     void Function(String step, double progress)? onProgress,
   }) async {
@@ -38,12 +41,25 @@ class AppInitializer {
     try {
       // Step 1: Validate configuration (20%)
       _updateProgress('Loading configuration...', 0.0, onProgress);
-      
-      if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
-        throw Exception(
-          'Missing Supabase configuration. '
-          'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx'
-        );
+
+      String url = _supabaseUrl;
+      String key = _supabaseAnonKey;
+
+      // specific logic to load from .env if dart-define is missing
+      if (url.isEmpty || key.isEmpty) {
+        try {
+          await dotenv.load(fileName: ".env");
+          url = dotenv.env['SUPABASE_URL'] ?? '';
+          key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+        } catch (e) {
+          debugPrint('Failed to load .env: $e');
+        }
+      }
+
+      if (url.isEmpty || key.isEmpty) {
+        throw Exception('Missing Supabase configuration. '
+            'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx '
+            'OR ensure .env file exists with SUPABASE_URL and SUPABASE_ANON_KEY');
       }
       _updateProgress('Configuration loaded', 0.2, onProgress);
 
@@ -54,10 +70,10 @@ class AppInitializer {
 
       // Step 3: Initialize Supabase (70%)
       _updateProgress('Connecting to server...', 0.4, onProgress);
-      
+
       await Supabase.initialize(
-        url: _supabaseUrl,
-        anonKey: _supabaseAnonKey,
+        url: url,
+        anonKey: key,
       );
       _updateProgress('Connected to server', 0.7, onProgress);
 
@@ -68,13 +84,13 @@ class AppInitializer {
 
       // Step 5: Final checks (100%)
       _updateProgress('Almost ready...', 0.9, onProgress);
-      await Future.delayed(const Duration(milliseconds: 300)); // Small delay for UX
+      await Future.delayed(
+          const Duration(milliseconds: 300)); // Small delay for UX
       _updateProgress('Ready!', 1.0, onProgress);
 
       _isInitialized = true;
       debugPrint('✅ App initialization complete');
       return true;
-
     } catch (e) {
       _error = e.toString();
       debugPrint('❌ App initialization failed: $e');
@@ -82,7 +98,8 @@ class AppInitializer {
     }
   }
 
-  void _updateProgress(String step, double progress, void Function(String, double)? callback) {
+  void _updateProgress(
+      String step, double progress, void Function(String, double)? callback) {
     _currentStep = step;
     _progress = progress;
     callback?.call(step, progress);

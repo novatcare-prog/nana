@@ -19,7 +19,7 @@ class PatientEditScreen extends ConsumerStatefulWidget {
 
 class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controllers - pre-filled with existing data
   late TextEditingController _clientNameController;
   late TextEditingController _ageController;
@@ -43,33 +43,44 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
   late bool _bloodTransfusion;
   late bool _drugAllergy;
   late bool _previousCs;
-  
+
   // Dates
   late DateTime? _lmp;
   late DateTime? _edd;
-  
+
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize controllers with existing data
-    _clientNameController = TextEditingController(text: widget.profile.clientName);
+    _clientNameController =
+        TextEditingController(text: widget.profile.clientName);
     _ageController = TextEditingController(text: widget.profile.age.toString());
-    _telephoneController = TextEditingController(text: widget.profile.telephone ?? '');
+    _telephoneController =
+        TextEditingController(text: widget.profile.telephone ?? '');
     _countyController = TextEditingController(text: widget.profile.county);
-    _subCountyController = TextEditingController(text: widget.profile.subCounty ?? '');
+    _subCountyController =
+        TextEditingController(text: widget.profile.subCounty ?? '');
     _wardController = TextEditingController(text: widget.profile.ward ?? '');
-    _villageController = TextEditingController(text: widget.profile.village ?? '');
-    _gravidaController = TextEditingController(text: widget.profile.gravida.toString());
-    _parityController = TextEditingController(text: widget.profile.parity.toString());
-    _heightController = TextEditingController(text: widget.profile.heightCm?.toString() ?? '');
-    _weightController = TextEditingController(text: widget.profile.weightKg?.toString() ?? '');
-    _nextOfKinNameController = TextEditingController(text: widget.profile.nextOfKinName ?? '');
-    _nextOfKinPhoneController = TextEditingController(text: widget.profile.nextOfKinPhone ?? '');
-    _nextOfKinRelationshipController = TextEditingController(text: widget.profile.nextOfKinRelationship ?? '');
-    
+    _villageController =
+        TextEditingController(text: widget.profile.village ?? '');
+    _gravidaController =
+        TextEditingController(text: widget.profile.gravida.toString());
+    _parityController =
+        TextEditingController(text: widget.profile.parity.toString());
+    _heightController =
+        TextEditingController(text: widget.profile.heightCm.toString() ?? '');
+    _weightController =
+        TextEditingController(text: widget.profile.weightKg.toString() ?? '');
+    _nextOfKinNameController =
+        TextEditingController(text: widget.profile.nextOfKinName ?? '');
+    _nextOfKinPhoneController =
+        TextEditingController(text: widget.profile.nextOfKinPhone ?? '');
+    _nextOfKinRelationshipController =
+        TextEditingController(text: widget.profile.nextOfKinRelationship ?? '');
+
     // Initialize boolean values
     _diabetes = widget.profile.diabetes ?? false;
     _hypertension = widget.profile.hypertension ?? false;
@@ -77,7 +88,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
     _bloodTransfusion = widget.profile.bloodTransfusion ?? false;
     _drugAllergy = widget.profile.drugAllergy ?? false;
     _previousCs = widget.profile.previousCs ?? false;
-    
+
     // Initialize dates
     _lmp = widget.profile.lmp;
     _edd = widget.profile.edd;
@@ -112,24 +123,43 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
       final updatedProfile = widget.profile.copyWith(
         clientName: _clientNameController.text.trim(),
         age: int.parse(_ageController.text),
-        telephone: _telephoneController.text.trim().isEmpty ? null : _telephoneController.text.trim(),
+        telephone: _telephoneController.text.trim().isEmpty
+            ? null
+            : _telephoneController.text.trim(),
         county: _countyController.text.trim(),
-        subCounty: _subCountyController.text.trim().isEmpty ? null : _subCountyController.text.trim(),
-        ward: _wardController.text.trim().isEmpty ? null : _wardController.text.trim(),
-        village: _villageController.text.trim().isEmpty ? null : _villageController.text.trim(),
+        subCounty: _subCountyController.text.trim().isEmpty
+            ? null
+            : _subCountyController.text.trim(),
+        ward: _wardController.text.trim().isEmpty
+            ? null
+            : _wardController.text.trim(),
+        village: _villageController.text.trim().isEmpty
+            ? null
+            : _villageController.text.trim(),
         gravida: int.parse(_gravidaController.text),
         parity: int.parse(_parityController.text),
-        heightCm: _heightController.text.isEmpty ? 0.0 : (double.tryParse(_heightController.text) ?? 0.0),
-        weightKg: _weightController.text.isEmpty ? 0.0 : (double.tryParse(_weightController.text) ?? 0.0),
+        heightCm: _heightController.text.isEmpty
+            ? 0.0
+            : (double.tryParse(_heightController.text) ?? 0.0),
+        weightKg: _weightController.text.isEmpty
+            ? 0.0
+            : (double.tryParse(_weightController.text) ?? 0.0),
         diabetes: _diabetes,
         hypertension: _hypertension,
         tuberculosis: _tuberculosis,
         bloodTransfusion: _bloodTransfusion,
         drugAllergy: _drugAllergy,
         previousCs: _previousCs,
-        nextOfKinName: _nextOfKinNameController.text.trim().isEmpty ? null : _nextOfKinNameController.text.trim(),
-        nextOfKinPhone: _nextOfKinPhoneController.text.trim().isEmpty ? null : _nextOfKinPhoneController.text.trim(),
-        nextOfKinRelationship: _nextOfKinRelationshipController.text.trim().isEmpty ? null : _nextOfKinRelationshipController.text.trim(),
+        nextOfKinName: _nextOfKinNameController.text.trim().isEmpty
+            ? null
+            : _nextOfKinNameController.text.trim(),
+        nextOfKinPhone: _nextOfKinPhoneController.text.trim().isEmpty
+            ? null
+            : _nextOfKinPhoneController.text.trim(),
+        nextOfKinRelationship:
+            _nextOfKinRelationshipController.text.trim().isEmpty
+                ? null
+                : _nextOfKinRelationshipController.text.trim(),
       );
 
       // Update in database
@@ -194,7 +224,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _clientNameController,
               decoration: const InputDecoration(
@@ -204,7 +234,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 16),
-            
+
             Row(
               children: [
                 Expanded(
@@ -239,14 +269,14 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Location Section
             Text(
               'Location',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _countyController,
               decoration: const InputDecoration(
@@ -256,7 +286,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _subCountyController,
               decoration: const InputDecoration(
@@ -265,7 +295,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             Row(
               children: [
                 Expanded(
@@ -290,14 +320,14 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Obstetric History
             Text(
               'Obstetric History',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             Row(
               children: [
                 Expanded(
@@ -308,7 +338,8 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
-                    validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'Required' : null,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -320,20 +351,21 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
-                    validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'Required' : null,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Physical Measurements
             Text(
               'Physical Measurements',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             Row(
               children: [
                 Expanded(
@@ -360,14 +392,14 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Medical Conditions
             Text(
               'Medical Conditions',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             CheckboxListTile(
               title: const Text('Diabetes'),
               value: _diabetes,
@@ -376,37 +408,42 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
             CheckboxListTile(
               title: const Text('Hypertension'),
               value: _hypertension,
-              onChanged: (value) => setState(() => _hypertension = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _hypertension = value ?? false),
             ),
             CheckboxListTile(
               title: const Text('Tuberculosis'),
               value: _tuberculosis,
-              onChanged: (value) => setState(() => _tuberculosis = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _tuberculosis = value ?? false),
             ),
             CheckboxListTile(
               title: const Text('Previous Blood Transfusion'),
               value: _bloodTransfusion,
-              onChanged: (value) => setState(() => _bloodTransfusion = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _bloodTransfusion = value ?? false),
             ),
             CheckboxListTile(
               title: const Text('Drug Allergy'),
               value: _drugAllergy,
-              onChanged: (value) => setState(() => _drugAllergy = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _drugAllergy = value ?? false),
             ),
             CheckboxListTile(
               title: const Text('Previous Cesarean Section'),
               value: _previousCs,
-              onChanged: (value) => setState(() => _previousCs = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _previousCs = value ?? false),
             ),
             const SizedBox(height: 24),
-            
+
             // Next of Kin
             Text(
               'Next of Kin',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _nextOfKinNameController,
               decoration: const InputDecoration(
@@ -415,7 +452,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _nextOfKinRelationshipController,
               decoration: const InputDecoration(
@@ -424,7 +461,7 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _nextOfKinPhoneController,
               decoration: const InputDecoration(

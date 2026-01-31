@@ -33,7 +33,7 @@ class _SearchableFacilitySelectorState
     extends ConsumerState<SearchableFacilitySelector> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  
+
   bool _isExpanded = false;
   bool _isLoading = false;
   String _searchQuery = '';
@@ -45,7 +45,7 @@ class _SearchableFacilitySelectorState
   void initState() {
     super.initState();
     _focusNode.addListener(_onFocusChange);
-    
+
     // Load initial facility if ID is provided
     if (widget.selectedFacilityId != null) {
       _loadInitialFacility();
@@ -96,7 +96,7 @@ class _SearchableFacilitySelectorState
     try {
       final repository = ref.read(facilityRepositoryProvider);
       List<Facility> results;
-      
+
       if (query.isEmpty) {
         // Load first 50 facilities as default
         final allFacilities = await repository.getAllFacilities();
@@ -105,7 +105,7 @@ class _SearchableFacilitySelectorState
         // Search by query
         results = await repository.searchFacilities(query);
       }
-      
+
       if (mounted) {
         setState(() {
           _searchResults = results;
@@ -187,7 +187,7 @@ class _SearchableFacilitySelectorState
           },
           validator: widget.validator,
         ),
-        
+
         // Selected Facility Display
         if (_selectedFacility != null && !_isExpanded)
           Container(
@@ -196,11 +196,12 @@ class _SearchableFacilitySelectorState
             decoration: BoxDecoration(
               color: theme.colorScheme.primaryContainer.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+              border:
+                  Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
             ),
             child: Row(
               children: [
-                Icon(Icons.check_circle, 
+                Icon(Icons.check_circle,
                     color: theme.colorScheme.primary, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
@@ -228,11 +229,11 @@ class _SearchableFacilitySelectorState
               ],
             ),
           ),
-        
+
         // Dropdown Panel
         if (_isExpanded) ...[
           const SizedBox(height: 8),
-          
+
           // Results Container
           Container(
             constraints: const BoxConstraints(maxHeight: 300),
@@ -253,9 +254,10 @@ class _SearchableFacilitySelectorState
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8),
                       topRight: Radius.circular(8),
@@ -264,8 +266,8 @@ class _SearchableFacilitySelectorState
                   child: Row(
                     children: [
                       Text(
-                        _searchQuery.isEmpty 
-                            ? 'Recent Facilities' 
+                        _searchQuery.isEmpty
+                            ? 'Recent Facilities'
                             : 'Search Results',
                         style: theme.textTheme.labelLarge,
                       ),
@@ -286,7 +288,7 @@ class _SearchableFacilitySelectorState
                     ],
                   ),
                 ),
-                
+
                 // Error Message
                 if (_errorMessage != null)
                   Padding(
@@ -296,7 +298,7 @@ class _SearchableFacilitySelectorState
                       style: TextStyle(color: theme.colorScheme.error),
                     ),
                   ),
-                
+
                 // Results List
                 if (_errorMessage == null)
                   Flexible(
@@ -322,7 +324,8 @@ class _SearchableFacilitySelectorState
                                           ? 'Start typing to search facilities'
                                           : 'No facilities found for "$_searchQuery"',
                                       textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
                                         color: theme.colorScheme.outline,
                                       ),
                                     ),
@@ -335,25 +338,28 @@ class _SearchableFacilitySelectorState
                                 itemCount: _searchResults.length,
                                 itemBuilder: (context, index) {
                                   final facility = _searchResults[index];
-                                  final isSelected = 
+                                  final isSelected =
                                       facility.id == _selectedFacility?.id;
-                                  
+
                                   return ListTile(
                                     dense: true,
                                     selected: isSelected,
-                                    selectedTileColor: theme.colorScheme
-                                        .primaryContainer.withOpacity(0.3),
+                                    selectedTileColor: theme
+                                        .colorScheme.primaryContainer
+                                        .withOpacity(0.3),
                                     leading: CircleAvatar(
                                       radius: 16,
                                       backgroundColor: isSelected
                                           ? theme.colorScheme.primary
-                                          : theme.colorScheme.surfaceVariant,
+                                          : theme.colorScheme
+                                              .surfaceContainerHighest,
                                       child: Icon(
                                         Icons.local_hospital,
                                         size: 16,
                                         color: isSelected
                                             ? Colors.white
-                                            : theme.colorScheme.onSurfaceVariant,
+                                            : theme
+                                                .colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     title: Text(
@@ -382,7 +388,7 @@ class _SearchableFacilitySelectorState
                                 },
                               ),
                   ),
-                
+
                 // Footer hint
                 if (_searchResults.length >= 50)
                   Container(
@@ -395,7 +401,7 @@ class _SearchableFacilitySelectorState
                       textAlign: TextAlign.center,
                     ),
                   ),
-                
+
                 // Can't find facility button
                 const Divider(height: 1),
                 InkWell(
@@ -459,21 +465,58 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
   final _kmhflCodeController = TextEditingController();
   final _countyController = TextEditingController();
   final _subCountyController = TextEditingController();
-  
+
   bool _isLoading = false;
   String? _selectedCounty;
 
   final List<String> _counties = [
-    'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo-Marakwet',
-    'Embu', 'Garissa', 'Homa Bay', 'Isiolo', 'Kajiado',
-    'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga',
-    'Kisii', 'Kisumu', 'Kitui', 'Kwale', 'Laikipia',
-    'Lamu', 'Machakos', 'Makueni', 'Mandera', 'Marsabit',
-    'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi',
-    'Nakuru', 'Nandi', 'Narok', 'Nyamira', 'Nyandarua',
-    'Nyeri', 'Samburu', 'Siaya', 'Taita-Taveta', 'Tana River',
-    'Tharaka-Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu',
-    'Vihiga', 'Wajir', 'West Pokot',
+    'Baringo',
+    'Bomet',
+    'Bungoma',
+    'Busia',
+    'Elgeyo-Marakwet',
+    'Embu',
+    'Garissa',
+    'Homa Bay',
+    'Isiolo',
+    'Kajiado',
+    'Kakamega',
+    'Kericho',
+    'Kiambu',
+    'Kilifi',
+    'Kirinyaga',
+    'Kisii',
+    'Kisumu',
+    'Kitui',
+    'Kwale',
+    'Laikipia',
+    'Lamu',
+    'Machakos',
+    'Makueni',
+    'Mandera',
+    'Marsabit',
+    'Meru',
+    'Migori',
+    'Mombasa',
+    'Murang\'a',
+    'Nairobi',
+    'Nakuru',
+    'Nandi',
+    'Narok',
+    'Nyamira',
+    'Nyandarua',
+    'Nyeri',
+    'Samburu',
+    'Siaya',
+    'Taita-Taveta',
+    'Tana River',
+    'Tharaka-Nithi',
+    'Trans Nzoia',
+    'Turkana',
+    'Uasin Gishu',
+    'Vihiga',
+    'Wajir',
+    'West Pokot',
   ];
 
   @override
@@ -493,15 +536,15 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
     try {
       final supabase = Supabase.instance.client;
       final user = supabase.auth.currentUser;
-      
+
       await supabase.from('facility_requests').insert({
         'facility_name': _facilityNameController.text.trim(),
-        'kmhfl_code': _kmhflCodeController.text.trim().isEmpty 
-            ? null 
+        'kmhfl_code': _kmhflCodeController.text.trim().isEmpty
+            ? null
             : _kmhflCodeController.text.trim(),
         'county': _selectedCounty,
-        'sub_county': _subCountyController.text.trim().isEmpty 
-            ? null 
+        'sub_county': _subCountyController.text.trim().isEmpty
+            ? null
             : _subCountyController.text.trim(),
         'requested_by': user?.id,
         'status': 'pending',
@@ -533,7 +576,7 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AlertDialog(
       title: Row(
         children: [
@@ -573,11 +616,13 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
                   labelText: 'County *',
                   border: OutlineInputBorder(),
                 ),
-                value: _selectedCounty,
-                items: _counties.map((c) => DropdownMenuItem(
-                  value: c,
-                  child: Text(c),
-                )).toList(),
+                initialValue: _selectedCounty,
+                items: _counties
+                    .map((c) => DropdownMenuItem(
+                          value: c,
+                          child: Text(c),
+                        ))
+                    .toList(),
                 onChanged: (v) => setState(() => _selectedCounty = v),
                 validator: (v) => v == null ? 'Required' : null,
               ),
@@ -600,10 +645,12 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
         ),
         FilledButton(
           onPressed: _isLoading ? null : _submitRequest,
-          child: _isLoading 
+          child: _isLoading
               ? const SizedBox(
-                  width: 16, height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
                 )
               : const Text('Submit'),
         ),
@@ -611,4 +658,3 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
     );
   }
 }
-

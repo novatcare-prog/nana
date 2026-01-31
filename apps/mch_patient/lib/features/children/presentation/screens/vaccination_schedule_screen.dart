@@ -43,7 +43,7 @@ class VaccinationScheduleScreen extends ConsumerWidget {
           if (child == null) {
             return const Center(child: Text('Child not found'));
           }
-          
+
           return coverageAsync.when(
             data: (coverage) {
               return immunizationsAsync.when(
@@ -77,7 +77,7 @@ class VaccinationScheduleScreen extends ConsumerWidget {
       dateOfBirth: child.dateOfBirth,
       coverage: coverage,
     );
-    
+
     final ageInWeeks = DateTime.now().difference(child.dateOfBirth).inDays ~/ 7;
 
     return SingleChildScrollView(
@@ -89,27 +89,27 @@ class VaccinationScheduleScreen extends ConsumerWidget {
             status: status,
             ageInWeeks: ageInWeeks,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Legend
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
                 _LegendItem(color: Colors.green, label: 'Given'),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 _LegendItem(color: Colors.orange, label: 'Due'),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 _LegendItem(color: Colors.red, label: 'Overdue'),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 _LegendItem(color: Colors.grey, label: 'Upcoming'),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Vaccination Timeline
           ...KenyaEPISchedule.schedule.map((milestone) {
             return _VaccineMilestoneCard(
@@ -120,7 +120,7 @@ class VaccinationScheduleScreen extends ConsumerWidget {
               immunizations: immunizations,
             );
           }),
-          
+
           const SizedBox(height: 24),
         ],
       ),
@@ -145,7 +145,7 @@ class _StatusHeader extends StatelessWidget {
     Color statusColor;
     String statusText;
     IconData statusIcon;
-    
+
     if (status.isUpToDate) {
       statusColor = Colors.green;
       statusText = 'Up to Date';
@@ -191,7 +191,7 @@ class _StatusHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Status badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -208,9 +208,9 @@ class _StatusHeader extends StatelessWidget {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Progress bar
           Row(
             children: [
@@ -223,7 +223,8 @@ class _StatusHeader extends StatelessWidget {
                         value: status.percentComplete / 100,
                         minHeight: 8,
                         backgroundColor: Colors.white.withOpacity(0.1),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -243,7 +244,7 @@ class _StatusHeader extends StatelessWidget {
       ),
     );
   }
-  
+
   String _formatAge(int weeks) {
     if (weeks < 6) return '$weeks weeks old';
     if (weeks < 52) {
@@ -312,9 +313,9 @@ class _VaccineMilestoneCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dueDate = childDob.add(Duration(days: milestone.ageInWeeks * 7));
     final isPast = currentAgeWeeks >= milestone.ageInWeeks;
-    final isCurrent = currentAgeWeeks >= milestone.ageInWeeks && 
-                      currentAgeWeeks < milestone.ageInWeeks + 4;
-    
+    final isCurrent = currentAgeWeeks >= milestone.ageInWeeks &&
+        currentAgeWeeks < milestone.ageInWeeks + 4;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
@@ -338,7 +339,7 @@ class _VaccineMilestoneCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isPast 
+              color: isPast
                   ? const Color(0xFF4CAF50).withOpacity(0.1)
                   : Colors.grey.shade50,
               borderRadius: const BorderRadius.only(
@@ -363,7 +364,8 @@ class _VaccineMilestoneCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: isPast ? const Color(0xFF4CAF50) : Colors.grey[600],
+                        color:
+                            isPast ? const Color(0xFF4CAF50) : Colors.grey[600],
                       ),
                     ),
                   ),
@@ -392,7 +394,8 @@ class _VaccineMilestoneCard extends StatelessWidget {
                 ),
                 if (isCurrent)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFF4CAF50),
                       borderRadius: BorderRadius.circular(12),
@@ -409,7 +412,7 @@ class _VaccineMilestoneCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Vaccines list
           Padding(
             padding: const EdgeInsets.all(16),
@@ -448,7 +451,7 @@ class _VaccineRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final receivedDoses = coverage[vaccine.type] ?? 0;
     final isGiven = receivedDoses >= vaccine.dose;
-    
+
     // Find the immunization record if given
     ImmunizationRecord? record;
     if (isGiven && vaccine.dose > 0) {
@@ -456,25 +459,26 @@ class _VaccineRow extends StatelessWidget {
           .where((r) => r.vaccineType == vaccine.type)
           .toList()
         ..sort((a, b) => a.dateGiven.compareTo(b.dateGiven));
-      
+
       final targetIndex = vaccine.dose - 1;
-      if (typeRecords.isNotEmpty && targetIndex >= 0 && targetIndex < typeRecords.length) {
+      if (typeRecords.isNotEmpty &&
+          targetIndex >= 0 &&
+          targetIndex < typeRecords.length) {
         record = typeRecords[targetIndex];
       }
     } else if (isGiven && vaccine.dose == 0) {
       // For dose 0 (birth dose), get first record of this type
-      final typeRecords = immunizations
-          .where((r) => r.vaccineType == vaccine.type)
-          .toList();
+      final typeRecords =
+          immunizations.where((r) => r.vaccineType == vaccine.type).toList();
       if (typeRecords.isNotEmpty) {
         record = typeRecords.first;
       }
     }
-    
+
     Color statusColor;
     IconData statusIcon;
     String statusLabel;
-    
+
     if (isGiven) {
       statusColor = Colors.green;
       statusIcon = Icons.check_circle;

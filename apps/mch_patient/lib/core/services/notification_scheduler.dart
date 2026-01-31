@@ -59,15 +59,17 @@ class NotificationScheduler {
   /// Schedule appointment reminders
   Future<void> _scheduleAppointmentReminders() async {
     try {
-      final appointmentsAsync = await _ref.read(upcomingAppointmentsProvider.future);
-      
+      final appointmentsAsync =
+          await _ref.read(upcomingAppointmentsProvider.future);
+
       int notificationId = 1000;
       for (final appointment in appointmentsAsync) {
         // Schedule 24-hour reminder
         await _notificationService.scheduleAppointmentReminder(
           id: notificationId++,
           title: '📅 Appointment Tomorrow',
-          body: '${_getAppointmentTypeLabel(appointment.appointmentType)} at ${_formatTime(appointment.appointmentDate)}',
+          body:
+              '${_getAppointmentTypeLabel(appointment.appointmentType)} at ${_formatTime(appointment.appointmentDate)}',
           appointmentDate: appointment.appointmentDate,
           reminderBefore: const Duration(hours: 24),
         );
@@ -76,13 +78,15 @@ class NotificationScheduler {
         await _notificationService.scheduleAppointmentReminder(
           id: notificationId++,
           title: '⏰ Appointment in 2 hours',
-          body: '${_getAppointmentTypeLabel(appointment.appointmentType)} - Don\'t forget to bring your MCH booklet!',
+          body:
+              '${_getAppointmentTypeLabel(appointment.appointmentType)} - Don\'t forget to bring your MCH booklet!',
           appointmentDate: appointment.appointmentDate,
           reminderBefore: const Duration(hours: 2),
         );
       }
-      
-      debugPrint('📅 Scheduled ${appointmentsAsync.length * 2} appointment reminders');
+
+      debugPrint(
+          '📅 Scheduled ${appointmentsAsync.length * 2} appointment reminders');
     } catch (e) {
       debugPrint('❌ Error scheduling appointment reminders: $e');
     }
@@ -92,11 +96,12 @@ class NotificationScheduler {
   Future<void> _scheduleVaccinationReminders() async {
     try {
       final childrenAsync = await _ref.read(patientChildrenProvider.future);
-      
+
       int notificationId = 2000;
       for (final child in childrenAsync) {
         // Get immunization data for this child
-        final immunizations = await _ref.read(childImmunizationsProvider(child.id!).future);
+        final immunizations =
+            await _ref.read(childImmunizationsProvider(child.id).future);
         // Note: We don't need getChildVaccinationStatus for scheduling
         // Just iterate through the schedule directly
 
@@ -105,7 +110,8 @@ class NotificationScheduler {
           for (final vaccine in milestone.vaccines) {
             // Check if vaccine is already given
             final isGiven = immunizations.any(
-              (r) => r.vaccineType == vaccine.type && r.doseNumber == vaccine.dose,
+              (r) =>
+                  r.vaccineType == vaccine.type && r.doseNumber == vaccine.dose,
             );
             if (isGiven) continue;
 
@@ -115,7 +121,8 @@ class NotificationScheduler {
             );
 
             // Only schedule for vaccines due in the future or within the last week
-            if (dueDate.isAfter(DateTime.now().subtract(const Duration(days: 7)))) {
+            if (dueDate
+                .isAfter(DateTime.now().subtract(const Duration(days: 7)))) {
               await _notificationService.scheduleVaccinationReminder(
                 id: notificationId++,
                 childName: child.childName,
@@ -126,7 +133,7 @@ class NotificationScheduler {
           }
         }
       }
-      
+
       debugPrint('💉 Vaccination reminders scheduled');
     } catch (e) {
       debugPrint('❌ Error scheduling vaccination reminders: $e');

@@ -23,16 +23,15 @@ class BookAppointmentScreen extends ConsumerStatefulWidget {
       _BookAppointmentScreenState();
 }
 
-class _BookAppointmentScreenState
-    extends ConsumerState<BookAppointmentScreen> {
+class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   String? _selectedPatientId;
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   AppointmentType _selectedType = AppointmentType.ancVisit;
   final _notesController = TextEditingController();
-  
+
   bool _isLoading = false;
 
   @override
@@ -55,7 +54,7 @@ class _BookAppointmentScreenState
     final now = DateTime.now();
     // Normalize "Today" to midnight (00:00:00) to prevent crashes
     final today = DateTime(now.year, now.month, now.day);
-    
+
     // Ensure initialDate is valid (must be >= firstDate)
     // If _selectedDate is in the past (e.g., yesterday), reset it to Today.
     if (_selectedDate.isBefore(today)) {
@@ -67,7 +66,7 @@ class _BookAppointmentScreenState
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate, // Now guaranteed to be valid
-      firstDate: today,           // Start from midnight today
+      firstDate: today, // Start from midnight today
       lastDate: today.add(const Duration(days: 365)), // 1 Year ahead
       builder: (context, child) {
         return Theme(
@@ -82,7 +81,7 @@ class _BookAppointmentScreenState
         );
       },
     );
-    
+
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
@@ -107,7 +106,7 @@ class _BookAppointmentScreenState
         );
       },
     );
-    
+
     if (picked != null) {
       setState(() {
         _selectedTime = picked;
@@ -142,21 +141,21 @@ class _BookAppointmentScreenState
 
       // --- CRITICAL FIX: Generate Valid UUID Locally ---
       // This ensures the ID is valid for Supabase BEFORE sync happens.
-      final newAppointmentId = const Uuid().v4(); 
+      final newAppointmentId = const Uuid().v4();
 
       final appointment = Appointment(
-        id: newAppointmentId, 
+        id: newAppointmentId,
         maternalProfileId: _selectedPatientId!,
         patientName: patient.clientName,
         appointmentDate: appointmentDateTime,
         appointmentType: _selectedType,
-        
+
         // --- FIXED PARAMETER NAME ---
         // Matches the 'appointmentStatus' field in your mch_core model
-        appointmentStatus: AppointmentStatus.scheduled, 
-        
-        notes: _notesController.text.trim().isEmpty 
-            ? null 
+        appointmentStatus: AppointmentStatus.scheduled,
+
+        notes: _notesController.text.trim().isEmpty
+            ? null
             : _notesController.text.trim(),
         facilityId: profile!.facilityId!,
         facilityName: patient.facilityName,
@@ -215,9 +214,9 @@ class _BookAppointmentScreenState
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              
+
               DropdownButtonFormField<String>(
-                value: _selectedPatientId,
+                initialValue: _selectedPatientId,
                 decoration: const InputDecoration(
                   labelText: 'Select Patient *',
                   border: OutlineInputBorder(),
@@ -237,24 +236,25 @@ class _BookAppointmentScreenState
                     _selectedPatientId = value;
                   });
                 },
-                validator: (value) => 
+                validator: (value) =>
                     value == null ? 'Please select a patient' : null,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Appointment Details
               Text(
                 'Appointment Details',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              
+
               // Date Selection
               ListTile(
                 leading: const Icon(Icons.calendar_today),
                 title: const Text('Date'),
-                subtitle: Text(DateFormat('EEEE, MMM dd, yyyy').format(_selectedDate)),
+                subtitle: Text(
+                    DateFormat('EEEE, MMM dd, yyyy').format(_selectedDate)),
                 trailing: const Icon(Icons.edit),
                 onTap: _selectDate,
                 shape: RoundedRectangleBorder(
@@ -262,9 +262,9 @@ class _BookAppointmentScreenState
                   side: BorderSide(color: Colors.grey.shade300),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Time Selection
               ListTile(
                 leading: const Icon(Icons.access_time),
@@ -277,12 +277,12 @@ class _BookAppointmentScreenState
                   side: BorderSide(color: Colors.grey.shade300),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Appointment Type
               DropdownButtonFormField<AppointmentType>(
-                value: _selectedType,
+                initialValue: _selectedType,
                 decoration: const InputDecoration(
                   labelText: 'Appointment Type *',
                   border: OutlineInputBorder(),
@@ -302,9 +302,9 @@ class _BookAppointmentScreenState
                   }
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Notes
               TextFormField(
                 controller: _notesController,
@@ -316,9 +316,9 @@ class _BookAppointmentScreenState
                 ),
                 maxLines: 3,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Book Button
               ElevatedButton(
                 onPressed: _isLoading ? null : _bookAppointment,

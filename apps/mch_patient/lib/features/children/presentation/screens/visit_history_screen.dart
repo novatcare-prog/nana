@@ -25,7 +25,8 @@ class VisitHistoryScreen extends ConsumerWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Visit History'),
-        backgroundColor: const Color(0xFFFF9800), // Keep orange for visits theme
+        backgroundColor:
+            const Color(0xFFFF9800), // Keep orange for visits theme
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -56,7 +57,8 @@ class VisitHistoryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, ChildProfile child, List<PostnatalVisit> visits) {
+  Widget _buildContent(
+      BuildContext context, ChildProfile child, List<PostnatalVisit> visits) {
     if (visits.isEmpty) {
       return Center(
         child: Padding(
@@ -70,7 +72,8 @@ class VisitHistoryScreen extends ConsumerWidget {
                   color: Colors.grey.shade100,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.history, size: 48, color: Colors.grey.shade400),
+                child:
+                    Icon(Icons.history, size: 48, color: Colors.grey.shade400),
               ),
               const SizedBox(height: 24),
               Text(
@@ -85,7 +88,9 @@ class VisitHistoryScreen extends ConsumerWidget {
               Text(
                 'Past clinic visits will appear here after your child\'s checkups.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                    fontSize: 14),
               ),
             ],
           ),
@@ -231,7 +236,8 @@ class _VisitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Check for danger signs
     final hasDangerSigns = visit.excessiveBleeding ||
-        (visit.maternalDangerSigns != null && visit.maternalDangerSigns!.isNotEmpty) ||
+        (visit.maternalDangerSigns != null &&
+            visit.maternalDangerSigns!.isNotEmpty) ||
         (visit.babyDangerSigns != null && visit.babyDangerSigns!.isNotEmpty);
 
     return Card(
@@ -270,7 +276,8 @@ class _VisitCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          DateFormat('EEEE, d MMM yyyy').format(visit.visitDate),
+                          DateFormat('EEEE, d MMM yyyy')
+                              .format(visit.visitDate),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -288,7 +295,8 @@ class _VisitCard extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getVisitTypeColor(visit.visitType).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -338,7 +346,7 @@ class _VisitCard extends StatelessWidget {
                   ],
                   if (visit.babyFeedingWell) ...[
                     const SizedBox(width: 8),
-                    _InfoChip(
+                    const _InfoChip(
                       icon: Icons.restaurant,
                       label: 'Feeding Well',
                       color: Colors.green,
@@ -374,8 +382,8 @@ class _VisitCard extends StatelessWidget {
                   Icon(
                     Icons.circle,
                     size: 12,
-                    color: visit.cordStatus == 'Normal' 
-                        ? Colors.green 
+                    color: visit.cordStatus == 'Normal'
+                        ? Colors.green
                         : Colors.orange,
                   ),
                   const SizedBox(width: 4),
@@ -402,7 +410,8 @@ class _VisitCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning_amber, size: 16, color: Colors.orange),
+                    const Icon(Icons.warning_amber,
+                        size: 16, color: Colors.orange),
                     const SizedBox(width: 8),
                     Text(
                       'Jaundice: ${visit.jaundiceSeverity ?? "Present"}',
@@ -433,7 +442,9 @@ class _VisitCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        visit.babyDangerSigns ?? visit.maternalDangerSigns ?? 'Danger signs noted',
+                        visit.babyDangerSigns ??
+                            visit.maternalDangerSigns ??
+                            'Danger signs noted',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.red,
@@ -449,7 +460,8 @@ class _VisitCard extends StatelessWidget {
             ],
 
             // Immunizations Given
-            if (visit.immunizationsGiven != null && visit.immunizationsGiven!.isNotEmpty) ...[
+            if (visit.immunizationsGiven != null &&
+                visit.immunizationsGiven!.isNotEmpty) ...[
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -496,7 +508,8 @@ class _VisitCard extends StatelessWidget {
             ],
 
             // Notes
-            if (visit.generalNotes != null && visit.generalNotes!.isNotEmpty) ...[
+            if (visit.generalNotes != null &&
+                visit.generalNotes!.isNotEmpty) ...[
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(

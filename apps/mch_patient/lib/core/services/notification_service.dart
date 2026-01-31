@@ -14,26 +14,30 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
 
   /// Notification Channels
   static const String appointmentChannelId = 'mch_appointments';
   static const String appointmentChannelName = 'Appointment Reminders';
-  static const String appointmentChannelDesc = 'Reminders for upcoming appointments';
+  static const String appointmentChannelDesc =
+      'Reminders for upcoming appointments';
 
   static const String vaccinationChannelId = 'mch_vaccinations';
   static const String vaccinationChannelName = 'Vaccination Reminders';
-  static const String vaccinationChannelDesc = 'Reminders for child vaccinations';
+  static const String vaccinationChannelDesc =
+      'Reminders for child vaccinations';
 
   static const String healthTipsChannelId = 'mch_health_tips';
   static const String healthTipsChannelName = 'Health Tips';
-  static const String healthTipsChannelDesc = 'Weekly pregnancy and child health tips';
+  static const String healthTipsChannelDesc =
+      'Weekly pregnancy and child health tips';
 
   /// Initialize the notification service
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     // Skip notification setup on web (not supported)
     if (kIsWeb) {
       debugPrint('🔔 NotificationService: Skipping on web platform');
@@ -46,7 +50,8 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation('Africa/Nairobi'));
 
     // Android initialization settings
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     // iOS initialization settings
     const iosSettings = DarwinInitializationSettings(
@@ -125,7 +130,7 @@ class NotificationService {
   Future<bool> requestPermissions() async {
     // Skip on web
     if (kIsWeb) return true;
-    
+
     if (Platform.isIOS) {
       final iosPlugin = _notifications.resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>();
@@ -136,8 +141,9 @@ class NotificationService {
       );
       return granted ?? false;
     } else if (Platform.isAndroid) {
-      final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final androidPlugin =
+          _notifications.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
       final granted = await androidPlugin?.requestNotificationsPermission();
       return granted ?? false;
     }
@@ -153,7 +159,7 @@ class NotificationService {
     Duration reminderBefore = const Duration(hours: 24),
   }) async {
     final scheduledDate = appointmentDate.subtract(reminderBefore);
-    
+
     if (scheduledDate.isBefore(DateTime.now())) {
       debugPrint('🔔 Skipping past appointment reminder');
       return;
@@ -164,7 +170,7 @@ class NotificationService {
       title,
       body,
       tz.TZDateTime.from(scheduledDate, tz.local),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           appointmentChannelId,
           appointmentChannelName,
@@ -174,7 +180,7 @@ class NotificationService {
           icon: '@mipmap/ic_launcher',
           color: Color(0xFFE91E63),
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
@@ -198,7 +204,7 @@ class NotificationService {
   }) async {
     // Remind 3 days before and on the day
     final reminderDate = dueDate.subtract(const Duration(days: 3));
-    
+
     if (reminderDate.isBefore(DateTime.now())) {
       debugPrint('🔔 Skipping past vaccination reminder');
       return;
@@ -209,7 +215,7 @@ class NotificationService {
       '💉 Vaccination Due Soon',
       '$childName\'s $vaccineName vaccine is due on ${_formatDate(dueDate)}',
       tz.TZDateTime.from(reminderDate, tz.local),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           vaccinationChannelId,
           vaccinationChannelName,
@@ -219,7 +225,7 @@ class NotificationService {
           icon: '@mipmap/ic_launcher',
           color: Color(0xFF4CAF50),
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
@@ -254,7 +260,7 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
-          color: Color(0xFFE91E63),
+          color: const Color(0xFFE91E63),
         ),
         iOS: const DarwinNotificationDetails(
           presentAlert: true,
@@ -279,14 +285,15 @@ class NotificationService {
     if (nextMonday.isBefore(now)) {
       nextMonday = nextMonday.add(const Duration(days: 7));
     }
-    final scheduledDate = DateTime(nextMonday.year, nextMonday.month, nextMonday.day, 9, 0);
+    final scheduledDate =
+        DateTime(nextMonday.year, nextMonday.month, nextMonday.day, 9, 0);
 
     await _notifications.zonedSchedule(
       9999, // Fixed ID for weekly tip
       '🤰 Week $pregnancyWeek Tip',
       tips,
       tz.TZDateTime.from(scheduledDate, tz.local),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           healthTipsChannelId,
           healthTipsChannelName,
@@ -296,7 +303,7 @@ class NotificationService {
           icon: '@mipmap/ic_launcher',
           color: Color(0xFFE91E63),
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
@@ -330,8 +337,20 @@ class NotificationService {
 
   /// Format date for display
   String _formatDate(DateTime date) {
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return '${date.day} ${months[date.month - 1]}';
   }
 

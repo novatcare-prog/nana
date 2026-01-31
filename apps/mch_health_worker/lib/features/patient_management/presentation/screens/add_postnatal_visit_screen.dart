@@ -15,22 +15,25 @@ class AddPostnatalVisitScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<AddPostnatalVisitScreen> createState() => _AddPostnatalVisitScreenState();
+  ConsumerState<AddPostnatalVisitScreen> createState() =>
+      _AddPostnatalVisitScreenState();
 }
 
-class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScreen> {
+class _AddPostnatalVisitScreenState
+    extends ConsumerState<AddPostnatalVisitScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   DateTime _visitDate = DateTime.now();
   String _visitType = '48 hours';
-  final TextEditingController _daysPostpartumController = TextEditingController();
-  
+  final TextEditingController _daysPostpartumController =
+      TextEditingController();
+
   // Mother's Health
   final TextEditingController _motherTempController = TextEditingController();
   final TextEditingController _motherBPController = TextEditingController();
   final TextEditingController _motherPulseController = TextEditingController();
   final TextEditingController _motherWeightController = TextEditingController();
-  
+
   // Complications
   bool _excessiveBleeding = false;
   bool _foulDischarge = false;
@@ -39,7 +42,7 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
   bool _perinealInfection = false;
   bool _csectionInfection = false;
   bool _urinaryProblems = false;
-  
+
   // Maternal Danger Signs
   final List<String> _selectedMaternalDangerSigns = [];
   final List<String> _maternalDangerSignsOptions = [
@@ -51,25 +54,25 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
     'Foul-smelling discharge',
     'Convulsions',
   ];
-  
+
   // Mental Health
   String? _moodAssessment = 'Good';
   String _mentalHealthNotes = '';
-  
+
   // Baby's Health
   final TextEditingController _babyWeightController = TextEditingController();
   final TextEditingController _babyTempController = TextEditingController();
   bool _babyFeedingWell = true;
   String _babyFeedingNotes = '';
-  
+
   // Cord Care
   String? _cordStatus = 'Normal';
   bool _cordCareAdviceGiven = true;
-  
+
   // Jaundice
   bool _jaundicePresent = false;
   String? _jaundiceSeverity;
-  
+
   // Baby Danger Signs
   final List<String> _selectedBabyDangerSigns = [];
   final List<String> _babyDangerSignsOptions = [
@@ -83,7 +86,7 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
     'Umbilical redness/discharge',
   ];
   String _babyDangerSignsNotes = '';
-  
+
   // Breastfeeding
   String? _breastfeedingStatus = 'Exclusive';
   String _breastfeedingFrequency = '';
@@ -91,13 +94,13 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
   String _breastfeedingChallenges = '';
   bool _breastfeedingSupportGiven = false;
   String _breastfeedingSupportDetails = '';
-  
+
   // Family Planning
   bool _familyPlanningDiscussed = false;
   String _familyPlanningMethod = '';
   bool _familyPlanningProvided = false;
   String _familyPlanningNotes = '';
-  
+
   // Immunizations
   final List<String> _selectedImmunizations = [];
   final List<String> _immunizationOptions = [
@@ -115,17 +118,17 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
     'Rota 1',
     'Rota 2',
   ];
-  
+
   // Referrals
   bool _referralMade = false;
   String _referralTo = '';
   String _referralReason = '';
-  
+
   // Follow-up
   DateTime? _nextVisitDate;
   String _followUpInstructions = '';
   String _generalNotes = '';
-  
+
   bool _isLoading = false;
 
   @override
@@ -151,7 +154,7 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
 
     try {
       final userProfile = ref.read(currentUserProfileProvider).value;
-      
+
       final visit = PostnatalVisit(
         maternalProfileId: widget.maternalProfile.id!,
         visitDate: _visitDate,
@@ -159,87 +162,108 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
         daysPostpartum: int.parse(_daysPostpartumController.text),
         healthFacility: widget.maternalProfile.facilityName,
         attendedBy: userProfile?.fullName,
-        
+
         // Mother's Health
-        motherTemperature: _motherTempController.text.isNotEmpty 
-            ? double.tryParse(_motherTempController.text) : null,
-        motherBloodPressure: _motherBPController.text.isNotEmpty 
-            ? _motherBPController.text : null,
-        motherPulse: _motherPulseController.text.isNotEmpty 
-            ? int.tryParse(_motherPulseController.text) : null,
-        motherWeight: _motherWeightController.text.isNotEmpty 
-            ? double.tryParse(_motherWeightController.text) : null,
-        
+        motherTemperature: _motherTempController.text.isNotEmpty
+            ? double.tryParse(_motherTempController.text)
+            : null,
+        motherBloodPressure: _motherBPController.text.isNotEmpty
+            ? _motherBPController.text
+            : null,
+        motherPulse: _motherPulseController.text.isNotEmpty
+            ? int.tryParse(_motherPulseController.text)
+            : null,
+        motherWeight: _motherWeightController.text.isNotEmpty
+            ? double.tryParse(_motherWeightController.text)
+            : null,
+
         // Complications
         excessiveBleeding: _excessiveBleeding,
         foulDischarge: _foulDischarge,
         breastProblems: _breastProblems,
-        breastProblemsDescription: _breastProblems && _breastProblemsDesc.isNotEmpty 
-            ? _breastProblemsDesc : null,
+        breastProblemsDescription:
+            _breastProblems && _breastProblemsDesc.isNotEmpty
+                ? _breastProblemsDesc
+                : null,
         perinealWoundInfection: _perinealInfection,
         cSectionWoundInfection: _csectionInfection,
         urinaryProblems: _urinaryProblems,
-        maternalDangerSigns: _selectedMaternalDangerSigns.isNotEmpty 
-            ? _selectedMaternalDangerSigns.join(', ') : null,
-        
+        maternalDangerSigns: _selectedMaternalDangerSigns.isNotEmpty
+            ? _selectedMaternalDangerSigns.join(', ')
+            : null,
+
         // Mental Health
         moodAssessment: _moodAssessment,
-        mentalHealthNotes: _mentalHealthNotes.isNotEmpty ? _mentalHealthNotes : null,
-        
+        mentalHealthNotes:
+            _mentalHealthNotes.isNotEmpty ? _mentalHealthNotes : null,
+
         // Baby's Health
-        babyWeight: _babyWeightController.text.isNotEmpty 
-            ? double.tryParse(_babyWeightController.text) : null,
-        babyTemperature: _babyTempController.text.isNotEmpty 
-            ? double.tryParse(_babyTempController.text) : null,
+        babyWeight: _babyWeightController.text.isNotEmpty
+            ? double.tryParse(_babyWeightController.text)
+            : null,
+        babyTemperature: _babyTempController.text.isNotEmpty
+            ? double.tryParse(_babyTempController.text)
+            : null,
         babyFeedingWell: _babyFeedingWell,
-        babyFeedingNotes: _babyFeedingNotes.isNotEmpty ? _babyFeedingNotes : null,
-        
+        babyFeedingNotes:
+            _babyFeedingNotes.isNotEmpty ? _babyFeedingNotes : null,
+
         // Cord Care
         cordStatus: _cordStatus,
         cordCareAdviceGiven: _cordCareAdviceGiven,
-        
+
         // Jaundice
         jaundicePresent: _jaundicePresent,
         jaundiceSeverity: _jaundicePresent ? _jaundiceSeverity : null,
-        
+
         // Baby Danger Signs
-        babyDangerSigns: _selectedBabyDangerSigns.isNotEmpty 
-            ? _selectedBabyDangerSigns.join(', ') : null,
-        babyDangerSignsNotes: _babyDangerSignsNotes.isNotEmpty 
-            ? _babyDangerSignsNotes : null,
-        
+        babyDangerSigns: _selectedBabyDangerSigns.isNotEmpty
+            ? _selectedBabyDangerSigns.join(', ')
+            : null,
+        babyDangerSignsNotes:
+            _babyDangerSignsNotes.isNotEmpty ? _babyDangerSignsNotes : null,
+
         // Breastfeeding
         breastfeedingStatus: _breastfeedingStatus,
-        breastfeedingFrequency: _breastfeedingFrequency.isNotEmpty 
-            ? _breastfeedingFrequency : null,
+        breastfeedingFrequency:
+            _breastfeedingFrequency.isNotEmpty ? _breastfeedingFrequency : null,
         latchQuality: _latchQuality,
-        breastfeedingChallenges: _breastfeedingChallenges.isNotEmpty 
-            ? _breastfeedingChallenges : null,
+        breastfeedingChallenges: _breastfeedingChallenges.isNotEmpty
+            ? _breastfeedingChallenges
+            : null,
         breastfeedingSupportGiven: _breastfeedingSupportGiven,
-        breastfeedingSupportDetails: _breastfeedingSupportGiven && _breastfeedingSupportDetails.isNotEmpty 
-            ? _breastfeedingSupportDetails : null,
-        
+        breastfeedingSupportDetails: _breastfeedingSupportGiven &&
+                _breastfeedingSupportDetails.isNotEmpty
+            ? _breastfeedingSupportDetails
+            : null,
+
         // Family Planning
         familyPlanningDiscussed: _familyPlanningDiscussed,
-        familyPlanningMethodChosen: _familyPlanningDiscussed && _familyPlanningMethod.isNotEmpty 
-            ? _familyPlanningMethod : null,
+        familyPlanningMethodChosen:
+            _familyPlanningDiscussed && _familyPlanningMethod.isNotEmpty
+                ? _familyPlanningMethod
+                : null,
         familyPlanningMethodProvided: _familyPlanningProvided,
-        familyPlanningNotes: _familyPlanningNotes.isNotEmpty 
-            ? _familyPlanningNotes : null,
-        
+        familyPlanningNotes:
+            _familyPlanningNotes.isNotEmpty ? _familyPlanningNotes : null,
+
         // Immunizations
-        immunizationsGiven: _selectedImmunizations.isNotEmpty 
-            ? _selectedImmunizations.join(', ') : null,
-        
+        immunizationsGiven: _selectedImmunizations.isNotEmpty
+            ? _selectedImmunizations.join(', ')
+            : null,
+
         // Referrals
         referralMade: _referralMade,
-        referralTo: _referralMade && _referralTo.isNotEmpty ? _referralTo : null,
-        referralReason: _referralMade && _referralReason.isNotEmpty ? _referralReason : null,
-        
+        referralTo:
+            _referralMade && _referralTo.isNotEmpty ? _referralTo : null,
+        referralReason: _referralMade && _referralReason.isNotEmpty
+            ? _referralReason
+            : null,
+
         // Follow-up
         nextVisitDate: _nextVisitDate,
-        followUpInstructions: _followUpInstructions.isNotEmpty 
-            ? _followUpInstructions : null,
+        followUpInstructions:
+            _followUpInstructions.isNotEmpty ? _followUpInstructions : null,
         generalNotes: _generalNotes.isNotEmpty ? _generalNotes : null,
       );
 
@@ -294,7 +318,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                       ),
                     ),
                     if (widget.maternalProfile.edd != null)
-                      Text('Delivery Date: ${DateFormat('dd/MM/yyyy').format(widget.maternalProfile.edd!)}'),
+                      Text(
+                          'Delivery Date: ${DateFormat('dd/MM/yyyy').format(widget.maternalProfile.edd!)}'),
                   ],
                 ),
               ),
@@ -309,15 +334,18 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                 child: Column(
                   children: [
                     ListTile(
-                      leading: Icon(Icons.calendar_today, color: Colors.teal[700]),
+                      leading:
+                          Icon(Icons.calendar_today, color: Colors.teal[700]),
                       title: const Text('Visit Date'),
-                      subtitle: Text(DateFormat('dd/MM/yyyy').format(_visitDate)),
+                      subtitle:
+                          Text(DateFormat('dd/MM/yyyy').format(_visitDate)),
                       trailing: const Icon(Icons.edit),
                       onTap: () async {
                         final date = await showDatePicker(
                           context: context,
                           initialDate: _visitDate,
-                          firstDate: widget.maternalProfile.edd ?? DateTime(2020),
+                          firstDate:
+                              widget.maternalProfile.edd ?? DateTime(2020),
                           lastDate: DateTime.now(),
                         );
                         if (date != null) {
@@ -329,16 +357,21 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                       },
                     ),
                     DropdownButtonFormField<String>(
-                      value: _visitType,
+                      initialValue: _visitType,
                       decoration: const InputDecoration(
                         labelText: 'Visit Type',
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: '48 hours', child: Text('48 hours (2 days)')),
-                        DropdownMenuItem(value: '6 days', child: Text('6 days')),
-                        DropdownMenuItem(value: '6 weeks', child: Text('6 weeks')),
-                        DropdownMenuItem(value: '6 months', child: Text('6 months')),
+                        DropdownMenuItem(
+                            value: '48 hours',
+                            child: Text('48 hours (2 days)')),
+                        DropdownMenuItem(
+                            value: '6 days', child: Text('6 days')),
+                        DropdownMenuItem(
+                            value: '6 weeks', child: Text('6 weeks')),
+                        DropdownMenuItem(
+                            value: '6 months', child: Text('6 months')),
                         DropdownMenuItem(value: 'Other', child: Text('Other')),
                       ],
                       onChanged: (value) {
@@ -380,7 +413,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                         hintText: 'e.g., 37.0',
                         border: OutlineInputBorder(),
                       ),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -412,7 +446,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                               labelText: 'Weight (kg)',
                               border: OutlineInputBorder(),
                             ),
-                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                           ),
                         ),
                       ],
@@ -433,20 +468,23 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     CheckboxListTile(
                       title: const Text('Excessive bleeding'),
                       value: _excessiveBleeding,
-                      onChanged: (value) => setState(() => _excessiveBleeding = value!),
+                      onChanged: (value) =>
+                          setState(() => _excessiveBleeding = value!),
                       activeColor: Colors.red[700],
                       contentPadding: EdgeInsets.zero,
                     ),
                     CheckboxListTile(
                       title: const Text('Foul-smelling discharge'),
                       value: _foulDischarge,
-                      onChanged: (value) => setState(() => _foulDischarge = value!),
+                      onChanged: (value) =>
+                          setState(() => _foulDischarge = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     CheckboxListTile(
                       title: const Text('Breast problems'),
                       value: _breastProblems,
-                      onChanged: (value) => setState(() => _breastProblems = value!),
+                      onChanged: (value) =>
+                          setState(() => _breastProblems = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     if (_breastProblems) ...[
@@ -463,19 +501,22 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     CheckboxListTile(
                       title: const Text('Perineal wound infection'),
                       value: _perinealInfection,
-                      onChanged: (value) => setState(() => _perinealInfection = value!),
+                      onChanged: (value) =>
+                          setState(() => _perinealInfection = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     CheckboxListTile(
                       title: const Text('C-section wound infection'),
                       value: _csectionInfection,
-                      onChanged: (value) => setState(() => _csectionInfection = value!),
+                      onChanged: (value) =>
+                          setState(() => _csectionInfection = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     CheckboxListTile(
                       title: const Text('Urinary problems'),
                       value: _urinaryProblems,
-                      onChanged: (value) => setState(() => _urinaryProblems = value!),
+                      onChanged: (value) =>
+                          setState(() => _urinaryProblems = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ],
@@ -492,22 +533,24 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ..._maternalDangerSignsOptions.map((sign) => CheckboxListTile(
-                          title: Text(sign),
-                          value: _selectedMaternalDangerSigns.contains(sign),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value!) {
-                                _selectedMaternalDangerSigns.add(sign);
-                              } else {
-                                _selectedMaternalDangerSigns.remove(sign);
-                              }
-                            });
-                          },
-                          activeColor: Colors.red[700],
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
-                        )),
+                    ..._maternalDangerSignsOptions
+                        .map((sign) => CheckboxListTile(
+                              title: Text(sign),
+                              value:
+                                  _selectedMaternalDangerSigns.contains(sign),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value!) {
+                                    _selectedMaternalDangerSigns.add(sign);
+                                  } else {
+                                    _selectedMaternalDangerSigns.remove(sign);
+                                  }
+                                });
+                              },
+                              activeColor: Colors.red[700],
+                              contentPadding: EdgeInsets.zero,
+                              dense: true,
+                            )),
                   ],
                 ),
               ),
@@ -522,18 +565,21 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
-                      value: _moodAssessment,
+                      initialValue: _moodAssessment,
                       decoration: const InputDecoration(
                         labelText: 'Mood Assessment',
                         border: OutlineInputBorder(),
                       ),
                       items: const [
                         DropdownMenuItem(value: 'Good', child: Text('Good')),
-                        DropdownMenuItem(value: 'Anxious', child: Text('Anxious')),
-                        DropdownMenuItem(value: 'Depressed', child: Text('Depressed')),
+                        DropdownMenuItem(
+                            value: 'Anxious', child: Text('Anxious')),
+                        DropdownMenuItem(
+                            value: 'Depressed', child: Text('Depressed')),
                         DropdownMenuItem(value: 'Other', child: Text('Other')),
                       ],
-                      onChanged: (value) => setState(() => _moodAssessment = value),
+                      onChanged: (value) =>
+                          setState(() => _moodAssessment = value),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -552,7 +598,7 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
             const SizedBox(height: 24),
 
             // Baby's Health Assessment - Continue in next message due to length...
-            
+
             _buildSectionTitle('Baby\'s Health Assessment'),
             Card(
               child: Padding(
@@ -568,7 +614,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                               labelText: 'Baby Weight (kg)',
                               border: OutlineInputBorder(),
                             ),
-                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -579,7 +626,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                               labelText: 'Temperature (°C)',
                               border: OutlineInputBorder(),
                             ),
-                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                           ),
                         ),
                       ],
@@ -588,7 +636,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     SwitchListTile(
                       title: const Text('Baby feeding well'),
                       value: _babyFeedingWell,
-                      onChanged: (value) => setState(() => _babyFeedingWell = value),
+                      onChanged: (value) =>
+                          setState(() => _babyFeedingWell = value),
                       contentPadding: EdgeInsets.zero,
                     ),
                     if (!_babyFeedingWell) ...[
@@ -615,23 +664,28 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
-                      value: _cordStatus,
+                      initialValue: _cordStatus,
                       decoration: const InputDecoration(
                         labelText: 'Cord Status',
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'Normal', child: Text('Normal')),
-                        DropdownMenuItem(value: 'Infected', child: Text('Infected')),
-                        DropdownMenuItem(value: 'Bleeding', child: Text('Bleeding')),
-                        DropdownMenuItem(value: 'Fallen off', child: Text('Fallen off')),
+                        DropdownMenuItem(
+                            value: 'Normal', child: Text('Normal')),
+                        DropdownMenuItem(
+                            value: 'Infected', child: Text('Infected')),
+                        DropdownMenuItem(
+                            value: 'Bleeding', child: Text('Bleeding')),
+                        DropdownMenuItem(
+                            value: 'Fallen off', child: Text('Fallen off')),
                       ],
                       onChanged: (value) => setState(() => _cordStatus = value),
                     ),
                     CheckboxListTile(
                       title: const Text('Cord care advice given'),
                       value: _cordCareAdviceGiven,
-                      onChanged: (value) => setState(() => _cordCareAdviceGiven = value!),
+                      onChanged: (value) =>
+                          setState(() => _cordCareAdviceGiven = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ],
@@ -650,25 +704,30 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     CheckboxListTile(
                       title: const Text('Jaundice present'),
                       value: _jaundicePresent,
-                      onChanged: (value) => setState(() => _jaundicePresent = value!),
+                      onChanged: (value) =>
+                          setState(() => _jaundicePresent = value!),
                       activeColor: Colors.orange[700],
                       contentPadding: EdgeInsets.zero,
                     ),
                     if (_jaundicePresent) ...[
                       DropdownButtonFormField<String>(
-                        value: _jaundiceSeverity,
+                        initialValue: _jaundiceSeverity,
                         decoration: const InputDecoration(
                           labelText: 'Jaundice Severity',
                           border: OutlineInputBorder(),
                         ),
                         items: const [
                           DropdownMenuItem(value: 'Mild', child: Text('Mild')),
-                          DropdownMenuItem(value: 'Moderate', child: Text('Moderate')),
-                          DropdownMenuItem(value: 'Severe', child: Text('Severe')),
+                          DropdownMenuItem(
+                              value: 'Moderate', child: Text('Moderate')),
+                          DropdownMenuItem(
+                              value: 'Severe', child: Text('Severe')),
                         ],
-                        onChanged: (value) => setState(() => _jaundiceSeverity = value),
+                        onChanged: (value) =>
+                            setState(() => _jaundiceSeverity = value),
                         validator: _jaundicePresent
-                            ? (value) => value == null ? 'Please select severity' : null
+                            ? (value) =>
+                                value == null ? 'Please select severity' : null
                             : null,
                       ),
                     ],
@@ -727,18 +786,24 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
-                      value: _breastfeedingStatus,
+                      initialValue: _breastfeedingStatus,
                       decoration: const InputDecoration(
                         labelText: 'Breastfeeding Status',
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'Exclusive', child: Text('Exclusive breastfeeding')),
-                        DropdownMenuItem(value: 'Mixed', child: Text('Mixed feeding')),
-                        DropdownMenuItem(value: 'Formula only', child: Text('Formula only')),
-                        DropdownMenuItem(value: 'Not feeding', child: Text('Not feeding')),
+                        DropdownMenuItem(
+                            value: 'Exclusive',
+                            child: Text('Exclusive breastfeeding')),
+                        DropdownMenuItem(
+                            value: 'Mixed', child: Text('Mixed feeding')),
+                        DropdownMenuItem(
+                            value: 'Formula only', child: Text('Formula only')),
+                        DropdownMenuItem(
+                            value: 'Not feeding', child: Text('Not feeding')),
                       ],
-                      onChanged: (value) => setState(() => _breastfeedingStatus = value),
+                      onChanged: (value) =>
+                          setState(() => _breastfeedingStatus = value),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -751,7 +816,7 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: _latchQuality,
+                      initialValue: _latchQuality,
                       decoration: const InputDecoration(
                         labelText: 'Latch Quality',
                         border: OutlineInputBorder(),
@@ -759,9 +824,12 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                       items: const [
                         DropdownMenuItem(value: 'Good', child: Text('Good')),
                         DropdownMenuItem(value: 'Poor', child: Text('Poor')),
-                        DropdownMenuItem(value: 'Needs support', child: Text('Needs support')),
+                        DropdownMenuItem(
+                            value: 'Needs support',
+                            child: Text('Needs support')),
                       ],
-                      onChanged: (value) => setState(() => _latchQuality = value),
+                      onChanged: (value) =>
+                          setState(() => _latchQuality = value),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -771,12 +839,14 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 2,
-                      onSaved: (value) => _breastfeedingChallenges = value ?? '',
+                      onSaved: (value) =>
+                          _breastfeedingChallenges = value ?? '',
                     ),
                     CheckboxListTile(
                       title: const Text('Breastfeeding support given'),
                       value: _breastfeedingSupportGiven,
-                      onChanged: (value) => setState(() => _breastfeedingSupportGiven = value!),
+                      onChanged: (value) =>
+                          setState(() => _breastfeedingSupportGiven = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     if (_breastfeedingSupportGiven) ...[
@@ -786,7 +856,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                           border: OutlineInputBorder(),
                         ),
                         maxLines: 2,
-                        onSaved: (value) => _breastfeedingSupportDetails = value ?? '',
+                        onSaved: (value) =>
+                            _breastfeedingSupportDetails = value ?? '',
                       ),
                     ],
                   ],
@@ -805,7 +876,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     CheckboxListTile(
                       title: const Text('Family planning discussed'),
                       value: _familyPlanningDiscussed,
-                      onChanged: (value) => setState(() => _familyPlanningDiscussed = value!),
+                      onChanged: (value) =>
+                          setState(() => _familyPlanningDiscussed = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     if (_familyPlanningDiscussed) ...[
@@ -821,7 +893,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                       CheckboxListTile(
                         title: const Text('Method provided'),
                         value: _familyPlanningProvided,
-                        onChanged: (value) => setState(() => _familyPlanningProvided = value!),
+                        onChanged: (value) =>
+                            setState(() => _familyPlanningProvided = value!),
                         contentPadding: EdgeInsets.zero,
                       ),
                       TextFormField(
@@ -848,7 +921,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                   spacing: 8,
                   runSpacing: 8,
                   children: _immunizationOptions.map((immunization) {
-                    final isSelected = _selectedImmunizations.contains(immunization);
+                    final isSelected =
+                        _selectedImmunizations.contains(immunization);
                     return FilterChip(
                       label: Text(immunization),
                       selected: isSelected,
@@ -880,7 +954,8 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                     CheckboxListTile(
                       title: const Text('Referral made'),
                       value: _referralMade,
-                      onChanged: (value) => setState(() => _referralMade = value!),
+                      onChanged: (value) =>
+                          setState(() => _referralMade = value!),
                       contentPadding: EdgeInsets.zero,
                     ),
                     if (_referralMade) ...[
@@ -925,9 +1000,11 @@ class _AddPostnatalVisitScreenState extends ConsumerState<AddPostnatalVisitScree
                       onTap: () async {
                         final date = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now().add(const Duration(days: 7)),
+                          initialDate:
+                              DateTime.now().add(const Duration(days: 7)),
                           firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 365)),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 365)),
                         );
                         if (date != null) {
                           setState(() => _nextVisitDate = date);

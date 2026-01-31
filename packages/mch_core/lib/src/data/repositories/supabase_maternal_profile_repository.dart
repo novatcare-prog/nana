@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Maternal Profile Repository using Supabase
 class SupabaseMaternalProfileRepository {
@@ -13,10 +12,7 @@ class SupabaseMaternalProfileRepository {
     try {
       await _supabase
           .from('maternal_profiles') // Correct table
-          .update({
-            'hypertension': true 
-          })
-          .eq('id', profileId);
+          .update({'hypertension': true}).eq('id', profileId);
     } catch (e) {
       print('Failed to flag patient as high risk: $e');
     }
@@ -27,7 +23,7 @@ class SupabaseMaternalProfileRepository {
     try {
       final response = await _supabase
           .from('maternal_profiles') // Correct table
-          .insert(profile.toJson()) 
+          .insert(profile.toJson())
           .select()
           .single();
 
@@ -87,7 +83,10 @@ class SupabaseMaternalProfileRepository {
   /// Delete a maternal profile
   Future<void> deleteProfile(String id) async {
     try {
-      await _supabase.from('maternal_profiles').delete().eq('id', id); // Correct table
+      await _supabase
+          .from('maternal_profiles')
+          .delete()
+          .eq('id', id); // Correct table
     } catch (e) {
       throw Exception('Failed to delete profile: $e');
     }
@@ -130,7 +129,7 @@ class SupabaseMaternalProfileRepository {
       throw Exception('Failed to fetch profiles due soon: $e');
     }
   }
-  
+
   /// Search profiles by name or ANC number
   Future<List<MaternalProfile>> searchProfiles(String query) async {
     try {
@@ -147,7 +146,6 @@ class SupabaseMaternalProfileRepository {
       throw Exception('Failed to search profiles: $e');
     }
   }
-
 
   /// Get statistics (This is for your dashboard)
   Future<Map<String, int>> getStatistics() async {

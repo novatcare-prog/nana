@@ -16,10 +16,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   bool _isLoading = true;
   Map<String, dynamic> _stats = {};
   String? _error;
-  
+
   // Date range
-  DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
-  DateTime _endDate = DateTime.now();
+  final DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
+  final DateTime _endDate = DateTime.now();
 
   @override
   void initState() {
@@ -35,20 +35,23 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
     try {
       final supabase = Supabase.instance.client;
-      
+
       // Get total patients
       final patientsResult = await supabase
           .from('maternal_profiles')
           .select('id')
           .count(CountOption.exact);
-      
+
       // Get new patients this month
       final newPatientsResult = await supabase
           .from('maternal_profiles')
           .select('id')
-          .gte('created_at', DateTime(DateTime.now().year, DateTime.now().month, 1).toIso8601String())
+          .gte(
+              'created_at',
+              DateTime(DateTime.now().year, DateTime.now().month, 1)
+                  .toIso8601String())
           .count(CountOption.exact);
-      
+
       // Get high risk patients (those with diabetes, hypertension, or HIV positive)
       // Using OR filter for medical conditions
       final highRiskResult = await supabase
@@ -56,30 +59,35 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           .select('id')
           .or('diabetes.eq.true,hypertension.eq.true,hiv_result.eq.positive')
           .count(CountOption.exact);
-      
+
       // Get total ANC visits
       final ancVisitsResult = await supabase
           .from('anc_visits')
           .select('id')
           .count(CountOption.exact);
-      
+
       // Get visits this week
-      final weekStart = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+      final weekStart =
+          DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
       final visitsThisWeekResult = await supabase
           .from('anc_visits')
           .select('id')
           .gte('visit_date', weekStart.toIso8601String())
           .count(CountOption.exact);
-      
+
       // Get appointments today
       final today = DateTime.now();
       final appointmentsTodayResult = await supabase
           .from('appointments')
           .select('id')
-          .gte('appointment_date', DateTime(today.year, today.month, today.day).toIso8601String())
-          .lt('appointment_date', DateTime(today.year, today.month, today.day + 1).toIso8601String())
+          .gte('appointment_date',
+              DateTime(today.year, today.month, today.day).toIso8601String())
+          .lt(
+              'appointment_date',
+              DateTime(today.year, today.month, today.day + 1)
+                  .toIso8601String())
           .count(CountOption.exact);
-      
+
       // Get pending appointments
       final pendingAppointmentsResult = await supabase
           .from('appointments')
@@ -87,21 +95,24 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           .eq('appointment_status', 'scheduled')
           .gte('appointment_date', DateTime.now().toIso8601String())
           .count(CountOption.exact);
-      
+
       // Get immunizations given this month
       final immunizationsResult = await supabase
           .from('maternal_immunizations')
           .select('id')
-          .gte('dose_date', DateTime(DateTime.now().year, DateTime.now().month, 1).toIso8601String())
+          .gte(
+              'dose_date',
+              DateTime(DateTime.now().year, DateTime.now().month, 1)
+                  .toIso8601String())
           .count(CountOption.exact);
-      
+
       // Get count of patients with EDD in the future (active pregnancies)
       final activeResult = await supabase
           .from('maternal_profiles')
           .select('id')
           .gte('edd', DateTime.now().toIso8601String())
           .count(CountOption.exact);
-      
+
       // Get delivered patients (EDD in the past)
       final deliveredResult = await supabase
           .from('maternal_profiles')
@@ -136,7 +147,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reports & Analytics'),
@@ -155,9 +166,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+                      Icon(Icons.error_outline,
+                          size: 64, color: theme.colorScheme.error),
                       const SizedBox(height: 16),
-                      Text('Error loading statistics', style: theme.textTheme.titleLarge),
+                      Text('Error loading statistics',
+                          style: theme.textTheme.titleLarge),
                       const SizedBox(height: 8),
                       Text(_error!, style: theme.textTheme.bodyMedium),
                       const SizedBox(height: 16),
@@ -180,19 +193,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                         // Header
                         _buildHeader(theme),
                         const SizedBox(height: 24),
-                        
+
                         // Summary Stats
                         _buildSummaryCards(theme),
                         const SizedBox(height: 24),
-                        
+
                         // Patient Status Distribution
                         _buildPatientStatusSection(theme),
                         const SizedBox(height: 24),
-                        
+
                         // Activity Section
                         _buildActivitySection(theme),
                         const SizedBox(height: 24),
-                        
+
                         // Quick Reports
                         _buildQuickReportsSection(theme),
                         const SizedBox(height: 32),
@@ -303,7 +316,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     final active = (_stats['activePatients'] ?? 0) as int;
     final highRisk = (_stats['highRisk'] ?? 0) as int;
     final delivered = (_stats['delivered'] ?? 0) as int;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -498,7 +511,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -560,7 +573,7 @@ class _ProgressRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percentage = total > 0 ? (value / total * 100) : 0.0;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -598,7 +611,7 @@ class _ActivityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -643,7 +656,7 @@ class _ReportTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(

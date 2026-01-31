@@ -14,27 +14,28 @@ class AddImmunizationScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<AddImmunizationScreen> createState() => _AddImmunizationScreenState();
+  ConsumerState<AddImmunizationScreen> createState() =>
+      _AddImmunizationScreenState();
 }
 
 class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Form fields
   ImmunizationType? _selectedVaccine;
   DateTime _dateGiven = DateTime.now();
   int? _doseNumber;
-  String? _batchNumber;
+
   DateTime? _expiryDate;
   String? _route;
   String? _site;
   bool _adverseReaction = false;
-  String? _reactionDetails;
+
   String? _reactionSeverity;
-  String? _notes;
+
   bool _bcgScarChecked = false;
   bool? _bcgScarPresent;
-  
+
   final _batchNumberController = TextEditingController();
   final _notesController = TextEditingController();
   final _reactionDetailsController = TextEditingController();
@@ -75,17 +76,20 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
         ageAtVaccinationWeeks: ageInWeeks,
         ageAtVaccinationMonths: ageInMonths,
         doseNumber: _doseNumber,
-        batchNumber: _batchNumberController.text.isNotEmpty 
-            ? _batchNumberController.text 
+        batchNumber: _batchNumberController.text.isNotEmpty
+            ? _batchNumberController.text
             : null,
         expiryDate: _expiryDate,
         administrationRoute: _route,
         administrationSite: _site,
         adverseEventReported: _adverseReaction,
-        adverseEventDescription: _adverseReaction ? _reactionDetailsController.text : null,
+        adverseEventDescription:
+            _adverseReaction ? _reactionDetailsController.text : null,
         reactionSeverity: _adverseReaction ? _reactionSeverity : null,
-        bcgScarChecked: _selectedVaccine == ImmunizationType.bcg ? _bcgScarChecked : null,
-        bcgScarPresent: _selectedVaccine == ImmunizationType.bcg ? _bcgScarPresent : null,
+        bcgScarChecked:
+            _selectedVaccine == ImmunizationType.bcg ? _bcgScarChecked : null,
+        bcgScarPresent:
+            _selectedVaccine == ImmunizationType.bcg ? _bcgScarPresent : null,
         givenBy: userProfile?.fullName,
         healthFacilityName: userProfile?.fullName,
         notes: _notesController.text.isNotEmpty ? _notesController.text : null,
@@ -154,7 +158,8 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                           child: Text(vaccine.label),
                         );
                       }).toList(),
-                      onChanged: (value) => setState(() => _selectedVaccine = value),
+                      onChanged: (value) =>
+                          setState(() => _selectedVaccine = value),
                       validator: (value) =>
                           value == null ? 'Please select a vaccine' : null,
                     ),
@@ -214,9 +219,12 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                       ),
                       items: const [
                         DropdownMenuItem(value: 'Oral', child: Text('Oral')),
-                        DropdownMenuItem(value: 'IM', child: Text('Intramuscular (IM)')),
-                        DropdownMenuItem(value: 'SC', child: Text('Subcutaneous (SC)')),
-                        DropdownMenuItem(value: 'ID', child: Text('Intradermal (ID)')),
+                        DropdownMenuItem(
+                            value: 'IM', child: Text('Intramuscular (IM)')),
+                        DropdownMenuItem(
+                            value: 'SC', child: Text('Subcutaneous (SC)')),
+                        DropdownMenuItem(
+                            value: 'ID', child: Text('Intradermal (ID)')),
                       ],
                       onChanged: (value) => setState(() => _route = value),
                     ),
@@ -229,11 +237,16 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'Left arm', child: Text('Left arm')),
-                        DropdownMenuItem(value: 'Right arm', child: Text('Right arm')),
-                        DropdownMenuItem(value: 'Left thigh', child: Text('Left thigh')),
-                        DropdownMenuItem(value: 'Right thigh', child: Text('Right thigh')),
-                        DropdownMenuItem(value: 'Mouth', child: Text('Mouth (Oral)')),
+                        DropdownMenuItem(
+                            value: 'Left arm', child: Text('Left arm')),
+                        DropdownMenuItem(
+                            value: 'Right arm', child: Text('Right arm')),
+                        DropdownMenuItem(
+                            value: 'Left thigh', child: Text('Left thigh')),
+                        DropdownMenuItem(
+                            value: 'Right thigh', child: Text('Right thigh')),
+                        DropdownMenuItem(
+                            value: 'Mouth', child: Text('Mouth (Oral)')),
                       ],
                       onChanged: (value) => setState(() => _site = value),
                     ),
@@ -258,9 +271,11 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                       onTap: () async {
                         final date = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now().add(const Duration(days: 365)),
+                          initialDate:
+                              DateTime.now().add(const Duration(days: 365)),
                           firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 3650)),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 3650)),
                         );
                         if (date != null) {
                           setState(() => _expiryDate = date);
@@ -273,16 +288,18 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                     if (_selectedVaccine == ImmunizationType.bcg) ...[
                       Text(
                         'BCG Scar Check',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(height: 12),
                       CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
                         title: const Text('BCG Scar Checked'),
                         value: _bcgScarChecked,
-                        onChanged: (value) => setState(() => _bcgScarChecked = value ?? false),
+                        onChanged: (value) =>
+                            setState(() => _bcgScarChecked = value ?? false),
                       ),
                       if (_bcgScarChecked) ...[
                         RadioListTile<bool>(
@@ -290,14 +307,16 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                           title: const Text('Scar Present'),
                           value: true,
                           groupValue: _bcgScarPresent,
-                          onChanged: (value) => setState(() => _bcgScarPresent = value),
+                          onChanged: (value) =>
+                              setState(() => _bcgScarPresent = value),
                         ),
                         RadioListTile<bool>(
                           contentPadding: EdgeInsets.zero,
                           title: const Text('Scar Not Present'),
                           value: false,
                           groupValue: _bcgScarPresent,
-                          onChanged: (value) => setState(() => _bcgScarPresent = value),
+                          onChanged: (value) =>
+                              setState(() => _bcgScarPresent = value),
                         ),
                       ],
                       const SizedBox(height: 24),
@@ -344,10 +363,13 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                         ),
                         items: const [
                           DropdownMenuItem(value: 'Mild', child: Text('Mild')),
-                          DropdownMenuItem(value: 'Moderate', child: Text('Moderate')),
-                          DropdownMenuItem(value: 'Severe', child: Text('Severe')),
+                          DropdownMenuItem(
+                              value: 'Moderate', child: Text('Moderate')),
+                          DropdownMenuItem(
+                              value: 'Severe', child: Text('Severe')),
                         ],
-                        onChanged: (value) => setState(() => _reactionSeverity = value),
+                        onChanged: (value) =>
+                            setState(() => _reactionSeverity = value),
                       ),
                     ],
                     const SizedBox(height: 24),
@@ -375,7 +397,8 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                         ),
                         child: const Text(
                           'Save Immunization Record',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -395,7 +418,8 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundColor: widget.child.sex == 'Male' ? Colors.blue : Colors.pink,
+              backgroundColor:
+                  widget.child.sex == 'Male' ? Colors.blue : Colors.pink,
               child: Icon(
                 widget.child.sex == 'Male' ? Icons.boy : Icons.girl,
                 size: 28,
@@ -433,7 +457,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
     final age = DateTime.now().difference(widget.child.dateOfBirth);
     final weeks = age.inDays ~/ 7;
     final months = age.inDays ~/ 30;
-    
+
     if (months < 12) {
       return '$weeks weeks ($months months)';
     } else {

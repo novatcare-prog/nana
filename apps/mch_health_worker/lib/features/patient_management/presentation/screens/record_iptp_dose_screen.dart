@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
@@ -18,7 +17,8 @@ class RecordIPTpDoseScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<RecordIPTpDoseScreen> createState() => _RecordIPTpDoseScreenState();
+  ConsumerState<RecordIPTpDoseScreen> createState() =>
+      _RecordIPTpDoseScreenState();
 }
 
 class _RecordIPTpDoseScreenState extends ConsumerState<RecordIPTpDoseScreen> {
@@ -44,7 +44,7 @@ class _RecordIPTpDoseScreenState extends ConsumerState<RecordIPTpDoseScreen> {
 
     try {
       final profile = ref.read(currentUserProfileProvider).value;
-      
+
       final record = MalariaPreventionRecord(
         maternalProfileId: widget.patientId,
         patientName: widget.patient.clientName,
@@ -97,7 +97,7 @@ class _RecordIPTpDoseScreenState extends ConsumerState<RecordIPTpDoseScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             DropdownButtonFormField<int>(
-              value: _spDose,
+              initialValue: _spDose,
               decoration: const InputDecoration(
                 labelText: 'SP Dose *',
                 border: OutlineInputBorder(),
@@ -160,7 +160,8 @@ class _RecordIPTpDoseScreenState extends ConsumerState<RecordIPTpDoseScreen> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: _isLoading ? null : _saveIPTpDose,
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50)),
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Save IPTp Dose'),
@@ -171,35 +172,3 @@ class _RecordIPTpDoseScreenState extends ConsumerState<RecordIPTpDoseScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

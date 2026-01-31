@@ -80,16 +80,16 @@ class _MainNavigationScaffoldState
           children: [
             // Offline status banner at the top
             const OfflineBanner(),
-            
+
             // Main content with sidebar
             Expanded(
               child: Row(
                 children: [
                   // Custom Sidebar (Left Side)
                   _buildDesktopSidebar(context, screenWidth >= 800),
-                  
+
                   const VerticalDivider(thickness: 1, width: 1),
-                  
+
                   // Main Content Area
                   Expanded(
                     child: _getPage(_selectedIndex),
@@ -107,7 +107,7 @@ class _MainNavigationScaffoldState
           children: [
             // Offline status banner at the top
             const OfflineBanner(),
-            
+
             // Main content
             Expanded(
               child: _getPage(_selectedIndex),
@@ -127,7 +127,7 @@ class _MainNavigationScaffoldState
   Widget _buildDesktopSidebar(BuildContext context, bool extended) {
     final theme = Theme.of(context);
     final sidebarWidth = extended ? 220.0 : 72.0;
-    
+
     return Container(
       width: sidebarWidth,
       color: theme.colorScheme.surface,
@@ -157,9 +157,9 @@ class _MainNavigationScaffoldState
               ],
             ),
           ),
-          
+
           const Divider(height: 1),
-          
+
           // Main Navigation Items
           Expanded(
             child: ListView(
@@ -195,12 +195,12 @@ class _MainNavigationScaffoldState
                   extended: extended,
                   onTap: () => _onDestinationSelected(2),
                 ),
-                
+
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Divider(),
                 ),
-                
+
                 // Reports
                 _buildSidebarItem(
                   context: context,
@@ -241,12 +241,12 @@ class _MainNavigationScaffoldState
                     );
                   },
                 ),
-                
+
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Divider(),
                 ),
-                
+
                 // Settings
                 _buildSidebarItem(
                   context: context,
@@ -267,7 +267,7 @@ class _MainNavigationScaffoldState
               ],
             ),
           ),
-          
+
           // User Profile Footer
           const Divider(height: 1),
           _UserProfileHeader(),
@@ -289,7 +289,8 @@ class _MainNavigationScaffoldState
   }) {
     final theme = Theme.of(context);
     final color = isSelected ? theme.primaryColor : theme.iconTheme.color;
-    final bgColor = isSelected ? theme.primaryColor.withOpacity(0.1) : Colors.transparent;
+    final bgColor =
+        isSelected ? theme.primaryColor.withOpacity(0.1) : Colors.transparent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -305,7 +306,8 @@ class _MainNavigationScaffoldState
               vertical: 12,
             ),
             child: Row(
-              mainAxisAlignment: extended ? MainAxisAlignment.start : MainAxisAlignment.center,
+              mainAxisAlignment:
+                  extended ? MainAxisAlignment.start : MainAxisAlignment.center,
               children: [
                 Stack(
                   clipBehavior: Clip.none,
@@ -339,7 +341,8 @@ class _MainNavigationScaffoldState
                     label,
                     style: TextStyle(
                       color: color,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -359,45 +362,7 @@ class _MainNavigationScaffoldState
         children: [
           // Drawer Header with REAL User Info
           _UserProfileHeader(),
-          
-          // My Facility
-          ListTile(
-            leading: const Icon(Icons.local_hospital),
-            title: const Text('My Facility'),
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('My Facility - Coming soon')),
-              );
-            },
-          ),
-          
-          // Staff Management
-          ListTile(
-            leading: const Icon(Icons.group),
-            title: const Text('Staff Management'),
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Staff Management - Coming soon')),
-              );
-            },
-          ),
-          
-          // Stock/Inventory
-          ListTile(
-            leading: const Icon(Icons.inventory),
-            title: const Text('Stock & Inventory'),
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Stock & Inventory - Coming soon')),
-              );
-            },
-          ),
-          
-          const Divider(),
-          
+
           // Reports & Analytics
           ListTile(
             leading: const Icon(Icons.analytics),
@@ -410,7 +375,7 @@ class _MainNavigationScaffoldState
               );
             },
           ),
-          
+
           // MOH Guidelines
           ListTile(
             leading: const Icon(Icons.book),
@@ -422,9 +387,9 @@ class _MainNavigationScaffoldState
               );
             },
           ),
-          
+
           const Divider(),
-          
+
           // Notifications (with real badge count)
           Consumer(
             builder: (context, ref, _) {
@@ -434,14 +399,16 @@ class _MainNavigationScaffoldState
                 title: const Text('Notifications'),
                 trailing: count > 0
                     ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           count > 99 ? '99+' : '$count',
-                          style: const TextStyle(color: Colors.white, fontSize: 12),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12),
                         ),
                       )
                     : null,
@@ -457,7 +424,7 @@ class _MainNavigationScaffoldState
               );
             },
           ),
-          
+
           // Settings - UPDATED!
           ListTile(
             leading: const Icon(Icons.settings),
@@ -472,7 +439,7 @@ class _MainNavigationScaffoldState
               );
             },
           ),
-          
+
           // Help & Support
           ListTile(
             leading: const Icon(Icons.help),
@@ -484,7 +451,7 @@ class _MainNavigationScaffoldState
               );
             },
           ),
-          
+
           // About
           ListTile(
             leading: const Icon(Icons.info),
@@ -495,7 +462,8 @@ class _MainNavigationScaffoldState
                 context: context,
                 applicationName: 'MCH Kenya',
                 applicationVersion: '1.0.0',
-                applicationIcon: const Icon(Icons.local_hospital, size: 48, color: Color(0xFF0D9488)),
+                applicationIcon: const Icon(Icons.local_hospital,
+                    size: 48, color: Color(0xFF0D9488)),
                 children: [
                   const Text('Mother & Child Health Management System'),
                   const SizedBox(height: 8),
@@ -504,9 +472,9 @@ class _MainNavigationScaffoldState
               );
             },
           ),
-          
+
           const Divider(),
-          
+
           // Logout with REAL functionality
           _LogoutTile(),
         ],
@@ -520,7 +488,6 @@ class _UserProfileHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentUserProfileProvider);
-    final facilityAsync = ref.watch(userFacilityProvider);
 
     return profileAsync.when(
       data: (profile) {
@@ -535,6 +502,11 @@ class _UserProfileHeader extends ConsumerWidget {
             accountEmail: Text(''),
           );
         }
+
+        // Watch facility only if we have an ID
+        final facilityAsync = profile.facilityId != null
+            ? ref.watch(facilityByIdProvider(profile.facilityId!))
+            : const AsyncValue.data(null);
 
         return UserAccountsDrawerHeader(
           decoration: const BoxDecoration(color: Color(0xFF0D9488)),
@@ -554,9 +526,28 @@ class _UserProfileHeader extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           accountEmail: facilityAsync.when(
-            data: (facility) => Text(facility?.name ?? 'No facility assigned'),
-            loading: () => const Text('Loading facility...'),
-            error: (_, __) => const Text('Error loading facility'),
+            data: (facility) => Row(
+              children: [
+                const Icon(Icons.local_hospital,
+                    size: 14, color: Colors.white70),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    facility?.name ?? 'No facility assigned',
+                    style: const TextStyle(color: Colors.white70),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            loading: () => const Text(
+              'Loading facility...',
+              style: TextStyle(color: Colors.white70),
+            ),
+            error: (_, __) => const Text(
+              'Error loading facility',
+              style: TextStyle(color: Colors.white70),
+            ),
           ),
           otherAccountsPictures: [
             IconButton(
@@ -641,7 +632,7 @@ class _LogoutTile extends ConsumerWidget {
                   // Perform logout
                   final authActions = ref.read(authActionsProvider);
                   await authActions.signOut();
-                  
+
                   if (context.mounted) {
                     Navigator.pop(context); // Close dialog
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -652,7 +643,8 @@ class _LogoutTile extends ConsumerWidget {
                     );
                   }
                 },
-                child: const Text('Logout', style: TextStyle(color: Colors.red)),
+                child:
+                    const Text('Logout', style: TextStyle(color: Colors.red)),
               ),
             ],
           ),
@@ -666,7 +658,7 @@ class _LogoutTile extends ConsumerWidget {
 
 class SchedulePage extends StatelessWidget {
   final Widget? drawer;
-  
+
   const SchedulePage({super.key, this.drawer});
 
   @override

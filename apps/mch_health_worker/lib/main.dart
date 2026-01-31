@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 
 // --- Core Imports ---
 import 'core/providers/auth_providers.dart';
-import 'core/providers/theme_provider.dart' hide AppTheme; // Hiding to avoid naming conflict
-import 'core/theme/app_theme.dart'; 
+import 'core/providers/theme_provider.dart'
+    hide AppTheme; // Hiding to avoid naming conflict
+import 'core/theme/app_theme.dart';
 import 'core/services/hive_service.dart';
 import 'core/services/connectivity_service.dart';
 
@@ -15,7 +17,7 @@ import 'features/navigation/main_navigation_scaffold.dart';
 import 'features/patient_management/presentation/screens/login_screen.dart';
 import 'features/patient_management/presentation/screens/reset_password_screen.dart';
 import 'features/patient_management/presentation/screens/splash_screen.dart';
-import 'core/widgets/offline_indicator.dart'; 
+import 'core/widgets/offline_indicator.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -27,23 +29,35 @@ const String _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. Validate Supabase configuration
-  if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
-    throw Exception(
-      'Missing Supabase configuration. '
-      'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx'
-    );
+  // 1. Validate and Load Configuration
+  String url = _supabaseUrl;
+  String key = _supabaseAnonKey;
+
+  if (url.isEmpty || key.isEmpty) {
+    try {
+      await dotenv.load(fileName: ".env");
+      url = dotenv.env['SUPABASE_URL'] ?? '';
+      key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+    } catch (e) {
+      print('⚠️ Failed to load .env: $e');
+    }
   }
-  
-  // 2. Initialize Supabase (using compile-time env vars)
+
+  if (url.isEmpty || key.isEmpty) {
+    throw Exception('Missing Supabase configuration. '
+        'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx '
+        'OR ensure .env file exists with SUPABASE_URL and SUPABASE_ANON_KEY');
+  }
+
+  // 2. Initialize Supabase
   await Supabase.initialize(
-    url: _supabaseUrl,
-    anonKey: _supabaseAnonKey,
+    url: url,
+    anonKey: key,
     authOptions: const FlutterAuthClientOptions(
       authFlowType: AuthFlowType.pkce,
     ),
   );
-  
+
   // 3. Listen for Auth State Changes (Password Recovery, Sign Out)
   Supabase.instance.client.auth.onAuthStateChange.listen((data) {
     if (data.event == AuthChangeEvent.passwordRecovery) {
@@ -59,22 +73,23 @@ void main() async {
         PageRouteBuilder(
           pageBuilder: (_, __, ___) => const _LoggingOutScreen(),
           transitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder: (_, animation, __, child) => 
-            FadeTransition(opacity: animation, child: child),
+          transitionsBuilder: (_, animation, __, child) =>
+              FadeTransition(opacity: animation, child: child),
         ),
         (route) => false,
       );
     }
   });
-  
+
   // 4. Initialize Hive (Offline Storage)
   print('🔄 Initializing Hive...');
   await HiveService.initAll();
   print('✅ Hive initialized successfully');
-  
+
   // Debug: Show storage stats
   final stats = HiveService.getStorageStats();
-  print('📊 Storage stats: ${stats.length} boxes, ${HiveService.getTotalCachedItems()} total items');
+  print(
+      '📊 Storage stats: ${stats.length} boxes, ${HiveService.getTotalCachedItems()} total items');
 
   runApp(
     const ProviderScope(
@@ -89,24 +104,24 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    
+
     // Initialize connectivity monitoring
     ref.watch(connectivityServiceProvider);
-    
+
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'MCH Kenya - Health Worker',
       debugShowCheckedModeBanner: false,
-      
+
       // Theme Configuration (Uses your updated AppTheme with darker blue)
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      
+
       // ✅ Start with the Splash Screen, wrapped with sync error listener
       home: const SyncErrorListener(
         child: SplashScreen(),
-      ), 
+      ),
     );
   }
 }
@@ -144,7 +159,8 @@ class AuthGate extends ConsumerWidget {
               children: [
                 const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
-                Text('Authentication Error: $error', textAlign: TextAlign.center),
+                Text('Authentication Error: $error',
+                    textAlign: TextAlign.center),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -225,7 +241,8 @@ class RoleChecker extends ConsumerWidget {
     );
   }
 
-  Widget _buildError(BuildContext context, WidgetRef ref, String title, String message) {
+  Widget _buildError(
+      BuildContext context, WidgetRef ref, String title, String message) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -278,7 +295,7 @@ class _LoggingOutScreen extends StatefulWidget {
   State<_LoggingOutScreen> createState() => _LoggingOutScreenState();
 }
 
-class _LoggingOutScreenState extends State<_LoggingOutScreen> 
+class _LoggingOutScreenState extends State<_LoggingOutScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -287,7 +304,7 @@ class _LoggingOutScreenState extends State<_LoggingOutScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -299,7 +316,7 @@ class _LoggingOutScreenState extends State<_LoggingOutScreen>
 
     _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
-        parent: _controller, 
+        parent: _controller,
         curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
       ),
     );
@@ -313,8 +330,8 @@ class _LoggingOutScreenState extends State<_LoggingOutScreen>
           PageRouteBuilder(
             pageBuilder: (_, __, ___) => const LoginScreen(),
             transitionDuration: const Duration(milliseconds: 500),
-            transitionsBuilder: (_, animation, __, child) => 
-              FadeTransition(opacity: animation, child: child),
+            transitionsBuilder: (_, animation, __, child) =>
+                FadeTransition(opacity: animation, child: child),
           ),
           (route) => false,
         );
@@ -348,7 +365,10 @@ class _LoggingOutScreenState extends State<_LoggingOutScreen>
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -358,24 +378,25 @@ class _LoggingOutScreenState extends State<_LoggingOutScreen>
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Text
                     Text(
                       'Goodbye!',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Logging you out...',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                            color: Colors.grey[600],
+                          ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Spinner
                     SizedBox(
                       width: 24,

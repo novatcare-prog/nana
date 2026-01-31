@@ -20,7 +20,7 @@ class AddDewormingScreen extends ConsumerStatefulWidget {
 
 class _AddDewormingScreenState extends ConsumerState<AddDewormingScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   DateTime _dateGiven = DateTime.now();
   int? _doseNumber;
   String _drugName = 'Albendazole';
@@ -43,7 +43,7 @@ class _AddDewormingScreenState extends ConsumerState<AddDewormingScreen> {
 
     try {
       final userProfile = ref.read(currentUserProfileProvider).value;
-      
+
       // Calculate next dose date (6 months later)
       final nextDoseDate = DateTime(
         _dateGiven.year,
@@ -61,9 +61,10 @@ class _AddDewormingScreenState extends ConsumerState<AddDewormingScreen> {
         givenBy: userProfile?.fullName,
         healthFacilityName: userProfile?.fullName,
         sideEffectsReported: _sideEffectsReported,
-        sideEffectsDescription: _sideEffectsReported && _sideEffectsDescription.isNotEmpty
-            ? _sideEffectsDescription
-            : null,
+        sideEffectsDescription:
+            _sideEffectsReported && _sideEffectsDescription.isNotEmpty
+                ? _sideEffectsDescription
+                : null,
         nextDoseDate: _ageInMonths < 59 ? nextDoseDate : null,
         notes: _notes.isNotEmpty ? _notes : null,
       );
@@ -119,7 +120,8 @@ class _AddDewormingScreenState extends ConsumerState<AddDewormingScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('DOB: ${DateFormat('dd/MM/yyyy').format(widget.child.dateOfBirth)}'),
+                    Text(
+                        'DOB: ${DateFormat('dd/MM/yyyy').format(widget.child.dateOfBirth)}'),
                     Text('Age: $_ageInMonths months'),
                   ],
                 ),
@@ -165,7 +167,7 @@ class _AddDewormingScreenState extends ConsumerState<AddDewormingScreen> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<int>(
-                      value: _doseNumber,
+                      initialValue: _doseNumber,
                       decoration: const InputDecoration(
                         hintText: 'Select dose number',
                         border: OutlineInputBorder(),
@@ -258,9 +260,11 @@ class _AddDewormingScreenState extends ConsumerState<AddDewormingScreen> {
                           labelText: 'Describe Side Effects',
                           hintText: 'Nausea, vomiting, diarrhea, etc.',
                           border: const OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.warning, color: Colors.orange[700]),
+                          prefixIcon:
+                              Icon(Icons.warning, color: Colors.orange[700]),
                         ),
-                        onSaved: (value) => _sideEffectsDescription = value ?? '',
+                        onSaved: (value) =>
+                            _sideEffectsDescription = value ?? '',
                         validator: _sideEffectsReported
                             ? (value) {
                                 if (value == null || value.isEmpty) {

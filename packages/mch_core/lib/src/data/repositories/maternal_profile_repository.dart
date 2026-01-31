@@ -11,13 +11,10 @@ class SupabaseMaternalProfileRepository {
   /// ✅ NEW FUNCTION TO UPDATE DASHBOARD
   Future<void> flagPatientAsHighRisk(String profileId) async {
     try {
-      await _supabase
-          .from('maternal_profiles')
-          .update({
-            // This is the column your dashboard is already checking
-            'hypertension': true 
-          })
-          .eq('id', profileId);
+      await _supabase.from('maternal_profiles').update({
+        // This is the column your dashboard is already checking
+        'hypertension': true
+      }).eq('id', profileId);
     } catch (e) {
       print('Failed to flag patient as high risk: $e');
       // Don't re-throw, as failing to flag is not a critical error
@@ -25,28 +22,28 @@ class SupabaseMaternalProfileRepository {
   }
 
   /// Create a new maternal profile
-Future<MaternalProfile> createProfile(MaternalProfile profile) async {
-  try {
-    final json = profile.toJson();
-    
-    // Remove id field - let database generate UUID
-    json.remove('id');
-    
-    // Also remove created_at and updated_at - let database handle these
-    json.remove('created_at');
-    json.remove('updated_at');
-    
-    final response = await _supabase
-        .from('maternal_profiles')
-        .insert(json)
-        .select()
-        .single();
+  Future<MaternalProfile> createProfile(MaternalProfile profile) async {
+    try {
+      final json = profile.toJson();
 
-    return MaternalProfile.fromJson(response);
-  } catch (e) {
-    throw Exception('Failed to create profile: $e');
+      // Remove id field - let database generate UUID
+      json.remove('id');
+
+      // Also remove created_at and updated_at - let database handle these
+      json.remove('created_at');
+      json.remove('updated_at');
+
+      final response = await _supabase
+          .from('maternal_profiles')
+          .insert(json)
+          .select()
+          .single();
+
+      return MaternalProfile.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to create profile: $e');
+    }
   }
-}
 
   /// Get all maternal profiles
   Future<List<MaternalProfile>> getAllProfiles() async {
@@ -108,16 +105,24 @@ Future<MaternalProfile> createProfile(MaternalProfile profile) async {
   Future<Map<String, int>> getStatistics() async {
     try {
       final allProfiles = await getAllProfiles();
-      
-      final highRisk = allProfiles.where((p) => 
-        p.diabetes == true || p.hypertension == true || p.previousCs == true || p.age > 35 || p.age < 18
-      ).length;
+
+      final highRisk = allProfiles
+          .where((p) =>
+              p.diabetes == true ||
+              p.hypertension == true ||
+              p.previousCs == true ||
+              p.age > 35 ||
+              p.age < 18)
+          .length;
 
       final now = DateTime.now();
       final thirtyDaysFromNow = now.add(const Duration(days: 30));
-      final dueSoon = allProfiles.where((p) => 
-        p.edd.isAfter(now) && p.edd.isBefore(thirtyDaysFromNow)
-      ).length;
+      final dueSoon = allProfiles
+          .where((p) =>
+              p.edd != null &&
+              p.edd!.isAfter(now) &&
+              p.edd!.isBefore(thirtyDaysFromNow))
+          .length;
 
       return {
         'total': allProfiles.length,
@@ -139,7 +144,8 @@ final maternalProfileRepositoryProvider = Provider((ref) {
   return SupabaseMaternalProfileRepository(Supabase.instance.client);
 });
 
-final maternalProfilesProvider = FutureProvider<List<MaternalProfile>>((ref) async {
+final maternalProfilesProvider =
+    FutureProvider<List<MaternalProfile>>((ref) async {
   return ref.watch(maternalProfileRepositoryProvider).getAllProfiles();
 });
 

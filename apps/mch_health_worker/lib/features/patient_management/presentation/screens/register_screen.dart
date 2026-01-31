@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/auth_providers.dart';
 import '../../../../core/utils/error_helper.dart';
 import '../../../../core/widgets/searchable_facility_selector.dart';
@@ -20,7 +19,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   String? _selectedFacilityId;
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -38,7 +37,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     if (_selectedFacilityId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -64,12 +63,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✓ Registration successful! Please check your email to verify your account.'),
+            content: Text(
+                '✓ Registration successful! Please check your email to verify your account.'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 5),
           ),
         );
-        
+
         // Go back to login screen
         Navigator.of(context).pop();
       }
@@ -204,7 +204,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         });
                       },
                       validator: (value) {
-                        if (_selectedFacilityId == null || _selectedFacilityId!.isEmpty) {
+                        if (_selectedFacilityId == null ||
+                            _selectedFacilityId!.isEmpty) {
                           return 'Please select a facility';
                         }
                         return null;
@@ -268,7 +269,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
                             });
                           },
                         ),
@@ -316,9 +318,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                     // Back to Login
                     TextButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () => Navigator.of(context).pop(),
+                      onPressed:
+                          _isLoading ? null : () => Navigator.of(context).pop(),
                       child: const Text('Already have an account? Login'),
                     ),
                   ],

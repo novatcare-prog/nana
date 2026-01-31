@@ -18,32 +18,33 @@ class RecordNutritionScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<RecordNutritionScreen> createState() => _RecordNutritionScreenState();
+  ConsumerState<RecordNutritionScreen> createState() =>
+      _RecordNutritionScreenState();
 }
 
 class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
   final _formKey = GlobalKey<FormState>();
   DateTime _recordDate = DateTime.now();
-  
+
   // MUAC
   final _muacController = TextEditingController();
-  
+
   // Iron/Folate
   bool _ironFolateGiven = false;
   final _ironFolateTabletsController = TextEditingController(text: '30');
-  
+
   // Calcium
   bool _calciumGiven = false;
   final _calciumTabletsController = TextEditingController(text: '30');
-  
+
   // Deworming
   bool _dewormingGiven = false;
   String _dewormingDrug = 'Albendazole';
-  
+
   // Counseling
   bool _counselingGiven = false;
   final List<String> _counselingTopics = [];
-  
+
   final _notesController = TextEditingController();
   bool _isLoading = false;
 
@@ -63,25 +64,33 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
 
     try {
       final profile = ref.read(currentUserProfileProvider).value;
-      
+
       // Create nutrition record
       final nutritionRecord = NutritionRecord(
         maternalProfileId: widget.patientId,
         patientName: widget.patient.clientName,
         recordDate: _recordDate,
-        muacCm: _muacController.text.isEmpty ? null : double.tryParse(_muacController.text),
-        isMalnourished: _muacController.text.isEmpty 
-            ? false 
+        muacCm: _muacController.text.isEmpty
+            ? null
+            : double.tryParse(_muacController.text),
+        isMalnourished: _muacController.text.isEmpty
+            ? false
             : (double.tryParse(_muacController.text) ?? 25) < 23,
         ironFolateGiven: _ironFolateGiven,
-        ironFolateTablets: _ironFolateGiven ? int.tryParse(_ironFolateTabletsController.text) : null,
+        ironFolateTablets: _ironFolateGiven
+            ? int.tryParse(_ironFolateTabletsController.text)
+            : null,
         calciumGiven: _calciumGiven,
-        calciumTablets: _calciumGiven ? int.tryParse(_calciumTabletsController.text) : null,
+        calciumTablets:
+            _calciumGiven ? int.tryParse(_calciumTabletsController.text) : null,
         dewormingGiven: _dewormingGiven,
         dewormingDrug: _dewormingGiven ? _dewormingDrug : null,
         nutritionCounselingGiven: _counselingGiven,
-        counselingTopics: _counselingGiven ? _counselingTopics.join(', ') : null,
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        counselingTopics:
+            _counselingGiven ? _counselingTopics.join(', ') : null,
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
         facilityId: profile!.facilityId!,
         facilityName: widget.patient.facilityName,
         recordedBy: profile.id,
@@ -161,7 +170,8 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
             const SizedBox(height: 24),
 
             // MUAC Section
-            Text('MUAC Measurement', style: Theme.of(context).textTheme.titleLarge),
+            Text('MUAC Measurement',
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             TextFormField(
               controller: _muacController,
@@ -186,7 +196,9 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
               title: const Text('Iron/Folate Given'),
               value: _ironFolateGiven,
               onChanged: (val) => setState(() => _ironFolateGiven = val!),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.grey.shade300)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey.shade300)),
             ),
             if (_ironFolateGiven) ...[
               const SizedBox(height: 8),
@@ -208,7 +220,9 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
               title: const Text('Calcium Given'),
               value: _calciumGiven,
               onChanged: (val) => setState(() => _calciumGiven = val!),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.grey.shade300)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey.shade300)),
             ),
             if (_calciumGiven) ...[
               const SizedBox(height: 8),
@@ -230,18 +244,21 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
               title: const Text('Deworming Given'),
               value: _dewormingGiven,
               onChanged: (val) => setState(() => _dewormingGiven = val!),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.grey.shade300)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey.shade300)),
             ),
             if (_dewormingGiven) ...[
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _dewormingDrug,
+                initialValue: _dewormingDrug,
                 decoration: const InputDecoration(
                   labelText: 'Drug',
                   border: OutlineInputBorder(),
                 ),
                 items: ['Albendazole', 'Mebendazole']
-                    .map((drug) => DropdownMenuItem(value: drug, child: Text(drug)))
+                    .map((drug) =>
+                        DropdownMenuItem(value: drug, child: Text(drug)))
                     .toList(),
                 onChanged: (val) => setState(() => _dewormingDrug = val!),
               ),
@@ -254,7 +271,9 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
               title: const Text('Nutrition Counseling Given'),
               value: _counselingGiven,
               onChanged: (val) => setState(() => _counselingGiven = val!),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.grey.shade300)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey.shade300)),
             ),
 
             const SizedBox(height: 16),
@@ -275,7 +294,8 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
             // Save Button
             ElevatedButton(
               onPressed: _isLoading ? null : _saveNutritionRecord,
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50)),
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Save Nutrition Record'),

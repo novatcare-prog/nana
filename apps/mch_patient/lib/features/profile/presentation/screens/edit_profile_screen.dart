@@ -59,7 +59,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   void _initializeControllers(MaternalProfile profile) {
     if (_originalProfile?.id == profile.id) return; // Already initialized
-    
+
     _originalProfile = profile;
     _phoneController.text = profile.telephone ?? '';
     _countyController.text = profile.county ?? '';
@@ -89,7 +89,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       );
 
       await ref.read(updateMaternalProfileProvider(updatedProfile).future);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -127,9 +127,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
                     )
-                  : const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  : const Text('Save',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
             ),
         ],
       ),
@@ -138,9 +141,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           if (profile == null) {
             return const Center(child: Text('Profile not found'));
           }
-          
+
           _initializeControllers(profile);
-          
+
           return Form(
             key: _formKey,
             onChanged: () {
@@ -166,7 +169,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       Expanded(
                         child: Text(
                           'Medical information can only be updated by your healthcare provider.',
-                          style: TextStyle(color: Colors.blue.shade700, fontSize: 13),
+                          style: TextStyle(
+                              color: Colors.blue.shade700, fontSize: 13),
                         ),
                       ),
                     ],
@@ -175,7 +179,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 const SizedBox(height: 24),
 
                 // Contact Information Section
-                _buildSectionHeader(context, 'Contact Information', Icons.phone),
+                _buildSectionHeader(
+                    context, 'Contact Information', Icons.phone),
                 const SizedBox(height: 12),
                 _buildCard(
                   context,
@@ -232,7 +237,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 const SizedBox(height: 24),
 
                 // Emergency Contact Section
-                _buildSectionHeader(context, 'Emergency Contact', Icons.emergency),
+                _buildSectionHeader(
+                    context, 'Emergency Contact', Icons.emergency),
                 const SizedBox(height: 12),
                 _buildCard(
                   context,
@@ -267,7 +273,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       controller: _nextOfKinRelationshipController,
                       label: 'Relationship',
                       icon: Icons.family_restroom,
-                      options: ['Spouse', 'Parent', 'Sibling', 'Child', 'Friend', 'Other'],
+                      options: [
+                        'Spouse',
+                        'Parent',
+                        'Sibling',
+                        'Child',
+                        'Friend',
+                        'Other'
+                      ],
                     ),
                   ],
                 ),
@@ -286,11 +299,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: _isLoading 
+                    icon: _isLoading
                         ? const SizedBox(
-                            width: 20, 
+                            width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white),
                           )
                         : const Icon(Icons.save),
                     label: Text(_isLoading ? 'Saving...' : 'Save Changes'),
@@ -309,7 +323,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, IconData icon) {
     return Row(
       children: [
         Icon(icon, color: const Color(0xFFE91E63), size: 20),
@@ -326,19 +341,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     );
   }
 
-  Widget _buildCard(BuildContext context, bool isDark, {required List<Widget> children}) {
+  Widget _buildCard(BuildContext context, bool isDark,
+      {required List<Widget> children}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Column(children: children),
     );
@@ -378,7 +397,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     required List<String> options,
   }) {
     return DropdownButtonFormField<String>(
-      value: options.contains(controller.text) ? controller.text : null,
+      initialValue: options.contains(controller.text) ? controller.text : null,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: const Color(0xFFE91E63)),
@@ -392,10 +411,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      items: options.map((option) => DropdownMenuItem(
-        value: option,
-        child: Text(option),
-      )).toList(),
+      items: options
+          .map((option) => DropdownMenuItem(
+                value: option,
+                child: Text(option),
+              ))
+          .toList(),
       onChanged: (value) {
         controller.text = value ?? '';
         if (!_hasChanges) {

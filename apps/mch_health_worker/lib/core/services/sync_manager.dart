@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mch_core/mch_core.dart';
 import 'hive_service.dart';
 import 'connectivity_service.dart';
 
@@ -10,11 +9,11 @@ import 'connectivity_service.dart';
 class SyncManager {
   final SupabaseClient _supabase;
   final ConnectivityService _connectivity;
-  
+
   bool _isSyncing = false;
   Timer? _periodicSyncTimer;
   StreamController<SyncResult>? _syncResultController;
-  
+
   // Conflict tracking
   final List<ConflictRecord> _conflicts = [];
   List<ConflictRecord> get conflicts => List.unmodifiable(_conflicts);
@@ -75,7 +74,7 @@ class SyncManager {
     }
 
     final isOnline = await _connectivity.isConnected();
-    
+
     if (!isOnline) {
       return SyncResult(
         success: false,
@@ -87,7 +86,7 @@ class SyncManager {
 
     _isSyncing = true;
     HiveService.setMetadata('sync_in_progress', true);
-    
+
     print('🔄 Starting sync...');
 
     int synced = 0;
@@ -107,9 +106,10 @@ class SyncManager {
         failed++;
         errors.add('${item['table']}: $e');
         print('❌ Sync failed: ${item['table']} - $e');
-        
+
         // Increment retry count - item will be removed if max retries exceeded
-        final maxRetriesExceeded = await HiveService.incrementRetryCount(item['id']);
+        final maxRetriesExceeded =
+            await HiveService.incrementRetryCount(item['id']);
         if (maxRetriesExceeded) {
           errors.add('${item['table']}: removed after max retries');
         }
@@ -119,15 +119,15 @@ class SyncManager {
     // Update metadata
     _isSyncing = false;
     HiveService.setMetadata('sync_in_progress', false);
-    
+
     if (synced > 0) {
       await HiveService.setLastSyncTime(DateTime.now());
     }
 
     final result = SyncResult(
       success: failed == 0,
-      message: failed == 0 
-          ? synced > 0 
+      message: failed == 0
+          ? synced > 0
               ? 'Synced $synced items successfully'
               : 'Nothing to sync'
           : 'Synced $synced items, $failed failed',
@@ -137,10 +137,10 @@ class SyncManager {
     );
 
     print('✅ Sync complete: ${result.message}');
-    
+
     // Broadcast result
     _syncResultController?.add(result);
-    
+
     return result;
   }
 
@@ -214,7 +214,8 @@ class SyncManager {
 
   /// Generic sync method for tables with standard CRUD operations
   /// Now includes timestamp-based conflict resolution for updates
-  Future<void> _syncGenericTable(String tableName, String operation, Map<String, dynamic> data) async {
+  Future<void> _syncGenericTable(
+      String tableName, String operation, Map<String, dynamic> data) async {
     if (operation == 'insert') {
       // Remove temporary IDs
       if (data['id'] != null && data['id'].toString().startsWith('temp_')) {
@@ -224,20 +225,21 @@ class SyncManager {
     } else if (operation == 'update') {
       // Timestamp-based conflict resolution
       final recordId = data['id'];
-      final localUpdatedAt = data['updated_at'] != null 
+      final localUpdatedAt = data['updated_at'] != null
           ? DateTime.parse(data['updated_at'].toString())
           : DateTime.now();
-      
+
       // Fetch server version to check timestamp
       final serverResponse = await _supabase
           .from(tableName)
           .select('id, updated_at')
           .eq('id', recordId)
           .maybeSingle();
-      
+
       if (serverResponse != null && serverResponse['updated_at'] != null) {
-        final serverUpdatedAt = DateTime.parse(serverResponse['updated_at'].toString());
-        
+        final serverUpdatedAt =
+            DateTime.parse(serverResponse['updated_at'].toString());
+
         // Only update if local version is newer than server
         if (localUpdatedAt.isAfter(serverUpdatedAt)) {
           await _supabase.from(tableName).update(data).eq('id', recordId);
@@ -252,7 +254,8 @@ class SyncManager {
             localUpdatedAt: localUpdatedAt,
             serverUpdatedAt: serverUpdatedAt,
           ));
-          print('⚠️ Conflict detected in $tableName: $recordId - server is newer, skipping update');
+          print(
+              '⚠️ Conflict detected in $tableName: $recordId - server is newer, skipping update');
         } else {
           // Same timestamp - update anyway (no conflict)
           await _supabase.from(tableName).update(data).eq('id', recordId);
@@ -268,18 +271,23 @@ class SyncManager {
 
   // ==================== EXISTING SYNC METHODS ====================
 
-  Future<void> _syncMaternalProfile(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncMaternalProfile(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       data.remove('id');
       await _supabase.from('maternal_profiles').insert(data);
     } else if (operation == 'update') {
-      await _supabase.from('maternal_profiles').update(data).eq('id', data['id']);
+      await _supabase
+          .from('maternal_profiles')
+          .update(data)
+          .eq('id', data['id']);
     } else if (operation == 'delete') {
       await _supabase.from('maternal_profiles').delete().eq('id', data['id']);
     }
   }
 
-  Future<void> _syncLabResult(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncLabResult(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       // Remove offline-generated ID if present
       if (data['id'] != null && data['id'].toString().startsWith('offline_')) {
@@ -293,40 +301,56 @@ class SyncManager {
     }
   }
 
-  Future<void> _syncImmunization(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncImmunization(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       if (data['id'] != null && data['id'].toString().startsWith('offline_')) {
         data.remove('id');
       }
       await _supabase.from('maternal_immunizations').insert(data);
     } else if (operation == 'update') {
-      await _supabase.from('maternal_immunizations').update(data).eq('id', data['id']);
+      await _supabase
+          .from('maternal_immunizations')
+          .update(data)
+          .eq('id', data['id']);
     } else if (operation == 'delete') {
-      await _supabase.from('maternal_immunizations').delete().eq('id', data['id']);
+      await _supabase
+          .from('maternal_immunizations')
+          .delete()
+          .eq('id', data['id']);
     }
   }
 
-  Future<void> _syncMalariaRecord(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncMalariaRecord(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       if (data['id'] != null && data['id'].toString().startsWith('offline_')) {
         data.remove('id');
       }
       await _supabase.from('malaria_prevention_records').insert(data);
     } else if (operation == 'update') {
-      await _supabase.from('malaria_prevention_records').update(data).eq('id', data['id']);
+      await _supabase
+          .from('malaria_prevention_records')
+          .update(data)
+          .eq('id', data['id']);
     } else if (operation == 'delete') {
-      await _supabase.from('malaria_prevention_records').delete().eq('id', data['id']);
+      await _supabase
+          .from('malaria_prevention_records')
+          .delete()
+          .eq('id', data['id']);
     }
   }
 
-  Future<void> _syncNutritionRecord(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncNutritionRecord(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       data.remove('id');
       await _supabase.from('nutrition_records').insert(data);
     }
   }
 
-  Future<void> _syncANCVisit(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncANCVisit(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       data.remove('id');
       await _supabase.from('anc_visits').insert(data);
@@ -336,7 +360,8 @@ class SyncManager {
   // ==================== NEW SYNC METHODS ====================
 
   /// Sync appointments (NEW)
-  Future<void> _syncAppointment(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncAppointment(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       // Remove offline-generated ID if it starts with 'offline_'
       if (data['id'] != null && data['id'].toString().startsWith('offline_')) {
@@ -351,7 +376,8 @@ class SyncManager {
   }
 
   /// Sync child profiles (NEW)
-  Future<void> _syncChildProfile(String operation, Map<String, dynamic> data) async {
+  Future<void> _syncChildProfile(
+      String operation, Map<String, dynamic> data) async {
     if (operation == 'create') {
       if (data['id'] != null && data['id'].toString().startsWith('offline_')) {
         data.remove('id');
@@ -416,14 +442,14 @@ class SyncResult {
 final syncManagerProvider = Provider<SyncManager>((ref) {
   final supabase = Supabase.instance.client;
   final connectivity = ref.watch(connectivityServiceProvider);
-  
+
   final manager = SyncManager(supabase, connectivity);
   manager.initialize();
-  
+
   ref.onDispose(() {
     manager.dispose();
   });
-  
+
   return manager;
 });
 

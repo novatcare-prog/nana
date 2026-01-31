@@ -17,7 +17,8 @@ class AddGrowthRecordScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<AddGrowthRecordScreen> createState() => _AddGrowthRecordScreenState();
+  ConsumerState<AddGrowthRecordScreen> createState() =>
+      _AddGrowthRecordScreenState();
 }
 
 class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
@@ -35,7 +36,8 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
   final _headCircumferenceController = TextEditingController();
 
   // Measurement Type
-  bool _measuredLying = true; // true = length (lying), false = height (standing)
+  bool _measuredLying =
+      true; // true = length (lying), false = height (standing)
 
   // Edema
   bool _edemaPresent = false;
@@ -81,7 +83,8 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
   void _calculateAgeInMonths() {
     final birthDate = widget.child.dateOfBirth;
     final now = DateTime.now();
-    final months = (now.year - birthDate.year) * 12 + now.month - birthDate.month;
+    final months =
+        (now.year - birthDate.year) * 12 + now.month - birthDate.month;
     setState(() => _ageInMonths = months);
   }
 
@@ -103,8 +106,11 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
         heightCm: !_measuredLying && _lengthHeightController.text.isNotEmpty
             ? double.parse(_lengthHeightController.text)
             : null,
-        measuredLying: _lengthHeightController.text.isNotEmpty ? _measuredLying : null,
-        muacCm: _muacController.text.isEmpty ? null : double.parse(_muacController.text),
+        measuredLying:
+            _lengthHeightController.text.isNotEmpty ? _measuredLying : null,
+        muacCm: _muacController.text.isEmpty
+            ? null
+            : double.parse(_muacController.text),
         headCircumferenceCm: _headCircumferenceController.text.isEmpty
             ? null
             : double.parse(_headCircumferenceController.text),
@@ -116,10 +122,15 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
         feedingRecommendations: _feedingRecommendationsController.text.isEmpty
             ? null
             : _feedingRecommendationsController.text,
-        concerns: _concernsController.text.isEmpty ? null : _concernsController.text,
-        interventions: _interventionsController.text.isEmpty ? null : _interventionsController.text,
+        concerns:
+            _concernsController.text.isEmpty ? null : _concernsController.text,
+        interventions: _interventionsController.text.isEmpty
+            ? null
+            : _interventionsController.text,
         nextVisitDate: _nextVisitDate,
-        recordedBy: _recordedByController.text.isEmpty ? null : _recordedByController.text,
+        recordedBy: _recordedByController.text.isEmpty
+            ? null
+            : _recordedByController.text,
         healthFacility: _healthFacilityController.text.isEmpty
             ? null
             : _healthFacilityController.text,
@@ -171,12 +182,14 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
                   children: [
                     Text(
                       widget.child.childName,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text('Age: $_ageInMonths months'),
                     Text('Sex: ${widget.child.sex}'),
-                    Text('Date of Birth: ${_formatDate(widget.child.dateOfBirth)}'),
+                    Text(
+                        'Date of Birth: ${_formatDate(widget.child.dateOfBirth)}'),
                   ],
                 ),
               ),
@@ -242,7 +255,7 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
                 Expanded(
                   flex: 1,
                   child: DropdownButtonFormField<bool>(
-                    value: _measuredLying,
+                    initialValue: _measuredLying,
                     decoration: const InputDecoration(
                       labelText: 'Type',
                       border: OutlineInputBorder(),
@@ -251,7 +264,8 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
                       DropdownMenuItem(value: true, child: Text('Lying')),
                       DropdownMenuItem(value: false, child: Text('Standing')),
                     ],
-                    onChanged: (value) => setState(() => _measuredLying = value!),
+                    onChanged: (value) =>
+                        setState(() => _measuredLying = value!),
                   ),
                 ),
               ],
@@ -266,7 +280,9 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
             const SizedBox(height: 16),
 
             // MUAC (if child is 6-59 months)
-            if (_ageInMonths != null && _ageInMonths! >= 6 && _ageInMonths! < 60) ...[
+            if (_ageInMonths != null &&
+                _ageInMonths! >= 6 &&
+                _ageInMonths! < 60) ...[
               TextFormField(
                 controller: _muacController,
                 decoration: const InputDecoration(
@@ -308,13 +324,14 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
               title: const Text('Edema Present'),
               subtitle: const Text('Swelling (indicates possible kwashiorkor)'),
               value: _edemaPresent,
-              onChanged: (value) => setState(() => _edemaPresent = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _edemaPresent = value ?? false),
             ),
 
             if (_edemaPresent) ...[
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _edemaGrade,
+                initialValue: _edemaGrade,
                 decoration: const InputDecoration(
                   labelText: 'Edema Grade',
                   border: OutlineInputBorder(),
@@ -331,16 +348,20 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
 
             // Nutritional Status
             DropdownButtonFormField<String>(
-              value: _nutritionalStatus,
+              initialValue: _nutritionalStatus,
               decoration: const InputDecoration(
                 labelText: 'Nutritional Status',
                 border: OutlineInputBorder(),
               ),
               items: const [
                 DropdownMenuItem(value: 'Normal', child: Text('Normal')),
-                DropdownMenuItem(value: 'Underweight', child: Text('Underweight')),
-                DropdownMenuItem(value: 'Severely Underweight', child: Text('Severely Underweight')),
-                DropdownMenuItem(value: 'Overweight', child: Text('Overweight')),
+                DropdownMenuItem(
+                    value: 'Underweight', child: Text('Underweight')),
+                DropdownMenuItem(
+                    value: 'Severely Underweight',
+                    child: Text('Severely Underweight')),
+                DropdownMenuItem(
+                    value: 'Overweight', child: Text('Overweight')),
                 DropdownMenuItem(value: 'Obese', child: Text('Obese')),
               ],
               onChanged: (value) => setState(() => _nutritionalStatus = value),
@@ -350,7 +371,8 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
             CheckboxListTile(
               title: const Text('Referred for Nutrition Support'),
               value: _referredForNutrition,
-              onChanged: (value) => setState(() => _referredForNutrition = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _referredForNutrition = value ?? false),
             ),
 
             const Divider(),
@@ -366,7 +388,8 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
             CheckboxListTile(
               title: const Text('Feeding Counseling Given'),
               value: _feedingCounselingGiven,
-              onChanged: (value) => setState(() => _feedingCounselingGiven = value ?? false),
+              onChanged: (value) =>
+                  setState(() => _feedingCounselingGiven = value ?? false),
             ),
 
             if (_feedingCounselingGiven) ...[
@@ -406,7 +429,9 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
             // Next Visit Date
             ListTile(
               title: const Text('Next Visit Date'),
-              subtitle: Text(_nextVisitDate != null ? _formatDate(_nextVisitDate!) : 'Not set'),
+              subtitle: Text(_nextVisitDate != null
+                  ? _formatDate(_nextVisitDate!)
+                  : 'Not set'),
               trailing: const Icon(Icons.calendar_today),
               onTap: () async {
                 final date = await showDatePicker(
@@ -451,7 +476,8 @@ class _AddGrowthRecordScreenState extends ConsumerState<AddGrowthRecordScreen> {
               ),
               child: _isSubmitting
                   ? const CircularProgressIndicator()
-                  : const Text('Save Growth Record', style: TextStyle(fontSize: 16)),
+                  : const Text('Save Growth Record',
+                      style: TextStyle(fontSize: 16)),
             ),
             const SizedBox(height: 32),
           ],

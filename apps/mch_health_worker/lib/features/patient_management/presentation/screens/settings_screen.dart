@@ -5,6 +5,8 @@ import '../../../../core/providers/theme_provider.dart';
 import '../../../../core/services/hive_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'edit_profile_screen.dart';
+import '../../../../core/providers/facility_providers.dart';
+import 'package:mch_core/mch_core.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -62,13 +64,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             );
           }
-          
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Profile Card
-                _buildProfileCard(context, profile),
+                _ProfileCard(profile: profile),
                 const SizedBox(height: 8),
 
                 // Notification Settings
@@ -89,9 +91,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // Danger Zone
                 _buildSectionHeader('Account', color: Colors.red),
                 _buildDangerZone(context),
-                
+
                 const Divider(height: 32),
-                
+
                 // Debug Section
                 _buildSectionHeader('Debug', color: Colors.orange),
                 _buildDebugSection(context),
@@ -104,94 +106,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Text('Error loading profile: $error'),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard(BuildContext context, dynamic profile) {
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Avatar
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: Text(
-                profile.fullName.isNotEmpty ? profile.fullName[0].toUpperCase() : 'U',
-                style: const TextStyle(
-                  fontSize: 32,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-
-            // Profile Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    profile.fullName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    profile.email,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      profile.role.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.blue[700],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Edit Button
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditProfileScreen(),
-                  ),
-                );
-                
-                // Refresh if profile was updated
-                if (result == true && mounted) {
-                  ref.invalidate(currentUserProfileProvider);
-                }
-              },
-            ),
-          ],
         ),
       ),
     );
@@ -261,7 +175,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildAppPreferences() {
     final themeMode = ref.watch(themeModeProvider);
-    
+
     return Column(
       children: [
         ListTile(
@@ -301,10 +215,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           title: const Text('App Version'),
           subtitle: Text(_appVersion.isNotEmpty ? _appVersion : 'Loading...'),
         ),
-        ListTile(
-          leading: const Icon(Icons.book),
-          title: const Text('MCH Handbook'),
-          subtitle: const Text('Kenya MCH Handbook 2020'),
+        const ListTile(
+          leading: Icon(Icons.book),
+          title: Text('MCH Handbook'),
+          subtitle: Text('Kenya MCH Handbook 2020'),
         ),
         ListTile(
           leading: const Icon(Icons.privacy_tip),
@@ -485,7 +399,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           FilledButton(
             onPressed: () async {
               Navigator.pop(context);
-              
+
               // Show loading
               showDialog(
                 context: context,
@@ -498,16 +412,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               try {
                 final authActions = ref.read(authActionsProvider);
                 await authActions.signOut();
-                
+
                 if (mounted) {
                   Navigator.pop(context); // Close loading dialog
-                  
+
                   // Navigate to login and clear all routes
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     '/login',
                     (route) => false,
                   );
-                  
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('✓ Logged out successfully'),
@@ -539,7 +453,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildDebugSection(BuildContext context) {
     final syncQueueCount = HiveService.getSyncQueueCount();
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -549,42 +463,44 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             title: const Text('Pending Sync Items'),
             subtitle: Text('$syncQueueCount items waiting to sync'),
             trailing: TextButton(
-              onPressed: syncQueueCount > 0 ? () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Clear Sync Queue?'),
-                    content: Text(
-                      'This will delete $syncQueueCount pending items that failed to sync. '
-                      'This data will be lost. Are you sure?'
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        style: TextButton.styleFrom(foregroundColor: Colors.red),
-                        child: const Text('Clear'),
-                      ),
-                    ],
-                  ),
-                );
-                
-                if (confirm == true) {
-                  await HiveService.getBox('sync_queue').clear();
-                  if (mounted) {
-                    setState(() {}); // Refresh UI
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('✓ Sync queue cleared'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  }
-                }
-              } : null,
+              onPressed: syncQueueCount > 0
+                  ? () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Clear Sync Queue?'),
+                          content: Text(
+                              'This will delete $syncQueueCount pending items that failed to sync. '
+                              'This data will be lost. Are you sure?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: TextButton.styleFrom(
+                                  foregroundColor: Colors.red),
+                              child: const Text('Clear'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        await HiveService.getBox('sync_queue').clear();
+                        if (mounted) {
+                          setState(() {}); // Refresh UI
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('✓ Sync queue cleared'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      }
+                    }
+                  : null,
               child: const Text('Clear'),
             ),
           ),
@@ -599,9 +515,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   builder: (context) => AlertDialog(
                     title: const Text('Clear All Cache?'),
                     content: const Text(
-                      'This will delete all cached data including patients, appointments, etc. '
-                      'Data on the server will not be affected. Are you sure?'
-                    ),
+                        'This will delete all cached data including patients, appointments, etc. '
+                        'Data on the server will not be affected. Are you sure?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
@@ -609,13 +524,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(context, true),
-                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.red),
                         child: const Text('Clear All'),
                       ),
                     ],
                   ),
                 );
-                
+
                 if (confirm == true) {
                   await HiveService.clearAllCache();
                   if (mounted) {
@@ -633,6 +549,149 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ProfileCard extends ConsumerWidget {
+  final dynamic profile;
+
+  const _ProfileCard({required this.profile});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final facilityAsync = profile.facilityId != null
+        ? ref.watch(facilityByIdProvider(profile.facilityId!))
+        : const AsyncValue.data(null);
+
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // Avatar
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text(
+                profile.fullName.isNotEmpty
+                    ? profile.fullName[0].toUpperCase()
+                    : 'U',
+                style: const TextStyle(
+                  fontSize: 32,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // Profile Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.fullName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    profile.email,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          profile.role.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.blue[700],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      // Facility Badge
+                      if (facilityAsync is AsyncData<Facility?> &&
+                          facilityAsync.value != null) ...[
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange[50],
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.orange[200]!),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.local_hospital,
+                                    size: 12, color: Colors.orange[800]),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    facilityAsync.value!.name,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.orange[900],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Edit Button
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfileScreen(),
+                  ),
+                );
+
+                // Refresh if profile was updated
+                if (result == true) {
+                  ref.invalidate(currentUserProfileProvider);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

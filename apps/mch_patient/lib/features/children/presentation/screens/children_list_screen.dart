@@ -131,15 +131,18 @@ class _ChildListItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: InkWell(
         onTap: () => context.push('/child/${child.id}'),
@@ -158,7 +161,7 @@ class _ChildListItem extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Main content
               Expanded(
                 child: Padding(
@@ -206,7 +209,8 @@ class _ChildListItem extends StatelessWidget {
                           ),
                           // Birth weight chip
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -222,7 +226,7 @@ class _ChildListItem extends StatelessWidget {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
                       const Divider(height: 1, color: Color(0xFFEEEEEE)),
                       const SizedBox(height: 12),
@@ -234,7 +238,8 @@ class _ChildListItem extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             "Born: ",
-                            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                            style: TextStyle(
+                                fontSize: 13, color: Colors.grey[600]),
                           ),
                           Text(
                             DateFormat('d MMM yyyy').format(child.dateOfBirth),
@@ -245,7 +250,8 @@ class _ChildListItem extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-                          Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[400]),
+                          Icon(Icons.arrow_forward_ios,
+                              size: 14, color: Colors.grey[400]),
                         ],
                       ),
                     ],
@@ -269,11 +275,11 @@ class _ChildListItem extends StatelessWidget {
     if (days < 30) return '$days days old';
     if (days < 120) return '${(days / 7).floor()} weeks old';
     if (days < 365) return '${(days / 30).floor()} months old';
-    
+
     final years = (days / 365).floor();
     final remainingMonths = ((days % 365) / 30).floor();
     if (remainingMonths > 0) {
-      return '$years yr ${remainingMonths} mo';
+      return '$years yr $remainingMonths mo';
     }
     return '$years years old';
   }
