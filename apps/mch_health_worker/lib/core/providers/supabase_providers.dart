@@ -4,6 +4,7 @@ import 'package:mch_core/mch_core.dart';
 import '../services/connectivity_service.dart';
 import '../services/hybrid_patient_repository.dart';
 import '../services/hive_service.dart';
+import 'auth_providers.dart'; // For userFacilityIdProvider
 
 // ✅ FIX: Add these two imports to tell this file where your repositories are
 import 'package:mch_core/src/data/repositories/supabase_maternal_profile_repository.dart';
@@ -280,11 +281,15 @@ final createVisitProvider = Provider<Future<void> Function(ANCVisit, bool)>((ref
 // NOTE: connectivityServiceProvider is defined in core/services/connectivity_service.dart
 // Do NOT redefine it here to avoid duplicate instances
 
-// Hybrid Patient Repository
+// Hybrid Patient Repository (with facility-based filtering)
 final hybridPatientRepositoryProvider = Provider<HybridPatientRepository>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
   final connectivity = ref.watch(connectivityServiceProvider);
-  return HybridPatientRepository(supabase, connectivity);
+  
+  // Get user's facility ID for offline filtering
+  final facilityId = ref.watch(userFacilityIdProvider);
+  
+  return HybridPatientRepository(supabase, connectivity, facilityId);
 });
 
 // NOTE: connectionStatusProvider is defined in core/services/connectivity_service.dart

@@ -104,6 +104,15 @@ class HiveService {
         .toList();
   }
 
+  /// Get cached patients filtered by facility ID (for offline access control)
+  static List<MaternalProfile> getCachedPatientsByFacility(String facilityId) {
+    final box = Hive.box(_patientsBox);
+    return box.values
+        .map((e) => MaternalProfile.fromJson(Map<String, dynamic>.from(e)))
+        .where((patient) => patient.facilityId == facilityId)
+        .toList();
+  }
+
   // ==================== SYNC QUEUE (Required by Repository) ====================
 
   static Future<void> addToSyncQueue({

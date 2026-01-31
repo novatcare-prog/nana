@@ -5,20 +5,24 @@ import '../services/connectivity_service.dart';
 
 /// Hybrid Patient Repository - Uses Supabase + Hive
 /// Works offline and syncs when online
+/// Enforces facility-based access control for offline mode
 class HybridPatientRepository {
   final SupabaseClient _supabase;
   final ConnectivityService _connectivity;
+  final String? _facilityId;
 
-  HybridPatientRepository(this._supabase, this._connectivity);
+  HybridPatientRepository(this._supabase, this._connectivity, [this._facilityId]);
 
   /// Get all patients (hybrid: try online first, fallback to cache)
+  /// Online: RLS enforces facility-based filtering
+  /// Offline: Filters cached patients by facilityId
   Future<List<MaternalProfile>> getAllPatients() async {
     try {
       // Check if online
       final isOnline = await _connectivity.isConnected();
       
       if (isOnline) {
-        // Fetch from Supabase
+        // Fetch from Supabase (RLS automatically filters by facility)
         final response = await _supabase
             .from('maternal_profiles')
             .select()
@@ -34,12 +38,19 @@ class HybridPatientRepository {
 
         return patients;
       } else {
-        // Return cached patients
+        // Return cached patients filtered by facility ID
+        if (_facilityId != null) {
+          return HiveService.getCachedPatientsByFacility(_facilityId!);
+        }
+        // Fallback to all cached if no facility ID (shouldn't happen)
         return HiveService.getCachedPatients();
       }
     } catch (e) {
-      // On error, return cached patients
+      // On error, return cached patients (filtered if possible)
       print('Error fetching patients, using cache: $e');
+      if (_facilityId != null) {
+        return HiveService.getCachedPatientsByFacility(_facilityId!);
+      }
       return HiveService.getCachedPatients();
     }
   }
