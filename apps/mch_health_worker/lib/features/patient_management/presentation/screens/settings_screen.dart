@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'edit_profile_screen.dart';
 import '../../../../core/providers/facility_providers.dart';
 import 'package:mch_core/mch_core.dart';
+import 'availability_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -88,8 +89,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildAboutSection(),
                 const Divider(height: 32),
 
+                // Account Section
+                _buildSectionHeader('Account', color: Colors.blueGrey),
+                _buildAccountSection(context),
+                const Divider(height: 32),
+
                 // Danger Zone
-                _buildSectionHeader('Account', color: Colors.red),
+                _buildSectionHeader('Danger Zone', color: Colors.red),
                 _buildDangerZone(context),
 
                 const Divider(height: 32),
@@ -250,6 +256,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // TODO: Show help
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Help & support coming soon')),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAccountSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.calendar_month, color: Colors.blue),
+          title: const Text('My Availability'),
+          subtitle: const Text('Set your working days and hours'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () {
+            // Navigate to Availability Screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const AvailabilityScreen()),
             );
           },
         ),

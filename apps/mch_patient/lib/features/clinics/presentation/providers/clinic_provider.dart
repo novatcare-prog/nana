@@ -1,9 +1,11 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/clinic.dart';
 import '../../domain/models/health_worker.dart';
 import '../../data/repositories/clinic_repository.dart';
 
-final clinicRepositoryProvider = Provider((ref) => ClinicRepository());
+final clinicRepositoryProvider =
+    Provider((ref) => ClinicRepository(Supabase.instance.client));
 
 final nearbyClinicsProvider = FutureProvider<List<Clinic>>((ref) async {
   final repository = ref.read(clinicRepositoryProvider);

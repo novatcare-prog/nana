@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/clinic.dart';
 import '../../domain/models/health_worker.dart';
 
@@ -29,15 +30,85 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final TextEditingController _notesController = TextEditingController();
   bool _isLoading = false;
 
-  final List<String> _timeSlots = [
-    '09:00 AM',
-    '09:30 AM',
-    '10:00 AM',
-    '11:00 AM',
-    '02:00 PM',
-    '03:30 PM',
-    '04:00 PM'
-  ];
+  List<String> _timeSlots = [];
+  bool _checkingAvailability = false;
+  String? _availabilityError;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAvailability();
+  }
+
+  Future<void> _checkAvailability() async {
+    if (widget.worker == null) return;
+
+    setState(() {
+      _checkingAvailability = true;
+      _availabilityError = null;
+      _selectedTime = null;
+      _timeSlots = [];
+    });
+
+    try {
+      final weekday = _selectedDate.weekday; // 1=Mon, 7=Sun
+      final supabase = Supabase.instance.client;
+
+      final response = await supabase
+          .from('health_worker_availability')
+          .select()
+          .eq('user_id', widget.worker!.id)
+          .eq('day_of_week', weekday)
+          .maybeSingle();
+
+      if (response == null || response['is_available'] == false) {
+        if (mounted) {
+          setState(() {
+            _availabilityError = 'Not available on this day';
+            _checkingAvailability = false;
+          });
+        }
+        return;
+      }
+
+      // Generate slots
+      final startParts = (response['start_time'] as String).split(':');
+      final endParts = (response['end_time'] as String).split(':');
+
+      final startHour = int.parse(startParts[0]);
+      final startMin = int.parse(startParts[1]);
+      final endHour = int.parse(endParts[0]);
+      final endMin = int.parse(endParts[1]);
+
+      final slots = <String>[];
+      var current = DateTime(2024, 1, 1, startHour, startMin);
+      final end = DateTime(2024, 1, 1, endHour, endMin);
+
+      while (current.isBefore(end)) {
+        final hour = current.hour;
+        final minute = current.minute.toString().padLeft(2, '0');
+        final period = hour >= 12 ? 'PM' : 'AM';
+        final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
+        slots.add('$displayHour:$minute $period');
+        current = current.add(const Duration(minutes: 30));
+      }
+
+      if (mounted) {
+        setState(() {
+          _timeSlots = slots;
+          _checkingAvailability = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _availabilityError = 'Could not check availability';
+          _checkingAvailability = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -57,48 +128,134 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       _isLoading = true;
     });
 
-    // Mock API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
+      if (user == null) {
+        throw Exception('You must be logged in to book an appointment');
+      }
+
+      // 1. Get Maternal Profile ID
+      final profileResponse = await supabase
+          .from('maternal_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+      if (profileResponse == null) {
+        throw Exception('Please complete your maternal profile first.');
+      }
+
+      final maternalProfileId = profileResponse['id'] as String;
+
+      // 2. Parse Date & Time
+      // _selectedTime is string like "9:30 AM" or "09:30 AM"
+      // Date is _selectedDate
+      final timeParts = _selectedTime!.split(' '); // ["09:30", "AM"]
+      final hm = timeParts[0].split(':');
+      int hour = int.parse(hm[0]);
+      final minute = int.parse(hm[1]);
+      final isPm = timeParts[1] == 'PM';
+
+      if (isPm && hour != 12) hour += 12;
+      if (!isPm && hour == 12) hour = 0;
+
+      final appointmentDateTime = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        hour,
+        minute,
+      );
+
+      // 3. Create Appointment
+      // Note: 'appointments' table schema is assumed to match standard mch_core models
+      // If facilityId is empty on worker, fallback to clinic ID passed to widget
+      final facilityId = widget.worker?.facilityId.isEmpty == true
+          ? widget.clinicId
+          : widget.worker!.facilityId;
+
+      await supabase.from('appointments').insert({
+        'maternal_profile_id': maternalProfileId,
+        'facility_id': facilityId, // Using worker's facility
+        'appointment_date': appointmentDateTime.toIso8601String(),
+        'appointment_status': 'scheduled',
+        'appointment_type': 'consultation', // Default, maybe allow selection
+        'patient_name': user.userMetadata?['full_name'] ?? 'Patient',
+        'notes': _notesController.text,
       });
 
-      // Show Success Dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Column(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 60),
-              SizedBox(height: 16),
-              Text('Appointment Booked!', textAlign: TextAlign.center),
+      // 4. Create Notification for Patient
+      await supabase.from('notifications').insert({
+        'user_id': user.id,
+        'title': 'Appointment Confirmed',
+        'body':
+            'Your appointment with ${widget.worker?.name ?? "Health Worker"} is confirmed for $_selectedTime on ${_selectedDate.toString().split(" ")[0]}.',
+        'type': 'appointment_booked',
+        'is_read': false,
+      });
+
+      // 5. Create Notification for Health Worker
+      if (widget.worker != null) {
+        await supabase.from('notifications').insert({
+          'user_id': widget.worker!
+              .id, // Ensure HealthWorker model has the AUTH USER ID, not just a uuid
+          'title': 'New Appointment',
+          'body':
+              'You have a new appointment with ${user.userMetadata?['full_name'] ?? "a patient"} at $_selectedTime on ${_selectedDate.toString().split(" ")[0]}.',
+          'type': 'appointment_booked',
+          'is_read': false,
+        });
+      }
+
+      if (mounted) {
+        setState(() => _isLoading = false);
+
+        // Show Success Dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Column(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 60),
+                SizedBox(height: 16),
+                Text('Appointment Booked!', textAlign: TextAlign.center),
+              ],
+            ),
+            content: const Text(
+              'Your appointment has been successfully scheduled. Both you and the health worker have been notified.',
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  context.go('/appointments'); // Navigate to appointments list
+                },
+                child: const Text('View Appointments'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.go('/home');
+                },
+                child: const Text('Go Home'),
+              ),
             ],
           ),
-          content: const Text(
-            'Your appointment has been successfully scheduled. You can view it in the My Visits tab.',
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                context.go('/appointments'); // Navigate to appointments list
-              },
-              child: const Text('View Appointments'),
-            ),
-            TextButton(
-              onPressed: () {
-                context.go('/home');
-              },
-              child: const Text('Go Home'),
-            ),
-          ],
-        ),
-      );
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Error booking appointment: ${e.toString().replaceAll("Exception: ", "")}')),
+        );
+      }
     }
   }
 
@@ -160,35 +317,80 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                   _selectedDate = date;
                   _selectedTime = null; // Reset time on date change
                 });
+                _checkAvailability();
               },
             ),
 
             const SizedBox(height: 24),
-            const Text('Available Time Slots',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: _timeSlots.map((time) {
-                final isSelected = _selectedTime == time;
-                return ChoiceChip(
-                  label: Text(time),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedTime = selected ? time : null;
-                    });
-                  },
-                  selectedColor: const Color(0xFFE91E63),
-                  labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+            Row(
+              children: [
+                const Text('Available Time Slots',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                if (_checkingAvailability) ...[
+                  const SizedBox(width: 12),
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                );
-              }).toList(),
+                ],
+              ],
             ),
+            const SizedBox(height: 12),
+
+            if (_availabilityError != null)
+              Container(
+                padding: const EdgeInsets.all(12),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange[200]!),
+                ),
+                child: Text(
+                  _availabilityError!,
+                  style: TextStyle(color: Colors.orange[800]),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            else if (_timeSlots.isEmpty && !_checkingAvailability)
+              Container(
+                padding: const EdgeInsets.all(12),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'No slots available',
+                  style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            else
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: _timeSlots.map((time) {
+                  final isSelected = _selectedTime == time;
+                  return ChoiceChip(
+                    label: Text(time),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        _selectedTime = selected ? time : null;
+                      });
+                    },
+                    selectedColor: const Color(0xFFE91E63),
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  );
+                }).toList(),
+              ),
 
             const SizedBox(height: 24),
             const Text('Reason for Visit (Optional)',
