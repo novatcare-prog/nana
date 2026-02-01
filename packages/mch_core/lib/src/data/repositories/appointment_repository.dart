@@ -61,11 +61,13 @@ class AppointmentRepository {
   /// Get upcoming appointments (future dates only)
   Future<List<Appointment>> getUpcomingAppointments() async {
     try {
-      final now = DateTime.now().toIso8601String();
+      final now = DateTime.now();
+      final startOfToday = DateTime(now.year, now.month, now.day).toIso8601String();
+      
       final response = await _supabase
           .from('appointments')
           .select()
-          .gte('appointment_date', now)
+          .gte('appointment_date', startOfToday)
           .inFilter('appointment_status', ['scheduled', 'confirmed'])
           .order('appointment_date', ascending: true);
 

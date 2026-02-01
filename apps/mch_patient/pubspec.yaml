@@ -68,9 +68,7 @@ flutter:
 
   assets:
     - .env
-    - assets/images/Asset_2.png
-    - assets/images/Asset_3.png
-    - assets/images/patient_logo.png
+    - assets/images/
 
 flutter_launcher_icons:
   android: true
