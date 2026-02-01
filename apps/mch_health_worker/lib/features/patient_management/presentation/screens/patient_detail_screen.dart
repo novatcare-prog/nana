@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/supabase_providers.dart';
-import '../../../../core/utils/error_helper.dart';
+import '../../../../core/providers/lab_result_providers.dart';
 import 'anc_visit_history_screen.dart';
 import 'patient_edit_screen.dart';
 import 'lab_results_history_screen.dart';
@@ -10,17 +10,14 @@ import '../../presentation/screens/immunization_malaria_screen.dart';
 import '../../presentation/screens/nutrition_tracking_screen.dart';
 import '../../presentation/screens/record_delivery_screen.dart';
 import '../../presentation/screens/children_list_screen.dart';
-import 'postnatal_screen.dart'; // ← ADD THIS LINE
+import 'postnatal_screen.dart';
+import 'anc_visit_recording_screen.dart';
 
-/// Patient Detail Screen with Tabbed Interface
-/// Design: Profile | Medical History | Lab Results | Visits
+/// Clean Patient Detail Screen
 class PatientDetailScreen extends ConsumerStatefulWidget {
   final String patientId;
 
-  const PatientDetailScreen({
-    super.key,
-    required this.patientId,
-  });
+  const PatientDetailScreen({super.key, required this.patientId});
 
   @override
   ConsumerState<PatientDetailScreen> createState() =>
@@ -53,695 +50,853 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
           (p) => p.id == widget.patientId,
           orElse: () => throw Exception('Patient not found'),
         );
-
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Patient Details'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PatientEditScreen(profile: patient),
-                    ),
-                  );
-
-                  // If edit was successful, refresh the page
-                  if (result == true) {
-                    ref.invalidate(maternalProfilesProvider);
-                  }
-                },
-                tooltip: 'Edit Patient',
-              ),
-              IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {
-                  // Show more options
-                },
-                tooltip: 'More options',
-              ),
-            ],
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: const [
-                Tab(icon: Icon(Icons.person), text: 'Profile'),
-                Tab(
-                    icon: Icon(Icons.medical_services),
-                    text: 'Medical History'),
-                Tab(icon: Icon(Icons.science), text: 'Lab Results'),
-                Tab(icon: Icon(Icons.event), text: 'Visits'),
-              ],
-            ),
-          ),
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildProfileTab(patient),
-              _buildMedicalHistoryTab(patient),
-              _buildLabResultsTab(patient),
-              _buildVisitsTab(patient),
-            ],
-          ),
-        );
+        return _buildScreen(context, patient);
       },
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Error')),
-        body: ErrorHelper.buildErrorWidget(
-          error,
-          onRetry: () => Navigator.pop(context),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error: $error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Go Back'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// Profile Tab - Patient header and basic info
-  Widget _buildProfileTab(MaternalProfile patient) {
-    final gestationWeeks =
-        patient.lmp != null ? _calculateGestationWeeks(patient.lmp!) : null;
-
-    return SingleChildScrollView(
-      child: Column(
+  Widget _buildScreen(BuildContext context, MaternalProfile patient) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(patient.clientName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: 'Edit Patient',
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PatientEditScreen(profile: patient),
+                ),
+              );
+              if (result == true) {
+                ref.invalidate(maternalProfilesProvider);
+              }
+            },
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: const [
+            Tab(text: 'Profile'),
+            Tab(text: 'Medical'),
+            Tab(text: 'Lab Results'),
+            Tab(text: 'Visits'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          // Patient Header Card with Avatar
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(24),
-            color: Theme.of(context).colorScheme.surface,
+          _ProfileTab(patient: patient),
+          _MedicalTab(patient: patient, patientId: widget.patientId),
+          _LabResultsTab(patient: patient, patientId: widget.patientId),
+          _VisitsTab(patient: patient, patientId: widget.patientId),
+        ],
+      ),
+    );
+  }
+}
+
+// ============= PROFILE TAB =============
+class _ProfileTab extends StatelessWidget {
+  final MaternalProfile patient;
+
+  const _ProfileTab({required this.patient});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final gestationWeeks = patient.lmp != null
+        ? DateTime.now().difference(patient.lmp!).inDays ~/ 7
+        : null;
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Header Card
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // Avatar
                 CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  radius: 40,
+                  backgroundColor: theme.colorScheme.primary,
                   child: Text(
                     patient.clientName.isNotEmpty
                         ? patient.clientName[0].toUpperCase()
                         : '?',
                     style: const TextStyle(
-                      fontSize: 40,
+                      fontSize: 32,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Patient Name
                 Text(
                   patient.clientName,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
-                // Age and ANC Number
+                const SizedBox(height: 4),
                 Text(
                   '${patient.age} years • ${patient.ancNumber}',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 24),
-                // Gravida, Parity, Gestation Cards
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatCard(
-                        patient.gravida.toString(),
-                        'Gravida',
-                        Colors.green,
-                      ),
-                      _buildStatCard(
-                        patient.parity.toString(),
-                        'Parity',
-                        Colors.green,
-                      ),
-                      _buildStatCard(
-                        gestationWeeks != null ? '${gestationWeeks}w' : 'N/A',
-                        'Gestation',
-                        Colors.green,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Facility Information Section
-          _buildSection(
-            context,
-            'Facility Information',
-            Icons.local_hospital,
-            [
-              _buildInfoRow('Facility Name', patient.facilityName),
-              _buildInfoRow('KMHFL Code', patient.kmhflCode),
-              _buildInfoRow('ANC Number', patient.ancNumber),
-              if (patient.pncNumber != null)
-                _buildInfoRow('PNC Number', patient.pncNumber!),
-            ],
-          ),
-
-          // Obstetric Information Section
-          _buildSection(
-            context,
-            'Obstetric Information',
-            Icons.pregnant_woman,
-            [
-              _buildInfoRow('Height', '${patient.heightCm} cm'),
-              _buildInfoRow('Weight', '${patient.weightKg} kg'),
-              if (patient.lmp != null)
-                _buildInfoRow('LMP', _formatDate(patient.lmp!)),
-              if (patient.edd != null)
-                _buildInfoRow('EDD', _formatDate(patient.edd!)),
-              if (patient.edd != null)
-                _buildInfoRow(
-                  'Days Until Due',
-                  '${patient.edd!.difference(DateTime.now()).inDays} days',
-                ),
-            ],
-          ),
-
-          // Contact Information Section
-          _buildSection(
-            context,
-            'Contact Information',
-            Icons.contact_phone,
-            [
-              if (patient.telephone != null)
-                _buildInfoRow('Phone', patient.telephone!),
-              if (patient.county != null)
-                _buildInfoRow('County', patient.county!),
-              if (patient.subCounty != null)
-                _buildInfoRow('Sub County', patient.subCounty!),
-              if (patient.ward != null) _buildInfoRow('Ward', patient.ward!),
-              if (patient.village != null)
-                _buildInfoRow('Village', patient.village!),
-            ],
-          ),
-
-          // Next of Kin Section
-          if (patient.nextOfKinName != null)
-            _buildSection(
-              context,
-              'Next of Kin',
-              Icons.people,
-              [
-                _buildInfoRow('Name', patient.nextOfKinName!),
-                if (patient.nextOfKinRelationship != null)
-                  _buildInfoRow('Relationship', patient.nextOfKinRelationship!),
-                if (patient.nextOfKinPhone != null)
-                  _buildInfoRow('Phone', patient.nextOfKinPhone!),
-              ],
-            ),
-
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  /// Medical History Tab
-  Widget _buildMedicalHistoryTab(MaternalProfile patient) {
-    final hasAnyCondition = patient.diabetes == true ||
-        patient.hypertension == true ||
-        patient.tuberculosis == true ||
-        patient.bloodTransfusion == true ||
-        patient.drugAllergy == true ||
-        patient.previousCs == true;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!hasAnyCondition)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
+                const SizedBox(height: 20),
+                // Stats Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      size: 64,
-                      color: Colors.green[300],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No Medical Conditions Recorded',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                      ),
+                    _StatItem(value: '${patient.gravida}', label: 'Gravida'),
+                    _StatItem(value: '${patient.parity}', label: 'Parity'),
+                    _StatItem(
+                      value:
+                          gestationWeeks != null ? '${gestationWeeks}w' : '-',
+                      label: 'Gestation',
                     ),
                   ],
                 ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Facility Info
+        _InfoSection(
+          title: 'Facility Information',
+          icon: Icons.local_hospital,
+          items: [
+            _InfoItem('Facility', patient.facilityName),
+            _InfoItem('KMHFL Code', patient.kmhflCode),
+            _InfoItem('ANC Number', patient.ancNumber),
+            if (patient.pncNumber != null)
+              _InfoItem('PNC Number', patient.pncNumber!),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // Obstetric Info
+        _InfoSection(
+          title: 'Obstetric Information',
+          icon: Icons.pregnant_woman,
+          items: [
+            _InfoItem('Height', '${patient.heightCm} cm'),
+            _InfoItem('Weight', '${patient.weightKg} kg'),
+            if (patient.lmp != null)
+              _InfoItem('LMP', _formatDate(patient.lmp!)),
+            if (patient.edd != null) ...[
+              _InfoItem('EDD', _formatDate(patient.edd!)),
+              _InfoItem(
+                'Days Until Due',
+                '${patient.edd!.difference(DateTime.now()).inDays} days',
+              ),
+            ],
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // Contact Info
+        _InfoSection(
+          title: 'Contact Information',
+          icon: Icons.phone,
+          items: [
+            if (patient.telephone != null)
+              _InfoItem('Phone', patient.telephone!),
+            if (patient.county != null) _InfoItem('County', patient.county!),
+            if (patient.subCounty != null)
+              _InfoItem('Sub County', patient.subCounty!),
+            if (patient.ward != null) _InfoItem('Ward', patient.ward!),
+            if (patient.village != null) _InfoItem('Village', patient.village!),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // Next of Kin
+        if (patient.nextOfKinName != null)
+          _InfoSection(
+            title: 'Next of Kin',
+            icon: Icons.people,
+            items: [
+              _InfoItem('Name', patient.nextOfKinName!),
+              if (patient.nextOfKinRelationship != null)
+                _InfoItem('Relationship', patient.nextOfKinRelationship!),
+              if (patient.nextOfKinPhone != null)
+                _InfoItem('Phone', patient.nextOfKinPhone!),
+            ],
+          ),
+
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+}
+
+// ============= MEDICAL TAB =============
+class _MedicalTab extends StatelessWidget {
+  final MaternalProfile patient;
+  final String patientId;
+
+  const _MedicalTab({required this.patient, required this.patientId});
+
+  bool get _hasConditions =>
+      patient.diabetes == true ||
+      patient.hypertension == true ||
+      patient.tuberculosis == true ||
+      patient.bloodTransfusion == true ||
+      patient.drugAllergy == true ||
+      patient.previousCs == true;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Conditions
+        if (!_hasConditions)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                children: [
+                  Icon(Icons.check_circle, size: 48, color: Colors.green[400]),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No Medical Conditions',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'No conditions recorded for this patient',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ],
               ),
             ),
-
-          // High Risk Conditions
+          )
+        else ...[
           if (patient.diabetes == true ||
               patient.hypertension == true ||
               patient.tuberculosis == true)
-            _buildSection(
-              context,
-              'High Risk Conditions',
-              Icons.warning,
-              [
+            _ConditionSection(
+              title: 'High Risk Conditions',
+              conditions: [
                 if (patient.diabetes == true)
-                  _buildConditionCard(
-                    'Diabetes',
-                    Icons.medication,
-                    Colors.red,
-                  ),
+                  _Condition('Diabetes', Icons.medication, Colors.red),
                 if (patient.hypertension == true)
-                  _buildConditionCard(
-                    'Hypertension',
-                    Icons.favorite,
-                    Colors.red,
-                  ),
+                  _Condition('Hypertension', Icons.favorite, Colors.red),
                 if (patient.tuberculosis == true)
-                  _buildConditionCard(
-                    'Tuberculosis',
-                    Icons.coronavirus,
-                    Colors.red,
-                  ),
+                  _Condition('Tuberculosis', Icons.coronavirus, Colors.red),
               ],
             ),
-
-          // Obstetric History
           if (patient.previousCs == true)
-            _buildSection(
-              context,
-              'Obstetric History',
-              Icons.history,
-              [
-                _buildConditionCard(
-                  'Previous Cesarean Section',
-                  Icons.local_hospital,
-                  Colors.orange,
-                ),
+            _ConditionSection(
+              title: 'Obstetric History',
+              conditions: [
+                _Condition('Previous Cesarean Section', Icons.local_hospital,
+                    Colors.orange),
               ],
             ),
-
-          // Allergies and Transfusions
           if (patient.drugAllergy == true || patient.bloodTransfusion == true)
-            _buildSection(
-              context,
-              'Other Medical History',
-              Icons.medical_information,
-              [
+            _ConditionSection(
+              title: 'Other History',
+              conditions: [
                 if (patient.drugAllergy == true)
-                  _buildConditionCard(
+                  _Condition(
                     'Drug Allergy: ${patient.allergyDetails ?? "Not specified"}',
                     Icons.warning_amber,
                     Colors.orange,
                   ),
                 if (patient.bloodTransfusion == true)
-                  _buildConditionCard(
-                    'Previous Blood Transfusion',
-                    Icons.bloodtype,
-                    Colors.blue,
-                  ),
+                  _Condition('Blood Transfusion', Icons.bloodtype, Colors.blue),
               ],
             ),
-          const SizedBox(height: 24),
-
-          // Record Delivery Button
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RecordDeliveryScreen(
-                    patientId: widget.patientId,
-                    patient: patient,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.child_care),
-            label: const Text('Record Delivery'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              backgroundColor: Colors.pink,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // View Children Button
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChildrenListScreen(
-                    maternalProfileId: widget.patientId,
-                    mother: patient,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.child_care),
-            label: const Text('View Children'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              backgroundColor: Colors.purple,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Immunization & Malaria Button
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImmunizationMalariaScreen(
-                    patientId: widget.patientId,
-                    patient: patient,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.vaccines),
-            label: const Text('View Immunization & Malaria'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Nutrition Button
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NutritionTrackingScreen(
-                    patientId: widget.patientId,
-                    patient: patient,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.restaurant),
-            label: const Text('View Nutrition Tracking'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Postnatal Care Button - NEW!
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PostnatalCareScreen(
-                    maternalProfile: patient,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.pregnant_woman),
-            label: const Text('Postnatal Care'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              backgroundColor: Colors.teal[700],
-              foregroundColor: Colors.white,
-            ),
-          ),
         ],
-      ),
+
+        const SizedBox(height: 24),
+
+        // Action Buttons
+        Text(
+          'Actions',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 12),
+
+        _ActionButton(
+          icon: Icons.child_care,
+          label: 'Record Delivery',
+          color: Colors.pink,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => RecordDeliveryScreen(
+                patientId: patientId,
+                patient: patient,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        _ActionButton(
+          icon: Icons.child_friendly,
+          label: 'View Children',
+          color: Colors.purple,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChildrenListScreen(
+                maternalProfileId: patientId,
+                mother: patient,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        _ActionButton(
+          icon: Icons.vaccines,
+          label: 'Immunization & Malaria',
+          color: Colors.teal,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ImmunizationMalariaScreen(
+                patientId: patientId,
+                patient: patient,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        _ActionButton(
+          icon: Icons.restaurant,
+          label: 'Nutrition Tracking',
+          color: Colors.green,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => NutritionTrackingScreen(
+                patientId: patientId,
+                patient: patient,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        _ActionButton(
+          icon: Icons.pregnant_woman,
+          label: 'Postnatal Care',
+          color: Colors.indigo,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PostnatalCareScreen(maternalProfile: patient),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 24),
+      ],
     );
   }
+}
 
-  /// Lab Results Tab
-  Widget _buildLabResultsTab(MaternalProfile patient) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
+// ============= LAB RESULTS TAB =============
+class _LabResultsTab extends ConsumerWidget {
+  final MaternalProfile patient;
+  final String patientId;
+
+  const _LabResultsTab({required this.patient, required this.patientId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final labResultsAsync = ref.watch(patientLabResultsProvider(patientId));
+
+    return labResultsAsync.when(
+      data: (results) {
+        if (results.isEmpty) {
+          return _buildEmptyState(context);
+        }
+
+        final abnormalCount = results.where((r) => r.isAbnormal).length;
+
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Summary
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _SummaryItem('${results.length}', 'Total', Colors.blue),
+                    _SummaryItem('$abnormalCount', 'Abnormal', Colors.red),
+                    _SummaryItem(
+                      '${results.length - abnormalCount}',
+                      'Normal',
+                      Colors.green,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Results List
+            ...results.map((result) => _buildLabResultCard(context, result)),
+
+            const SizedBox(height: 80),
+          ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.science_outlined,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
-            Text(
-              'Lab Results',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'View and manage laboratory test results',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LabResultsHistoryScreen(
-                      patientId: widget.patientId,
-                      patient: patient,
-                    ),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.science),
-              label: const Text('View Lab Results'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(200, 48),
-              ),
-            ),
+            Text('Error loading results: $error'),
           ],
         ),
       ),
     );
   }
 
-  /// Visits Tab
-  Widget _buildVisitsTab(MaternalProfile patient) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ANCVisitHistoryScreen(
-                    patientId: widget.patientId,
-                    patient: patient,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.history),
-            label: const Text('View ANC Visit History'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.science_outlined, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'No Lab Results',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
             ),
           ),
+          const SizedBox(height: 8),
+          Text(
+            'No laboratory tests recorded yet',
+            style: TextStyle(color: Colors.grey[500]),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => LabResultsHistoryScreen(
+                  patientId: patientId,
+                  patient: patient,
+                ),
+              ),
+            ),
+            icon: const Icon(Icons.add),
+            label: const Text('Add Lab Result'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLabResultCard(BuildContext context, LabResult result) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor:
+              result.isAbnormal ? Colors.red.shade100 : Colors.green.shade100,
+          child: Icon(
+            result.isAbnormal ? Icons.warning : Icons.check,
+            color: result.isAbnormal ? Colors.red : Colors.green,
+            size: 20,
+          ),
         ),
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32),
+        title: Text(
+          result.testName,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '${result.resultValue}${result.resultUnit != null ? " ${result.resultUnit}" : ""}',
+          style: TextStyle(
+            color: result.isAbnormal ? Colors.red : null,
+            fontWeight: result.isAbnormal ? FontWeight.w600 : null,
+          ),
+        ),
+        trailing: Text(
+          _formatDate(result.testDate),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+}
+
+// ============= VISITS TAB =============
+class _VisitsTab extends StatelessWidget {
+  final MaternalProfile patient;
+  final String patientId;
+
+  const _VisitsTab({required this.patient, required this.patientId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Record New Visit
+          ElevatedButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ANCVisitRecordingScreen(
+                  patientId: patientId,
+                  patient: patient,
+                ),
+              ),
+            ),
+            icon: const Icon(Icons.add),
+            label: const Text('Record New Visit'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // View History
+          OutlinedButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ANCVisitHistoryScreen(
+                  patientId: patientId,
+                  patient: patient,
+                ),
+              ),
+            ),
+            icon: const Icon(Icons.history),
+            label: const Text('View Visit History'),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Placeholder
+          Expanded(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.event_note,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
+                  Icon(Icons.event_note, size: 64, color: Colors.grey[300]),
                   const SizedBox(height: 16),
                   Text(
                     'Visit Management',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'View and manage patient visits',
-                    style: TextStyle(
                       fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       color: Colors.grey[600],
                     ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Record and manage patient visits',
+                    style: TextStyle(color: Colors.grey[500]),
                   ),
                 ],
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+}
 
-  /// Build a stat card (Gravida, Parity, Gestation)
-  Widget _buildStatCard(String value, String label, Color color) {
+// ============= HELPER WIDGETS =============
+
+class _StatItem extends StatelessWidget {
+  final String value;
+  final String label;
+
+  const _StatItem({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Text(
           value,
           style: TextStyle(
-            fontSize: 32,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+      ],
+    );
+  }
+}
+
+class _InfoSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<_InfoItem> items;
+
+  const _InfoSection({
+    required this.title,
+    required this.icon,
+    required this.items,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon,
+                    size: 18, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            ...items.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        child: Text(
+                          item.label,
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 13),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          item.value,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoItem {
+  final String label;
+  final String value;
+
+  const _InfoItem(this.label, this.value);
+}
+
+class _ConditionSection extends StatelessWidget {
+  final String title;
+  final List<_Condition> conditions;
+
+  const _ConditionSection({required this.title, required this.conditions});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            ...conditions.map((c) => Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: c.color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(c.icon, color: c.color, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          c.name,
+                          style: TextStyle(
+                            color: c.color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Condition {
+  final String name;
+  final IconData icon;
+  final Color color;
+
+  const _Condition(this.name, this.icon, this.color);
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: Colors.white70),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryItem extends StatelessWidget {
+  final String value;
+  final String label;
+  final Color color;
+
+  const _SummaryItem(this.value, this.label, this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.bold,
             color: color,
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
-  }
-
-  /// Build a section with title and content
-  Widget _buildSection(
-    BuildContext context,
-    String title,
-    IconData icon,
-    List<Widget> children,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon,
-                  size: 20, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: children,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build an information row
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 140,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build a condition card
-  Widget _buildConditionCard(String condition, IconData icon, Color color) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              condition,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: color,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Calculate gestation weeks from LMP
-  int _calculateGestationWeeks(DateTime lmp) {
-    final now = DateTime.now();
-    final difference = now.difference(lmp);
-    return (difference.inDays / 7).floor();
-  }
-
-  /// Format date as DD/MM/YYYY
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }
