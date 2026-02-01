@@ -178,10 +178,11 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
 
       await supabase.from('appointments').insert({
         'maternal_profile_id': maternalProfileId,
-        'facility_id': facilityId, // Using worker's facility
+        'facility_id': facilityId,
+        'health_worker_id': widget.worker?.id,
         'appointment_date': appointmentDateTime.toIso8601String(),
         'appointment_status': 'scheduled',
-        'appointment_type': 'consultation', // Default, maybe allow selection
+        'appointment_type': 'consultation',
         'patient_name': user.userMetadata?['full_name'] ?? 'Patient',
         'notes': _notesController.text,
       });
