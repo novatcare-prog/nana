@@ -69,7 +69,7 @@ class ClinicDetailsScreen extends ConsumerWidget {
                         context.pushNamed(
                           'book-appointment',
                           pathParameters: {
-                            'clinicId': clinicId,
+                            'id': clinicId,
                             'workerId': workers[index].id
                           },
                           extra: {'worker': workers[index], 'clinic': clinic},
