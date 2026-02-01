@@ -134,7 +134,7 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                     final visit = sortedVisits[index];
                     final isFirst = index == 0;
                     final isLast = index == sortedVisits.length - 1;
-                    
+
                     return _buildVisitCard(
                       context,
                       visit,
@@ -242,7 +242,9 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                     child: Text(
                       'Contact ${visit.contactNumber}',
                       style: TextStyle(
-                        color: isFirst ? Colors.white : Colors.black87,
+                        color: isFirst
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -291,7 +293,7 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 8),
-              
+
               // Key Information Grid
               Row(
                 children: [
@@ -326,7 +328,7 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              
+
               // Clinical Information
               if (visit.complaints != null || visit.diagnosis != null)
                 Column(
@@ -340,7 +342,7 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                       _buildInfoRow('Diagnosis', visit.diagnosis!),
                   ],
                 ),
-              
+
               // Next Visit Date
               if (visit.nextVisitDate != null)
                 Column(
@@ -510,11 +512,15 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
 
               // Visit Information
               _buildDetailSection('Visit Information', [
-                _buildDetailRow('Contact Number', 'Contact ${visit.contactNumber}'),
-                _buildDetailRow('Visit Date', _formatDate(visit.visitDate)),
-                _buildDetailRow('Gestation', '${visit.gestationWeeks} weeks'),
+                _buildDetailRow(context, 'Contact Number',
+                    'Contact ${visit.contactNumber}'),
+                _buildDetailRow(
+                    context, 'Visit Date', _formatDate(visit.visitDate)),
+                _buildDetailRow(
+                    context, 'Gestation', '${visit.gestationWeeks} weeks'),
                 if (visit.isHighRisk == true)
-                  _buildDetailRow('Risk Status', 'High Risk', isAlert: true),
+                  _buildDetailRow(context, 'Risk Status', 'High Risk',
+                      isAlert: true),
               ]),
 
               // Vital Signs
@@ -523,15 +529,18 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                   visit.haemoglobin != null)
                 _buildDetailSection('Vital Signs', [
                   if (visit.weightKg != null)
-                    _buildDetailRow('Weight', '${visit.weightKg} kg'),
+                    _buildDetailRow(context, 'Weight', '${visit.weightKg} kg'),
                   if (visit.bloodPressure != null)
-                    _buildDetailRow('Blood Pressure', visit.bloodPressure!),
+                    _buildDetailRow(
+                        context, 'Blood Pressure', visit.bloodPressure!),
                   if (visit.muacCm != null)
-                    _buildDetailRow('MUAC', '${visit.muacCm} cm'),
+                    _buildDetailRow(context, 'MUAC', '${visit.muacCm} cm'),
                   if (visit.haemoglobin != null)
-                    _buildDetailRow('Haemoglobin', '${visit.haemoglobin} g/dL'),
+                    _buildDetailRow(
+                        context, 'Haemoglobin', '${visit.haemoglobin} g/dL'),
                   if (visit.pallor == true)
-                    _buildDetailRow('Pallor', 'Present', isAlert: true),
+                    _buildDetailRow(context, 'Pallor', 'Present',
+                        isAlert: true),
                 ]),
 
               // Physical Examination
@@ -540,15 +549,18 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                   visit.foetalHeartRate != null)
                 _buildDetailSection('Physical Examination', [
                   if (visit.fundalHeight != null)
-                    _buildDetailRow('Fundal Height', '${visit.fundalHeight} cm'),
-                  if (visit.presentation != null)
-                    _buildDetailRow('Presentation', visit.presentation!),
-                  if (visit.lie != null) _buildDetailRow('Lie', visit.lie!),
-                  if (visit.foetalHeartRate != null)
                     _buildDetailRow(
-                        'Foetal Heart Rate', '${visit.foetalHeartRate} bpm'),
+                        context, 'Fundal Height', '${visit.fundalHeight} cm'),
+                  if (visit.presentation != null)
+                    _buildDetailRow(
+                        context, 'Presentation', visit.presentation!),
+                  if (visit.lie != null)
+                    _buildDetailRow(context, 'Lie', visit.lie!),
+                  if (visit.foetalHeartRate != null)
+                    _buildDetailRow(context, 'Foetal Heart Rate',
+                        '${visit.foetalHeartRate} bpm'),
                   if (visit.foetalMovement == true)
-                    _buildDetailRow('Foetal Movement', 'Present'),
+                    _buildDetailRow(context, 'Foetal Movement', 'Present'),
                 ]),
 
               // Lab Tests
@@ -557,17 +569,21 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                   visit.syphilisTested == true)
                 _buildDetailSection('Lab Tests', [
                   if (visit.urineProtein != null)
-                    _buildDetailRow('Urine Protein', visit.urineProtein!),
+                    _buildDetailRow(
+                        context, 'Urine Protein', visit.urineProtein!),
                   if (visit.urineGlucose != null)
-                    _buildDetailRow('Urine Glucose', visit.urineGlucose!),
+                    _buildDetailRow(
+                        context, 'Urine Glucose', visit.urineGlucose!),
                   if (visit.hivTested == true)
                     _buildDetailRow(
+                      context,
                       'HIV Test',
                       visit.hivResult ?? 'Tested',
                       isAlert: visit.hivResult == 'Positive',
                     ),
                   if (visit.syphilisTested == true)
                     _buildDetailRow(
+                      context,
                       'Syphilis Test',
                       visit.syphilisResult ?? 'Tested',
                       isAlert: visit.syphilisResult == 'Positive',
@@ -580,14 +596,16 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                   visit.lllinGiven == true)
                 _buildDetailSection('Preventive Services', [
                   if (visit.tdInjectionGiven == true)
-                    _buildDetailRow('TD Injection', 'Given'),
-                  if (visit.iptpSpGiven == true) _buildDetailRow('IPTp-SP', 'Given'),
+                    _buildDetailRow(context, 'TD Injection', 'Given'),
+                  if (visit.iptpSpGiven == true)
+                    _buildDetailRow(context, 'IPTp-SP', 'Given'),
                   if (visit.ifasTabletsGiven != null)
-                    _buildDetailRow(
-                        'IFAS Tablets', '${visit.ifasTabletsGiven} tablets'),
-                  if (visit.lllinGiven == true) _buildDetailRow('LLIN', 'Given'),
+                    _buildDetailRow(context, 'IFAS Tablets',
+                        '${visit.ifasTabletsGiven} tablets'),
+                  if (visit.lllinGiven == true)
+                    _buildDetailRow(context, 'LLIN', 'Given'),
                   if (visit.dewormingGiven == true)
-                    _buildDetailRow('Deworming', 'Given'),
+                    _buildDetailRow(context, 'Deworming', 'Given'),
                 ]),
 
               // Clinical Notes
@@ -596,22 +614,24 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
                   visit.treatment != null)
                 _buildDetailSection('Clinical Notes', [
                   if (visit.complaints != null)
-                    _buildDetailRow('Complaints', visit.complaints!),
+                    _buildDetailRow(context, 'Complaints', visit.complaints!),
                   if (visit.diagnosis != null)
-                    _buildDetailRow('Diagnosis', visit.diagnosis!),
+                    _buildDetailRow(context, 'Diagnosis', visit.diagnosis!),
                   if (visit.treatment != null)
-                    _buildDetailRow('Treatment', visit.treatment!),
-                  if (visit.notes != null) _buildDetailRow('Notes', visit.notes!),
+                    _buildDetailRow(context, 'Treatment', visit.treatment!),
+                  if (visit.notes != null)
+                    _buildDetailRow(context, 'Notes', visit.notes!),
                 ]),
 
               // Next Visit
               if (visit.nextVisitDate != null || visit.healthWorkerName != null)
                 _buildDetailSection('Follow-up', [
                   if (visit.nextVisitDate != null)
-                    _buildDetailRow(
-                        'Next Visit', _formatDate(visit.nextVisitDate!)),
+                    _buildDetailRow(context, 'Next Visit',
+                        _formatDate(visit.nextVisitDate!)),
                   if (visit.healthWorkerName != null)
-                    _buildDetailRow('Health Worker', visit.healthWorkerName!),
+                    _buildDetailRow(
+                        context, 'Health Worker', visit.healthWorkerName!),
                 ]),
 
               const SizedBox(height: 24),
@@ -640,7 +660,8 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isAlert = false}) {
+  Widget _buildDetailRow(BuildContext context, String label, String value,
+      {bool isAlert = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -660,7 +681,9 @@ class ANCVisitHistoryScreen extends ConsumerWidget {
             child: Text(
               value,
               style: TextStyle(
-                color: isAlert ? Colors.red : Colors.black87,
+                color: isAlert
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.onSurface,
                 fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
               ),
             ),

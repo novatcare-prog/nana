@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/services/app_initializer.dart';
 import '../../../../core/services/notification_scheduler.dart';
+import '../../../../core/providers/auth_provider.dart';
 
 /// Splash Screen with Initialization
 /// Handles all app startup tasks with progress indication
@@ -13,13 +14,12 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> 
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
-  
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  
+
   String _statusMessage = 'Starting...';
   double _progress = 0.0;
   bool _hasError = false;
@@ -57,7 +57,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _initializeApp() async {
     final initializer = AppInitializer();
-    
+
     final success = await initializer.initialize(
       onProgress: (step, progress) {
         if (mounted) {
@@ -84,11 +84,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       _scheduleNotifications();
     }
 
+    // Unlock the router (allows Supabase access)
+    ref.read(appInitializedProvider.notifier).state = true;
+
     // Small delay for UX, then navigate
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     if (!mounted) return;
-    
+
     // Navigate based on auth state
     if (initializer.isAuthenticated) {
       context.go('/home');
@@ -148,9 +151,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   children: [
                     // Logo with text (Asset_2 includes Nana + tagline)
                     _buildLogo(),
-                    
+
                     const SizedBox(height: 60),
-                    
+
                     // Progress or Error
                     if (_hasError)
                       _buildErrorWidget()
@@ -223,9 +226,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Status message
         Text(
           _statusMessage,
@@ -280,7 +283,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE91E63),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),

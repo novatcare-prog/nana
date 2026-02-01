@@ -18,10 +18,32 @@ import '../../features/sharing/presentation/screens/share_records_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/home/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
+import '../../features/children/presentation/screens/add_child_screen.dart';
+import '../../features/education/presentation/screens/handbook_screen.dart';
+import '../../features/support/presentation/screens/help_support_screen.dart';
+import '../../features/support/presentation/screens/privacy_policy_screen.dart';
+import '../../features/clinics/presentation/screens/clinic_list_screen.dart';
+import '../../features/journal/presentation/screens/journal_list_screen.dart';
+import '../../features/journal/presentation/screens/journal_entry_screen.dart';
+import '../../features/journal/domain/models/journal_entry.dart';
 import '../../../../core/providers/auth_provider.dart';
 
 // Router provider
 final routerProvider = Provider<GoRouter>((ref) {
+  final isInitialized = ref.watch(appInitializedProvider);
+
+  if (!isInitialized) {
+    return GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const SplashScreen(),
+        ),
+      ],
+    );
+  }
+
   final authState = ref.watch(authStateProvider.stream);
 
   return GoRouter(
@@ -124,6 +146,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
+      // Add Child Route
+      GoRoute(
+        path: '/children/add',
+        name: 'add-child',
+        builder: (context, state) => const AddChildScreen(),
+      ),
+
+      // Education & Support Routes
+      GoRoute(
+        path: '/handbook',
+        name: 'handbook',
+        builder: (context, state) => const HandbookScreen(),
+      ),
+      GoRoute(
+        path: '/help',
+        name: 'help',
+        builder: (context, state) => const HelpSupportScreen(),
+      ),
+      GoRoute(
+        path: '/privacy',
+        name: 'privacy',
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+
       // Child Detail Route (outside shell for full screen)
       GoRoute(
         path: '/child/:id',
@@ -169,6 +215,35 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/anc-visits',
         name: 'ancVisits',
         builder: (context, state) => const AncVisitHistoryScreen(),
+      ),
+
+      // Clinics Route
+      GoRoute(
+        path: '/clinics',
+        name: 'clinics',
+        builder: (context, state) => const ClinicListScreen(),
+      ),
+
+      // Journal Routes
+      GoRoute(
+        path: '/journal',
+        name: 'journal',
+        builder: (context, state) => const JournalListScreen(),
+        routes: [
+          GoRoute(
+            path: 'add',
+            name: 'add-journal',
+            builder: (context, state) => const JournalEntryScreen(),
+          ),
+          GoRoute(
+            path: 'edit/:id',
+            name: 'edit-journal',
+            builder: (context, state) {
+              final entry = state.extra as JournalEntry?;
+              return JournalEntryScreen(entry: entry);
+            },
+          ),
+        ],
       ),
 
       // Settings Route

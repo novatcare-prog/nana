@@ -42,9 +42,9 @@ class LabResultsHistoryScreen extends ConsumerWidget {
             children: [
               // Summary Card
               _buildSummaryCard(labResults),
-              
+
               const SizedBox(height: 16),
-              
+
               // Grouped Results
               ...groupedResults.entries.map((entry) {
                 return _buildTestTypeSection(
@@ -250,7 +250,9 @@ class LabResultsHistoryScreen extends ConsumerWidget {
             Text(
               'Result: ${result.resultValue}${result.resultUnit != null ? " ${result.resultUnit}" : ""}',
               style: TextStyle(
-                color: result.isAbnormal ? Colors.red : Colors.black87,
+                color: result.isAbnormal
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.onSurface,
                 fontWeight:
                     result.isAbnormal ? FontWeight.bold : FontWeight.normal,
               ),
@@ -294,7 +296,8 @@ class LabResultsHistoryScreen extends ConsumerWidget {
                 'Status', result.isAbnormal ? 'Abnormal' : 'Normal'),
             if (result.notes != null && result.notes!.isNotEmpty)
               _buildDetailRow('Notes', result.notes!),
-            _buildDetailRow('Performed By', result.performedByName ?? 'Unknown'),
+            _buildDetailRow(
+                'Performed By', result.performedByName ?? 'Unknown'),
           ],
         ),
         actions: [

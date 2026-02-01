@@ -6,7 +6,6 @@ import 'growth_record_screen.dart';
 import 'growth_history_screen.dart';
 import 'immunization_card_screen.dart';
 import 'vit_a_deworming_screen.dart';
-import 'deworming_screen.dart';
 import 'developmental_milestone_screen.dart';
 
 class ChildDetailScreen extends ConsumerStatefulWidget {

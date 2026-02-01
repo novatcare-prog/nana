@@ -55,7 +55,8 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
                     .withValues(alpha: 0.7)),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(22), // Rounded corners
-                borderSide: BorderSide(width: 1, color: Color(0xFF2196F3))),
+                borderSide:
+                    const BorderSide(width: 1, color: Color(0xFF2196F3))),
             prefixIcon: const Icon(Icons.search, color: Color(0xFF2196F3)),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(

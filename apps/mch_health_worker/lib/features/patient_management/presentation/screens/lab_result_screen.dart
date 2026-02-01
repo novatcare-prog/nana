@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/providers/lab_result_providers.dart';
-import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/providers/auth_providers.dart';
 
 /// Record Lab Result Screen

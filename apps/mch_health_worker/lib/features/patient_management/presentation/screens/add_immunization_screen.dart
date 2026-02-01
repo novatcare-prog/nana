@@ -147,7 +147,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                     const SizedBox(height: 12),
 
                     DropdownButtonFormField<ImmunizationType>(
-                      value: _selectedVaccine,
+                      initialValue: _selectedVaccine,
                       decoration: const InputDecoration(
                         labelText: 'Vaccine *',
                         border: OutlineInputBorder(),
@@ -187,7 +187,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
 
                     // Dose Number
                     DropdownButtonFormField<int>(
-                      value: _doseNumber,
+                      initialValue: _doseNumber,
                       decoration: const InputDecoration(
                         labelText: 'Dose Number',
                         border: OutlineInputBorder(),
@@ -212,7 +212,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                     const SizedBox(height: 12),
 
                     DropdownButtonFormField<String>(
-                      value: _route,
+                      initialValue: _route,
                       decoration: const InputDecoration(
                         labelText: 'Route',
                         border: OutlineInputBorder(),
@@ -231,7 +231,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                     const SizedBox(height: 16),
 
                     DropdownButtonFormField<String>(
-                      value: _site,
+                      initialValue: _site,
                       decoration: const InputDecoration(
                         labelText: 'Site',
                         border: OutlineInputBorder(),
@@ -356,7 +356,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                       ),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
-                        value: _reactionSeverity,
+                        initialValue: _reactionSeverity,
                         decoration: const InputDecoration(
                           labelText: 'Severity',
                           border: OutlineInputBorder(),
@@ -432,7 +432,7 @@ class _AddImmunizationScreenState extends ConsumerState<AddImmunizationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${widget.child.childName}',
+                    widget.child.childName,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

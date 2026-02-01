@@ -166,9 +166,9 @@ class _GrowthSummaryHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [const Color(0xFF2196F3), const Color(0xFF1976D2)],
+          colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -745,7 +745,7 @@ class _GrowthHistoryCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     _MiniStat(
                       icon: Icons.straighten,
-                      value: '${record.muacCm!.toStringAsFixed(1)}',
+                      value: record.muacCm!.toStringAsFixed(1),
                       color: Colors.orange,
                     ),
                   ],

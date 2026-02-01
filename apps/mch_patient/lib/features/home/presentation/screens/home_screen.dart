@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
-import '../../../../core/theme/app_colors.dart'; // Uncomment if available
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -26,8 +24,8 @@ class HomeScreen extends ConsumerWidget {
     final shaNumber = userIdNumber != null ? "ID: $userIdNumber" : "No ID";
 
     // --- MOCK DATA (Connect to Hive/Riverpod in Phase 2) ---
-    final bool isOffline = false;
-    final bool hasUrgentAlert = true; // Simulating an overdue vaccine
+    const bool isOffline = false;
+    const bool hasUrgentAlert = true; // Simulating an overdue vaccine
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -69,8 +67,8 @@ class HomeScreen extends ConsumerWidget {
                         ),
                         Text(
                           userName,
-                          style: const TextStyle(
-                            color: Colors.black87,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -119,8 +117,8 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   // NOTIFICATIONS
                   IconButton(
-                    icon: const Icon(Icons.notifications_outlined,
-                        color: Colors.black87),
+                    icon: Icon(Icons.notifications_outlined,
+                        color: Theme.of(context).colorScheme.onSurface),
                     onPressed: () {}, // TODO: Open Notifications
                   ),
                 ],
@@ -144,9 +142,32 @@ class HomeScreen extends ConsumerWidget {
 
                     // B. URGENT ALERT (Only visible if needed)
                     if (hasUrgentAlert) ...[
-                      const _UrgentActionAlert(
+                      _UrgentActionAlert(
                         title: "Action Required",
                         message: "Baby John missed 6-week Polio vaccine.",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Missed Vaccine'),
+                              content: const Text(
+                                  'Baby John missed the Polio vaccine due at 6 weeks. Please book an appointment immediately to catch up.'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Later')),
+                                FilledButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      context.go('/appointments');
+                                    },
+                                    style: FilledButton.styleFrom(
+                                        backgroundColor: Colors.red),
+                                    child: const Text('Book Now')),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 24),
                     ],
@@ -158,12 +179,12 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
 
                     // D. QUICK ACTIONS GRID
-                    const Text(
+                    Text(
                       "Quick Actions",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87),
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                     const SizedBox(height: 12),
 
@@ -311,9 +332,9 @@ class _ShaCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white.withValues(alpha: 0.3)),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(Icons.check_circle,
                             color: Color(0xFF69F0AE), size: 14),
                         SizedBox(width: 8),
@@ -406,7 +427,7 @@ class _ChildrenCarousel extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () => context.go('/family'),
+                onPressed: () => context.go('/children'),
                 child: const Text('View All',
                     style: TextStyle(color: Color(0xFFE91E63))),
               ),
@@ -432,24 +453,27 @@ class _ChildrenCarousel extends StatelessWidget {
                 isAlert: true,
               ),
               // "Add Child" Placeholder
-              Container(
-                width: 100,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: Colors.grey[300]!, style: BorderStyle.solid),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, color: Colors.grey[600]),
-                    const SizedBox(height: 4),
-                    Text("Add Child",
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 12)),
-                  ],
+              InkWell(
+                onTap: () => context.push('/children/add'),
+                child: Container(
+                  width: 100,
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: Colors.grey[300]!, style: BorderStyle.solid),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add, color: Colors.grey[600]),
+                      const SizedBox(height: 4),
+                      Text("Add Child",
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 12)),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -546,27 +570,31 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.calendar_month,
           label: 'My Visits',
           color: Colors.blue,
-          onTap: () => context.go('/visits'),
+          onTap: () => context.push('/anc-visits'),
         ),
         _QuickActionBtn(
           icon: Icons.emergency,
           label: 'Emergency',
           color: Colors.red,
-          onTap: () {
-            // TODO: Trigger Ambulance (SHA Benefit)
-          },
+          onTap: () => context.push('/help'),
         ),
         _QuickActionBtn(
           icon: Icons.medical_services,
           label: 'Clinics',
           color: Colors.teal,
-          onTap: () {},
+          onTap: () => context.go('/appointments'),
         ),
         _QuickActionBtn(
           icon: Icons.menu_book,
           label: 'Resources',
           color: Colors.purple,
-          onTap: () {},
+          onTap: () => context.push('/handbook'),
+        ),
+        _QuickActionBtn(
+          icon: Icons.edit_note,
+          label: 'Journal',
+          color: Colors.pink,
+          onTap: () => context.push('/journal'),
         ),
       ],
     );
@@ -633,51 +661,61 @@ class _QuickActionBtn extends StatelessWidget {
 class _UrgentActionAlert extends StatelessWidget {
   final String title;
   final String message;
+  final VoidCallback? onTap;
 
-  const _UrgentActionAlert({required this.title, required this.message});
+  const _UrgentActionAlert({
+    required this.title,
+    required this.message,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.red[50],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red[100]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.red[100],
-              shape: BoxShape.circle,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.red[50],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.red[100]!),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red[100],
+                shape: BoxShape.circle,
+              ),
+              child:
+                  const Icon(Icons.priority_high, color: Colors.red, size: 20),
             ),
-            child: const Icon(Icons.priority_high, color: Colors.red, size: 20),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                    fontSize: 14,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  message,
-                  style: TextStyle(color: Colors.red[900], fontSize: 13),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    message,
+                    style: TextStyle(color: Colors.red[900], fontSize: 13),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.red),
-        ],
+            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.red),
+          ],
+        ),
       ),
     );
   }
@@ -692,16 +730,16 @@ class _HealthTipOfTheDay extends StatelessWidget {
         color: const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb, color: Color(0xFF1976D2), size: 28),
-          const SizedBox(width: 16),
+          Icon(Icons.lightbulb, color: Color(0xFF1976D2), size: 28),
+          SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "DID YOU KNOW?",
                   style: TextStyle(
                     fontSize: 10,
@@ -710,8 +748,8 @@ class _HealthTipOfTheDay extends StatelessWidget {
                     letterSpacing: 1.5,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   "Iron-rich foods like spinach and beans help prevent anemia during pregnancy.",
                   style: TextStyle(
                     fontSize: 14,

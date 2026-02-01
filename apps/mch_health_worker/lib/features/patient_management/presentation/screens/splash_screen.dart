@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // For status bar styling
+// For status bar styling
 import 'package:mch_health_worker/main.dart';
 
 class SplashScreen extends StatefulWidget {

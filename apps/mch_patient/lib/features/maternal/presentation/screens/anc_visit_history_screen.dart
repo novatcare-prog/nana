@@ -327,7 +327,9 @@ class _AncVisitCard extends StatelessWidget {
                     child: Text(
                       'Visit ${visit.contactNumber}',
                       style: TextStyle(
-                        color: isLatest ? Colors.white : Colors.black87,
+                        color: isLatest
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -840,7 +842,9 @@ class _DetailRow extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isAlert ? Colors.red : Colors.black87,
+                color: isAlert
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),

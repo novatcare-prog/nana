@@ -250,7 +250,7 @@ class ProfileScreen extends ConsumerWidget {
                   trailing: Switch(
                     value: true,
                     onChanged: (val) {},
-                    activeColor: const Color(0xFFE91E63),
+                    activeThumbColor: const Color(0xFFE91E63),
                   ),
                 ),
                 const _Divider(),
@@ -368,7 +368,7 @@ class ProfileScreen extends ConsumerWidget {
             const Text('Emergency Contacts'),
           ],
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _EmergencyNumber(
@@ -825,11 +825,11 @@ class _ProfilePhotoWidgetState extends State<_ProfilePhotoWidget> {
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
-              const Icon(Icons.info_outline, color: Colors.white),
-              const SizedBox(width: 12),
-              const Expanded(
+              Icon(Icons.info_outline, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(
                 child: Text(
                     'Photo upload is available on the mobile app. Download the app to update your photo.'),
               ),

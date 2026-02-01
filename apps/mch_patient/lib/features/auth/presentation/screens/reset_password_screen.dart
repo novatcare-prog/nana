@@ -97,12 +97,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      // backgroundColor: Colors.grey[50], // Removed to allow theme background
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => context.go('/login'),
         ),
       ),
@@ -145,12 +146,12 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                 const SizedBox(height: 32),
 
                 // Title
-                const Text(
+                Text(
                   'Reset Password',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -175,8 +176,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   enabled: !_isLoading,
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
@@ -210,7 +211,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                           const BorderSide(color: Color(0xFFFF6B9D), width: 2),
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        Theme.of(context).inputDecorationTheme.fillColor ??
+                            Theme.of(context).cardColor,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -230,8 +233,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   enabled: !_isLoading,
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
@@ -266,7 +269,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                           const BorderSide(color: Color(0xFFFF6B9D), width: 2),
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        Theme.of(context).inputDecorationTheme.fillColor ??
+                            Theme.of(context).cardColor,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {

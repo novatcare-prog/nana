@@ -13,6 +13,9 @@ final authStateProvider = StreamProvider<AuthState>((ref) {
   return supabase.auth.onAuthStateChange;
 });
 
+// App Initialization State
+final appInitializedProvider = StateProvider<bool>((ref) => false);
+
 // Current user provider
 final currentUserProvider = Provider<User?>((ref) {
   final authState = ref.watch(authStateProvider);

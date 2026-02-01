@@ -9,14 +9,15 @@ class FlexibleLoginScreen extends ConsumerStatefulWidget {
   const FlexibleLoginScreen({super.key});
 
   @override
-  ConsumerState<FlexibleLoginScreen> createState() => _FlexibleLoginScreenState();
+  ConsumerState<FlexibleLoginScreen> createState() =>
+      _FlexibleLoginScreenState();
 }
 
 class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController(); // Email or Phone
   final _passwordController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _isPhoneMode = false; // Toggle between phone and email
@@ -35,7 +36,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
 
     try {
       final authController = ref.read(authControllerProvider);
-      
+
       if (_isPhoneMode) {
         // Phone number login
         final phone = _formatPhoneNumber(_identifierController.text);
@@ -67,7 +68,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
             ),
             backgroundColor: const Color(0xFFF44336),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -82,75 +84,89 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
   /// Convert technical error messages to user-friendly ones
   String _getErrorMessage(String error) {
     final errorLower = error.toLowerCase();
-    
+
     // Invalid credentials
-    if (errorLower.contains('invalid_credentials') || 
+    if (errorLower.contains('invalid_credentials') ||
         errorLower.contains('invalid login credentials')) {
       return 'Incorrect email or password. Please try again.';
     }
-    
+
     // User not found
-    if (errorLower.contains('user not found') || 
+    if (errorLower.contains('user not found') ||
         errorLower.contains('no user found')) {
       return 'Account not found. Please check your email or sign up.';
     }
-    
+
     // Email not confirmed
     if (errorLower.contains('email not confirmed')) {
       return 'Please verify your email before signing in.';
     }
-    
+
     // Too many attempts
-    if (errorLower.contains('too many requests') || 
+    if (errorLower.contains('too many requests') ||
         errorLower.contains('rate limit')) {
       return 'Too many attempts. Please wait a few minutes and try again.';
     }
-    
+
     // Network error
-    if (errorLower.contains('network') || 
+    if (errorLower.contains('network') ||
         errorLower.contains('connection') ||
         errorLower.contains('socket') ||
         errorLower.contains('timeout')) {
       return 'Connection error. Please check your internet and try again.';
     }
-    
+
     // Invalid email format
     if (errorLower.contains('invalid email')) {
       return 'Please enter a valid email address.';
     }
-    
+
     // Password too weak
     if (errorLower.contains('password') && errorLower.contains('weak')) {
       return 'Password is too weak. Use at least 6 characters.';
     }
-    
+
     // Account disabled
     if (errorLower.contains('disabled') || errorLower.contains('banned')) {
       return 'This account has been disabled. Please contact support.';
     }
-    
-    // Default fallback
+
+    // Role mismatch (Patient App vs Health Worker App)
+    if (errorLower.contains('app is for patients only')) {
+      return 'This account is not a patient account. Please use the Health Worker app.';
+    }
+
+    // Default fallback - show the actual error message if possible
+    // This allows custom exceptions from AuthController to be seen
+    String cleanError = error
+        .replaceAll('Exception:', '')
+        .replaceAll('AuthException:', '')
+        .trim();
+    if (cleanError.isNotEmpty) {
+      return cleanError;
+    }
+
     return 'Something went wrong. Please try again.';
   }
 
   String _formatPhoneNumber(String phone) {
     // Remove spaces and dashes
     phone = phone.replaceAll(RegExp(r'[\s-]'), '');
-    
+
     // Convert 0712345678 → +254712345678
     if (phone.startsWith('0')) {
       phone = '+254${phone.substring(1)}';
     } else if (!phone.startsWith('+')) {
       phone = '+254$phone';
     }
-    
+
     return phone;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      // backgroundColor: Colors.grey[50], // Removed to allow theme background
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -174,12 +190,12 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                 const SizedBox(height: 32),
 
                 // Title
-                const Text(
+                Text(
                   'Welcome Back',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -211,8 +227,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: _isPhoneMode 
-                                  ? const Color(0xFFE91E63) 
+                              color: _isPhoneMode
+                                  ? const Color(0xFFE91E63)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -222,8 +238,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                                 Icon(
                                   Icons.phone,
                                   size: 18,
-                                  color: _isPhoneMode 
-                                      ? Colors.white 
+                                  color: _isPhoneMode
+                                      ? Colors.white
                                       : Colors.grey[700],
                                 ),
                                 const SizedBox(width: 8),
@@ -232,8 +248,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: _isPhoneMode 
-                                        ? Colors.white 
+                                    color: _isPhoneMode
+                                        ? Colors.white
                                         : Colors.grey[700],
                                   ),
                                 ),
@@ -248,8 +264,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: !_isPhoneMode 
-                                  ? const Color(0xFFE91E63) 
+                              color: !_isPhoneMode
+                                  ? const Color(0xFFE91E63)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -259,8 +275,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                                 Icon(
                                   Icons.email,
                                   size: 18,
-                                  color: !_isPhoneMode 
-                                      ? Colors.white 
+                                  color: !_isPhoneMode
+                                      ? Colors.white
                                       : Colors.grey[700],
                                 ),
                                 const SizedBox(width: 8),
@@ -269,8 +285,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: !_isPhoneMode 
-                                        ? Colors.white 
+                                    color: !_isPhoneMode
+                                        ? Colors.white
                                         : Colors.grey[700],
                                   ),
                                 ),
@@ -288,12 +304,12 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                 // Email or Phone Field
                 TextFormField(
                   controller: _identifierController,
-                  keyboardType: _isPhoneMode 
-                      ? TextInputType.phone 
+                  keyboardType: _isPhoneMode
+                      ? TextInputType.phone
                       : TextInputType.emailAddress,
                   enabled: !_isLoading,
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                   ),
                   inputFormatters: _isPhoneMode
@@ -327,15 +343,17 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                       ),
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        Theme.of(context).inputDecorationTheme.fillColor ??
+                            Theme.of(context).cardColor,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return _isPhoneMode 
+                      return _isPhoneMode
                           ? 'Please enter your phone number'
                           : 'Please enter your email';
                     }
-                    
+
                     if (_isPhoneMode) {
                       // Kenyan phone numbers: 07XX, 01XX (10 digits starting with 0)
                       if (!RegExp(r'^0[17]\d{8}$').hasMatch(value)) {
@@ -348,7 +366,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                         return 'Please enter a valid email';
                       }
                     }
-                    
+
                     return null;
                   },
                 ),
@@ -360,8 +378,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   enabled: !_isLoading,
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
@@ -501,9 +519,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () => context.go('/signup'),
+                      onPressed:
+                          _isLoading ? null : () => context.go('/signup'),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(50, 30),
@@ -537,10 +554,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info_outline, 
-                        color: Colors.blue[700], 
-                        size: 20
-                      ),
+                      Icon(Icons.info_outline,
+                          color: Colors.blue[700], size: 20),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(

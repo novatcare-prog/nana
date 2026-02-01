@@ -51,7 +51,8 @@ class _PregnancyDashboardState extends ConsumerState<PregnancyDashboard>
             SliverAppBar(
               floating: true,
               pinned: true,
-              backgroundColor: Theme.of(context).cardTheme.color ?? Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: Theme.of(context).cardTheme.color ??
+                  Theme.of(context).scaffoldBackgroundColor,
               elevation: 0,
               title: Row(
                 children: [
@@ -67,29 +68,33 @@ class _PregnancyDashboardState extends ConsumerState<PregnancyDashboard>
                   const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  Text(
-                    _getTimeGreeting(),
-                    style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color),
-                  ),
-                  Text(
-                    userName,
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    children: [
+                      Text(
+                        _getTimeGreeting(),
+                        style: TextStyle(
+                            fontSize: 10,
+                            color:
+                                Theme.of(context).textTheme.bodySmall?.color),
+                      ),
+                      Text(
+                        userName,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.notifications_outlined, color: Theme.of(context).textTheme.bodyLarge?.color),
-              onPressed: () {},
-            ),
-          ],
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.notifications_outlined,
+                      color: Theme.of(context).textTheme.bodyLarge?.color),
+                  onPressed: () {},
+                ),
+              ],
               bottom: TabBar(
                 controller: _tabController,
                 labelColor: const Color(0xFFE91E63),
@@ -173,12 +178,12 @@ class _PregnancyView extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Quick Actions
-            const Text(
+            Text(
               'Quick Actions',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
@@ -426,7 +431,7 @@ class _NextAncAppointmentCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nextAppointmentAsync = ref.watch(nextAppointmentProvider);
-    
+
     return nextAppointmentAsync.when(
       data: (appointment) {
         if (appointment == null) {
@@ -438,17 +443,19 @@ class _NextAncAppointmentCard extends ConsumerWidget {
       error: (_, __) => _buildNoAppointmentCard(context),
     );
   }
-  
+
   Widget _buildLoadingCard(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
+        border: Border.all(
+            color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
       ),
       child: const Center(
         child: SizedBox(
@@ -462,24 +469,28 @@ class _NextAncAppointmentCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildNoAppointmentCard(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+            color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -524,11 +535,11 @@ class _NextAncAppointmentCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildAppointmentCard(BuildContext context, Appointment appointment) {
     final appointmentDate = appointment.appointmentDate;
     final daysUntil = appointmentDate.difference(DateTime.now()).inDays;
-    
+
     // Format appointment type
     String typeLabel;
     switch (appointment.appointmentType) {
@@ -556,16 +567,20 @@ class _NextAncAppointmentCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+            color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -607,10 +622,10 @@ class _NextAncAppointmentCard extends ConsumerWidget {
               children: [
                 Text(
                   typeLabel,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -634,7 +649,8 @@ class _NextAncAppointmentCard extends ConsumerWidget {
                 ],
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: daysUntil <= 3
                         ? Colors.orange.withOpacity(0.1)
@@ -650,7 +666,9 @@ class _NextAncAppointmentCard extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: daysUntil <= 3 ? Colors.orange[800] : Colors.green[800],
+                      color: daysUntil <= 3
+                          ? Colors.orange[800]
+                          : Colors.green[800],
                     ),
                   ),
                 ),
@@ -676,7 +694,7 @@ class _QuickActionsRow extends StatelessWidget {
             icon: Icons.medical_services_outlined,
             label: 'ANC Records',
             color: const Color(0xFFE91E63),
-            onTap: () {},
+            onTap: () => context.push('/anc-visits'),
           ),
         ),
         const SizedBox(width: 12),
@@ -685,7 +703,11 @@ class _QuickActionsRow extends StatelessWidget {
             icon: Icons.science_outlined,
             label: 'Lab Results',
             color: const Color(0xFF9C27B0),
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Lab Results coming soon')),
+              );
+            },
           ),
         ),
         const SizedBox(width: 12),
@@ -694,7 +716,7 @@ class _QuickActionsRow extends StatelessWidget {
             icon: Icons.emergency_outlined,
             label: 'Emergency',
             color: Colors.red,
-            onTap: () {},
+            onTap: () => context.push('/help'),
           ),
         ),
       ],
@@ -718,16 +740,18 @@ class _QuickActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+          color: Theme.of(context).cardTheme.color ??
+              (isDark ? const Color(0xFF1E1E1E) : Colors.white),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
+          border: Border.all(
+              color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
         ),
         child: Column(
           children: [
@@ -768,7 +792,8 @@ class _PregnancyHealthTip extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb_outline, color: Color(0xFFE91E63), size: 24),
+          const Icon(Icons.lightbulb_outline,
+              color: Color(0xFFE91E63), size: 24),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -822,7 +847,7 @@ class _ChildrenView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final childrenAsync = ref.watch(patientChildrenProvider);
-    
+
     return childrenAsync.when(
       data: (children) {
         if (children.isEmpty) {
@@ -836,12 +861,12 @@ class _ChildrenView extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'My Children',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   Text(
@@ -854,30 +879,23 @@ class _ChildrenView extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Real children list
               ...children.map((child) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _ChildCard(
-                  name: child.childName,
-                  age: _calculateAge(child.dateOfBirth),
-                  sex: child.sex,
-                  onTap: () => context.push('/child/${child.id}'),
-                ),
-              )),
-              
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _ChildCard(
+                      name: child.childName,
+                      age: _calculateAge(child.dateOfBirth),
+                      sex: child.sex,
+                      onTap: () => context.push('/child/${child.id}'),
+                    ),
+                  )),
+
               const SizedBox(height: 12),
 
               // Add Child Button
               OutlinedButton.icon(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Add Child feature coming soon'),
-                      backgroundColor: Color(0xFFE91E63),
-                    ),
-                  );
-                },
+                onPressed: () => context.push('/children/add'),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Child'),
                 style: OutlinedButton.styleFrom(
@@ -902,7 +920,7 @@ class _ChildrenView extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
@@ -945,7 +963,7 @@ class _ChildrenView extends ConsumerWidget {
       ),
     );
   }
-  
+
   String _calculateAge(DateTime birthDate) {
     final now = DateTime.now();
     final difference = now.difference(birthDate);
@@ -977,21 +995,23 @@ class _ChildCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMale = sex.toLowerCase() == 'male';
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+          color: Theme.of(context).cardTheme.color ??
+              (isDark ? const Color(0xFF1E1E1E) : Colors.white),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
+          border: Border.all(
+              color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
         ),
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: isMale 
+              backgroundColor: isMale
                   ? Colors.blue.withOpacity(0.1)
                   : Colors.pink.withOpacity(0.1),
               radius: 24,
@@ -1023,7 +1043,8 @@ class _ChildCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 14, color: Theme.of(context).textTheme.bodySmall?.color),
+            Icon(Icons.arrow_forward_ios,
+                size: 14, color: Theme.of(context).textTheme.bodySmall?.color),
           ],
         ),
       ),

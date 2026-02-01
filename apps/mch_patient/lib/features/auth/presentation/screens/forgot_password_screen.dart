@@ -9,7 +9,8 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
@@ -19,7 +20,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _codeSent = false;
   bool _obscurePassword = true;
@@ -42,9 +43,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
     try {
       await ref.read(authControllerProvider).sendPasswordResetOtp(
-        email: _emailController.text.trim(),
-      );
-      
+            email: _emailController.text.trim(),
+          );
+
       setState(() {
         _codeSent = true;
         _userEmail = _emailController.text.trim();
@@ -61,7 +62,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       }
     } catch (e) {
       setState(() => _isLoading = false);
-      
+
       if (mounted) {
         ErrorHelper.showErrorSnackbar(context, e);
       }
@@ -76,10 +77,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     try {
       // Verify the OTP and update password
       await ref.read(authControllerProvider).verifyOtpAndResetPassword(
-        email: _userEmail,
-        token: _codeController.text.trim(),
-        newPassword: _passwordController.text,
-      );
+            email: _userEmail,
+            token: _codeController.text.trim(),
+            newPassword: _passwordController.text,
+          );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -88,13 +89,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             backgroundColor: AppColors.success,
           ),
         );
-        
+
         // Navigate to login
         context.go('/login');
       }
     } catch (e) {
       setState(() => _isLoading = false);
-      
+
       if (mounted) {
         ErrorHelper.showErrorSnackbar(context, e);
       }
@@ -104,12 +105,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      // backgroundColor: Colors.grey[50], // Removed to allow theme background
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => context.pop(),
         ),
       ),
@@ -129,7 +131,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 20),
-          
+
           // ----------- LOGO UPDATE -----------
           Center(
             child: SizedBox(
@@ -142,22 +144,22 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
           ),
           // -----------------------------------
-          
+
           const SizedBox(height: 32),
-          
+
           // Title
-          const Text(
+          Text(
             'Forgot Password?',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Subtitle
           Text(
             'Enter your email address and we\'ll send you a code to reset your password.',
@@ -168,9 +170,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 40),
-          
+
           // Email Field
           TextFormField(
             controller: _emailController,
@@ -196,25 +198,28 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFFF6B9D), width: 2),
+                borderSide:
+                    const BorderSide(color: Color(0xFFFF6B9D), width: 2),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
+                  Theme.of(context).cardColor,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                  .hasMatch(value)) {
                 return 'Please enter a valid email';
               }
               return null;
             },
             onFieldSubmitted: (_) => _handleSendCode(),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Send Code Button
           SizedBox(
             height: 56,
@@ -247,9 +252,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Back to Login
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -291,36 +296,36 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 20),
-          
+
           // ----------- LOGO UPDATE -----------
           // Showing the logo here too instead of the checkmark icon
           Center(
             child: SizedBox(
-              width: 120, 
+              width: 120,
               height: 120,
               child: Image.asset(
-                'assets/images/Asset_2.png', 
+                'assets/images/Asset_2.png',
                 fit: BoxFit.contain,
               ),
             ),
           ),
           // -----------------------------------
-          
+
           const SizedBox(height: 32),
-          
+
           // Title
-          const Text(
+          Text(
             'Enter Reset Code',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Subtitle
           Text(
             'We sent a code to',
@@ -330,9 +335,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 4),
-          
+
           Text(
             _userEmail,
             style: const TextStyle(
@@ -342,17 +347,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Reset Code Field
           TextFormField(
             controller: _codeController,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
             enabled: !_isLoading,
-            style: const TextStyle(
-              color: Colors.black87,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 20,
               fontWeight: FontWeight.bold,
               letterSpacing: 8,
@@ -376,10 +381,12 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFFF6B9D), width: 2),
+                borderSide:
+                    const BorderSide(color: Color(0xFFFF6B9D), width: 2),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
+                  Theme.of(context).cardColor,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -391,17 +398,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // New Password Field
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
             textInputAction: TextInputAction.next,
             enabled: !_isLoading,
-            style: const TextStyle(
-              color: Colors.black87,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 16,
             ),
             decoration: InputDecoration(
@@ -430,7 +437,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFFF6B9D), width: 2),
+                borderSide:
+                    const BorderSide(color: Color(0xFFFF6B9D), width: 2),
               ),
               filled: true,
               fillColor: Colors.white,
@@ -445,17 +453,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Confirm Password Field
           TextFormField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
             textInputAction: TextInputAction.done,
             enabled: !_isLoading,
-            style: const TextStyle(
-              color: Colors.black87,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 16,
             ),
             decoration: InputDecoration(
@@ -472,7 +480,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   color: Colors.grey[600],
                 ),
                 onPressed: () {
-                  setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                  setState(
+                      () => _obscureConfirmPassword = !_obscureConfirmPassword);
                 },
               ),
               border: OutlineInputBorder(
@@ -484,7 +493,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFFF6B9D), width: 2),
+                borderSide:
+                    const BorderSide(color: Color(0xFFFF6B9D), width: 2),
               ),
               filled: true,
               fillColor: Colors.white,
@@ -500,9 +510,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             },
             onFieldSubmitted: (_) => _handleResetPassword(),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Info Box
           Container(
             padding: const EdgeInsets.all(16),
@@ -532,9 +542,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Reset Password Button
           SizedBox(
             height: 56,
@@ -567,15 +577,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Resend Code
           Center(
             child: TextButton(
-              onPressed: _isLoading ? null : () {
-                setState(() => _codeSent = false);
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() => _codeSent = false);
+                    },
               child: const Text(
                 'Didn\'t receive code? Resend',
                 style: TextStyle(

@@ -39,21 +39,17 @@ class SettingsScreen extends ConsumerWidget {
             _buildSectionHeader('NOTIFICATIONS'),
             _buildNotificationSettings(context, ref, notificationSettings),
 
-
             // Theme Section
             _buildSectionHeader('APPEARANCE'),
             _buildThemeSettings(context, ref, themeMode),
-
 
             // Language Section
             _buildSectionHeader('LANGUAGE'),
             _buildLanguageSettings(context),
 
-
             // About Section
             _buildSectionHeader('ABOUT'),
             _buildAboutSection(context),
-
 
             // Account Section
             _buildSectionHeader('ACCOUNT'),
@@ -93,8 +89,8 @@ class SettingsScreen extends ConsumerWidget {
             radius: 30,
             backgroundColor: Colors.white,
             child: Text(
-              profile.clientName.isNotEmpty 
-                  ? profile.clientName[0].toUpperCase() 
+              profile.clientName.isNotEmpty
+                  ? profile.clientName[0].toUpperCase()
                   : 'M',
               style: const TextStyle(
                 fontSize: 24,
@@ -155,9 +151,11 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
     NotificationSettings settings,
   ) {
-    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87;
-    final subtitleColor = Theme.of(context).textTheme.bodySmall?.color ?? Colors.black54;
-    
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ??
+        Theme.of(context).colorScheme.onSurface;
+    final subtitleColor = Theme.of(context).textTheme.bodySmall?.color ??
+        Theme.of(context).colorScheme.onSurface.withOpacity(0.7);
+
     return _SettingsCard(
       children: [
         SwitchListTile(
@@ -171,7 +169,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           value: settings.enabled,
           onChanged: (value) async {
-            await ref.read(notificationSettingsProvider.notifier).setEnabled(value);
+            await ref
+                .read(notificationSettingsProvider.notifier)
+                .setEnabled(value);
             // Reschedule notifications
             ref.read(notificationSchedulerProvider).scheduleAllNotifications();
           },
@@ -201,12 +201,13 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           value: settings.appointmentReminders && settings.enabled,
-          onChanged: settings.enabled 
-            ? (value) {
-                ref.read(notificationSettingsProvider.notifier)
-                    .setAppointmentReminders(value);
-              }
-            : null,
+          onChanged: settings.enabled
+              ? (value) {
+                  ref
+                      .read(notificationSettingsProvider.notifier)
+                      .setAppointmentReminders(value);
+                }
+              : null,
           contentPadding: const EdgeInsets.only(left: 72, right: 16),
         ),
         const Divider(indent: 72),
@@ -227,11 +228,12 @@ class SettingsScreen extends ConsumerWidget {
           ),
           value: settings.vaccineReminders && settings.enabled,
           onChanged: settings.enabled
-            ? (value) {
-                ref.read(notificationSettingsProvider.notifier)
-                    .setVaccineReminders(value);
-              }
-            : null,
+              ? (value) {
+                  ref
+                      .read(notificationSettingsProvider.notifier)
+                      .setVaccineReminders(value);
+                }
+              : null,
           contentPadding: const EdgeInsets.only(left: 72, right: 16),
         ),
         const Divider(indent: 72),
@@ -252,11 +254,12 @@ class SettingsScreen extends ConsumerWidget {
           ),
           value: settings.visitReminders && settings.enabled,
           onChanged: settings.enabled
-            ? (value) {
-                ref.read(notificationSettingsProvider.notifier)
-                    .setVisitReminders(value);
-              }
-            : null,
+              ? (value) {
+                  ref
+                      .read(notificationSettingsProvider.notifier)
+                      .setVisitReminders(value);
+                }
+              : null,
           contentPadding: const EdgeInsets.only(left: 72, right: 16),
         ),
       ],
@@ -270,7 +273,7 @@ class SettingsScreen extends ConsumerWidget {
   ) {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color;
     final subtitleColor = Theme.of(context).textTheme.bodySmall?.color;
-    
+
     return _SettingsCard(
       children: [
         ListTile(
@@ -300,7 +303,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildLanguageSettings(BuildContext context) {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color;
     final subtitleColor = Theme.of(context).textTheme.bodySmall?.color;
-    
+
     return _SettingsCard(
       children: [
         ListTile(
@@ -330,7 +333,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildAboutSection(BuildContext context) {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color;
     final subtitleColor = Theme.of(context).textTheme.bodySmall?.color;
-    
+
     return _SettingsCard(
       children: [
         ListTile(
@@ -369,6 +372,8 @@ class SettingsScreen extends ConsumerWidget {
             'Kenya MCH Handbook 2020',
             style: TextStyle(color: subtitleColor, fontSize: 12),
           ),
+          trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+          onTap: () => context.push('/handbook'),
         ),
         const Divider(indent: 72),
         ListTile(
@@ -385,11 +390,7 @@ class SettingsScreen extends ConsumerWidget {
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Privacy policy coming soon')),
-            );
-          },
+          onTap: () => context.push('/privacy'),
         ),
         const Divider(indent: 72),
         ListTile(
@@ -406,11 +407,7 @@ class SettingsScreen extends ConsumerWidget {
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Help & support coming soon')),
-            );
-          },
+          onTap: () => context.push('/help'),
         ),
       ],
     );
@@ -418,7 +415,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildAccountSection(BuildContext context, WidgetRef ref) {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color;
-    
+
     return _SettingsCard(
       children: [
         ListTile(
@@ -468,7 +465,8 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showThemeDialog(BuildContext context, WidgetRef ref, ThemeMode currentMode) {
+  void _showThemeDialog(
+      BuildContext context, WidgetRef ref, ThemeMode currentMode) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -574,7 +572,7 @@ class SettingsScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () async {
               Navigator.pop(context);
-              
+
               // Show loading
               showDialog(
                 context: context,
@@ -587,7 +585,7 @@ class SettingsScreen extends ConsumerWidget {
               try {
                 final authController = ref.read(authControllerProvider);
                 await authController.signOut();
-                
+
                 if (context.mounted) {
                   Navigator.pop(context); // Close loading
                   context.go('/login');
@@ -617,20 +615,23 @@ class _SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+        color: Theme.of(context).cardTheme.color ??
+            (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -639,4 +640,3 @@ class _SettingsCard extends StatelessWidget {
     );
   }
 }
-

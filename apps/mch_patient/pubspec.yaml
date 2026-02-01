@@ -49,6 +49,9 @@ dependencies:
   # Image Picker
   image_picker: ^1.0.7
   qr_flutter: ^4.1.0
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:

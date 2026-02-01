@@ -33,13 +33,7 @@ class ChildrenListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: Navigate to Add Child Form
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Add Child feature coming soon'),
-              backgroundColor: Color(0xFFE91E63),
-            ),
-          );
+          context.push('/children/add');
         },
         backgroundColor: const Color(0xFFE91E63),
         icon: const Icon(Icons.add, color: Colors.white),
@@ -190,10 +184,11 @@ class _ChildListItem extends StatelessWidget {
                               children: [
                                 Text(
                                   child.childName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -243,10 +238,10 @@ class _ChildListItem extends StatelessWidget {
                           ),
                           Text(
                             DateFormat('d MMM yyyy').format(child.dateOfBirth),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           const Spacer(),

@@ -23,7 +23,8 @@ class PatientDetailScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<PatientDetailScreen> createState() => _PatientDetailScreenState();
+  ConsumerState<PatientDetailScreen> createState() =>
+      _PatientDetailScreenState();
 }
 
 class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
@@ -66,7 +67,7 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
                       builder: (context) => PatientEditScreen(profile: patient),
                     ),
                   );
-                  
+
                   // If edit was successful, refresh the page
                   if (result == true) {
                     ref.invalidate(maternalProfilesProvider);
@@ -86,7 +87,9 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
               controller: _tabController,
               tabs: const [
                 Tab(icon: Icon(Icons.person), text: 'Profile'),
-                Tab(icon: Icon(Icons.medical_services), text: 'Medical History'),
+                Tab(
+                    icon: Icon(Icons.medical_services),
+                    text: 'Medical History'),
                 Tab(icon: Icon(Icons.science), text: 'Lab Results'),
                 Tab(icon: Icon(Icons.event), text: 'Visits'),
               ],
@@ -118,9 +121,8 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
 
   /// Profile Tab - Patient header and basic info
   Widget _buildProfileTab(MaternalProfile patient) {
-    final gestationWeeks = patient.lmp != null
-        ? _calculateGestationWeeks(patient.lmp!)
-        : null;
+    final gestationWeeks =
+        patient.lmp != null ? _calculateGestationWeeks(patient.lmp!) : null;
 
     return SingleChildScrollView(
       child: Column(
@@ -646,7 +648,8 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+              Icon(icon,
+                  size: 20, color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -691,8 +694,8 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                color: Colors.black87,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
