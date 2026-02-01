@@ -13,7 +13,8 @@ class AppointmentRepository {
   AppointmentRepository(this._supabase);
 
   /// Get appointments for a specific patient by maternal_profile_id
-  Future<List<Appointment>> getAppointmentsByPatientId(String maternalProfileId) async {
+  Future<List<Appointment>> getAppointmentsByPatientId(
+      String maternalProfileId) async {
     try {
       final response = await _supabase
           .from('appointments')
@@ -31,16 +32,18 @@ class AppointmentRepository {
   }
 
   /// Get upcoming appointments for a patient
-  Future<List<Appointment>> getUpcomingAppointments(String maternalProfileId) async {
+  Future<List<Appointment>> getUpcomingAppointments(
+      String maternalProfileId) async {
     try {
-      final now = DateTime.now().toIso8601String();
+      final now = DateTime.now().toUtc().toIso8601String();
       final response = await _supabase
           .from('appointments')
           .select()
           .eq('maternal_profile_id', maternalProfileId)
           .gte('appointment_date', now)
-          .inFilter('appointment_status', ['scheduled', 'confirmed'])
-          .order('appointment_date', ascending: true);
+          .inFilter('appointment_status', ['scheduled', 'confirmed']).order(
+              'appointment_date',
+              ascending: true);
 
       return (response as List)
           .map((json) => Appointment.fromJson(json))
@@ -52,9 +55,10 @@ class AppointmentRepository {
   }
 
   /// Get past appointments for a patient
-  Future<List<Appointment>> getPastAppointments(String maternalProfileId) async {
+  Future<List<Appointment>> getPastAppointments(
+      String maternalProfileId) async {
     try {
-      final now = DateTime.now().toIso8601String();
+      final now = DateTime.now().toUtc().toIso8601String();
       final response = await _supabase
           .from('appointments')
           .select()
@@ -70,6 +74,18 @@ class AppointmentRepository {
       throw Exception('Failed to fetch past appointments: $e');
     }
   }
+
+  /// Confirm an appointment
+  Future<void> confirmAppointment(String appointmentId) async {
+    try {
+      await _supabase
+          .from('appointments')
+          .update({'appointment_status': 'confirmed'}).eq('id', appointmentId);
+    } catch (e) {
+      print('Error confirming appointment: $e');
+      throw Exception('Failed to confirm appointment: $e');
+    }
+  }
 }
 
 /// Repository provider for appointments
@@ -78,20 +94,22 @@ final appointmentRepositoryProvider = Provider<AppointmentRepository>((ref) {
 });
 
 /// Provider to get the current patient's upcoming appointments
-final upcomingAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
+final upcomingAppointmentsProvider =
+    FutureProvider<List<Appointment>>((ref) async {
   final maternalProfileAsync = ref.watch(currentMaternalProfileProvider);
   final repository = ref.read(appointmentRepositoryProvider);
-  
+
   return maternalProfileAsync.when(
     data: (maternalProfile) async {
       if (maternalProfile == null || maternalProfile.id == null) {
         print('📅 No maternal profile found, returning empty appointments');
         return <Appointment>[];
       }
-      
+
       print('📅 Fetching upcoming appointments for: ${maternalProfile.id}');
       try {
-        final appointments = await repository.getUpcomingAppointments(maternalProfile.id!);
+        final appointments =
+            await repository.getUpcomingAppointments(maternalProfile.id!);
         print('📅 Found ${appointments.length} upcoming appointments');
         return appointments;
       } catch (e) {
@@ -108,16 +126,17 @@ final upcomingAppointmentsProvider = FutureProvider<List<Appointment>>((ref) asy
 final pastAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
   final maternalProfileAsync = ref.watch(currentMaternalProfileProvider);
   final repository = ref.read(appointmentRepositoryProvider);
-  
+
   return maternalProfileAsync.when(
     data: (maternalProfile) async {
       if (maternalProfile == null || maternalProfile.id == null) {
         return <Appointment>[];
       }
-      
+
       print('📅 Fetching past appointments for: ${maternalProfile.id}');
       try {
-        final appointments = await repository.getPastAppointments(maternalProfile.id!);
+        final appointments =
+            await repository.getPastAppointments(maternalProfile.id!);
         print('📅 Found ${appointments.length} past appointments');
         return appointments;
       } catch (e) {
@@ -134,13 +153,13 @@ final pastAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
 final allAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
   final maternalProfileAsync = ref.watch(currentMaternalProfileProvider);
   final repository = ref.read(appointmentRepositoryProvider);
-  
+
   return maternalProfileAsync.when(
     data: (maternalProfile) async {
       if (maternalProfile == null || maternalProfile.id == null) {
         return <Appointment>[];
       }
-      
+
       try {
         return await repository.getAppointmentsByPatientId(maternalProfile.id!);
       } catch (e) {
@@ -156,9 +175,22 @@ final allAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
 /// Provider to get the next upcoming appointment (for dashboard)
 final nextAppointmentProvider = FutureProvider<Appointment?>((ref) async {
   final appointments = await ref.watch(upcomingAppointmentsProvider.future);
-  
+
   if (appointments.isEmpty) return null;
-  
-  // Return the first (soonest) upcoming appointment
+
   return appointments.first;
+});
+
+/// Provider to confirm an appointment
+final confirmAppointmentProvider =
+    Provider<Future<void> Function(String)>((ref) {
+  final repository = ref.read(appointmentRepositoryProvider);
+  return (appointmentId) async {
+    await repository.confirmAppointment(appointmentId);
+
+    // Refresh lists
+    ref.invalidate(upcomingAppointmentsProvider);
+    ref.invalidate(pastAppointmentsProvider);
+    ref.invalidate(nextAppointmentProvider);
+  };
 });

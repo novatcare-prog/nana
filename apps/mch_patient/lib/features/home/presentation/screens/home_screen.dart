@@ -19,6 +19,7 @@ class HomeScreen extends ConsumerWidget {
     final isPregnant = ref.watch(hasActivePregnancyProvider);
     final pregnancyWeek = ref.watch(pregnancyWeekProvider);
     final daysUntilDue = ref.watch(daysUntilDueDateProvider);
+    final facilityName = maternalProfileAsync.value?.facilityName;
 
     // 3. Get ID for SHA card (use ID number from user metadata)
     final shaNumber = userIdNumber != null ? "ID: $userIdNumber" : "No ID";
@@ -136,6 +137,7 @@ class HomeScreen extends ConsumerWidget {
                       isPregnant: isPregnant,
                       pregnancyWeek: pregnancyWeek,
                       daysUntilDue: daysUntilDue,
+                      facilityName: facilityName,
                     ),
 
                     const SizedBox(height: 24),
@@ -226,6 +228,7 @@ class _ShaCard extends StatelessWidget {
   final bool isPregnant;
   final int? pregnancyWeek;
   final int? daysUntilDue;
+  final String? facilityName;
 
   const _ShaCard({
     required this.name,
@@ -233,12 +236,13 @@ class _ShaCard extends StatelessWidget {
     required this.isPregnant,
     this.pregnancyWeek,
     this.daysUntilDue,
+    this.facilityName,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 210,
+      height: 220, // Increased height to accommodate facility
       width: double.infinity,
       decoration: BoxDecoration(
         // Official Teal Gradient
@@ -350,6 +354,40 @@ class _ShaCard extends StatelessWidget {
                   ),
 
                 const Spacer(),
+
+                // FACILITY DISPLAY
+                if (facilityName != null && facilityName!.isNotEmpty) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "REGISTERED FACILITY",
+                        style: TextStyle(color: Colors.white60, fontSize: 9),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(Icons.local_hospital,
+                              color: Colors.white70, size: 14),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              facilityName!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
 
                 // BOTTOM DETAILS
                 Row(

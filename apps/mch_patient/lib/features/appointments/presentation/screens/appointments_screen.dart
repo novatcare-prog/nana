@@ -169,7 +169,7 @@ class _PastAppointmentsTab extends ConsumerWidget {
 }
 
 // Appointment Card Widget - Using real Appointment model
-class _AppointmentCard extends StatelessWidget {
+class _AppointmentCard extends ConsumerStatefulWidget {
   final Appointment appointment;
   final bool isUpcoming;
 
@@ -179,7 +179,15 @@ class _AppointmentCard extends StatelessWidget {
   });
 
   @override
+  ConsumerState<_AppointmentCard> createState() => _AppointmentCardState();
+}
+
+class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
+  bool _isProcessing = false;
+
+  @override
   Widget build(BuildContext context) {
+    final appointment = widget.appointment;
     final dateFormatted =
         DateFormat('dd MMM yyyy').format(appointment.appointmentDate);
     final dayOfWeek = DateFormat('EEEE').format(appointment.appointmentDate);
@@ -391,18 +399,81 @@ class _AppointmentCard extends StatelessWidget {
             ),
 
             // Action Buttons (Only for upcoming)
-            if (isUpcoming &&
+            if (widget.isUpcoming &&
                 appointment.appointmentStatus !=
                     AppointmentStatus.cancelled) ...[
               const SizedBox(height: 16),
               Row(
                 children: [
+                  // CONFIRM BUTTON (Show if scheduled)
+                  if (appointment.appointmentStatus ==
+                      AppointmentStatus.scheduled)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ElevatedButton.icon(
+                          onPressed: _isProcessing
+                              ? null
+                              : () async {
+                                  setState(() => _isProcessing = true);
+                                  try {
+                                    final confirm =
+                                        ref.read(confirmAppointmentProvider);
+                                    await confirm(appointment.id!);
+
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Appointment confirmed successfully!'),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Failed: $e'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  } finally {
+                                    if (mounted) {
+                                      setState(() => _isProcessing = false);
+                                    }
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          icon: _isProcessing
+                              ? const SizedBox(
+                                  width: 12,
+                                  height: 12,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white))
+                              : const Icon(Icons.check_circle, size: 16),
+                          label: const Text("Confirm",
+                              style: TextStyle(fontSize: 12)),
+                        ),
+                      ),
+                    ),
+
+                  // RESCHEDULE BUTTON
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Reschedule feature coming soon')),
+                              content: Text('Contact facility to reschedule')),
                         );
                       },
                       style: OutlinedButton.styleFrom(
@@ -415,27 +486,6 @@ class _AppointmentCard extends StatelessWidget {
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 12)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Get Directions feature coming soon')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        backgroundColor: typeColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        elevation: 0,
-                      ),
-                      child: const Text("Get Directions",
-                          style: TextStyle(color: Colors.white, fontSize: 12)),
                     ),
                   ),
                 ],

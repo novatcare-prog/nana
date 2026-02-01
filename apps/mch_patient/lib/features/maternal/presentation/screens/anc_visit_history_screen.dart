@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/anc_visit_provider.dart';
+import '../../../../core/providers/appointment_provider.dart';
 import '../../../../core/utils/error_helper.dart';
 
 /// ANC Visit History Screen
@@ -107,6 +108,9 @@ class AncVisitHistoryScreen extends ConsumerWidget {
           profile: profile,
           visits: sortedVisits,
         ),
+
+        // Upcoming Appointment Alert
+        const _UpcomingAppointmentAlert(),
 
         const SizedBox(height: 16),
 
@@ -798,11 +802,146 @@ class _VisitDetailSheet extends StatelessWidget {
         Card(
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: Column(children: children),
+            child: Column(
+              children: children,
+            ),
           ),
         ),
         const SizedBox(height: 16),
       ],
+    );
+  }
+}
+
+/// Alert Widget for Upcoming Appointments
+class _UpcomingAppointmentAlert extends ConsumerWidget {
+  const _UpcomingAppointmentAlert();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appointmentsAsync = ref.watch(upcomingAppointmentsProvider);
+
+    return appointmentsAsync.when(
+      data: (appointments) {
+        if (appointments.isEmpty) return const SizedBox.shrink();
+
+        // Helper to find the next valid appointment (not cancelled/completed)
+        final upcomingList = appointments
+            .where((a) =>
+                a.appointmentStatus == AppointmentStatus.scheduled ||
+                a.appointmentStatus == AppointmentStatus.confirmed)
+            .toList();
+
+        if (upcomingList.isEmpty) return const SizedBox.shrink();
+
+        // Sort by date just in case
+        upcomingList
+            .sort((a, b) => a.appointmentDate.compareTo(b.appointmentDate));
+        final nextAppointment = upcomingList.first;
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.calendar_month,
+                          color: Colors.blue, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Upcoming Appointment",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            DateFormat('EEEE, d MMMM • h:mm a')
+                                .format(nextAppointment.appointmentDate),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0D47A1), // Dark Blue
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(
+                    height: 1,
+                    color: Colors
+                        .blueAccent), // removed withOpacity using standard color
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 14, color: Colors.blue),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        nextAppointment.facilityName.isNotEmpty
+                            ? nextAppointment.facilityName
+                            : "Health Facility",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.blue[800],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                      ),
+                      child: Text(
+                        nextAppointment.appointmentType ==
+                                AppointmentType.ancVisit
+                            ? "ANC Visit"
+                            : "Appointment",
+                        style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }

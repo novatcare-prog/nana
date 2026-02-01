@@ -140,7 +140,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       final profileResponse = await supabase
           .from('maternal_profiles')
           .select('id')
-          .eq('user_id', user.id)
+          .eq('auth_id', user.id)
           .maybeSingle();
 
       if (profileResponse == null) {
@@ -179,12 +179,15 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       await supabase.from('appointments').insert({
         'maternal_profile_id': maternalProfileId,
         'facility_id': facilityId,
+        'facility_name':
+            widget.clinic?.name ?? 'Health Facility', // Required field
         'health_worker_id': widget.worker?.id,
         'appointment_date': appointmentDateTime.toIso8601String(),
         'appointment_status': 'scheduled',
         'appointment_type': 'consultation',
         'patient_name': user.userMetadata?['full_name'] ?? 'Patient',
         'notes': _notesController.text,
+        'created_by': user.id, // Required field
       });
 
       // 4. Create Notification for Patient

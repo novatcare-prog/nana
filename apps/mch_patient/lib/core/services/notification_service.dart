@@ -7,6 +7,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 /// Notification Service for MCH Patient App
 /// Handles local notifications for appointments, vaccinations, and reminders
 class NotificationService {
@@ -17,6 +19,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
+  final _supabase = Supabase.instance.client;
 
   /// Notification Channels
   static const String appointmentChannelId = 'mch_appointments';
@@ -75,8 +78,55 @@ class NotificationService {
       await _createNotificationChannels();
     }
 
+    // Start Realtime Listener
+    _listenForRealtimeNotifications();
+
     _isInitialized = true;
     debugPrint('🔔 NotificationService initialized');
+  }
+
+  /// Listen for realtime notifications from Supabase
+  void _listenForRealtimeNotifications() {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) return;
+
+    _supabase
+        .from('notifications')
+        .stream(primaryKey: ['id'])
+        .eq('user_id', userId)
+        .limit(1)
+        .listen((List<Map<String, dynamic>> data) {
+          // Note: Stream returns the current state of proper rows.
+          // However, for pure "new event" notification, .onPostgresChanges is better
+          // But .stream is easier to set up for initial load + updates.
+          // To capture *new* inserts specifically for alerting:
+        });
+
+    // Better approach for ALERTS: Postgres Changes
+    _supabase
+        .channel('public:notifications:$userId')
+        .onPostgresChanges(
+            event: PostgresChangeEvent.insert,
+            schema: 'public',
+            table: 'notifications',
+            filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'user_id',
+                value: userId),
+            callback: (payload) {
+              final newRecord = payload.newRecord;
+              final title = newRecord['title'] ?? 'New Notification';
+              final body = newRecord['body'] ?? 'You have a new update.';
+              // Show local notification
+              showNotification(
+                  id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                  title: title,
+                  body: body,
+                  payload: newRecord['type']);
+            })
+        .subscribe();
+
+    debugPrint('🔔 Listening for realtime notifications for user: $userId');
   }
 
   /// Create Android notification channels
