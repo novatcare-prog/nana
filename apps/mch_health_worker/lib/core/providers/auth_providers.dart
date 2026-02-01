@@ -43,7 +43,9 @@ final currentUserProfileProvider = FutureProvider<UserProfile?>((ref) async {
   if (user == null) return null;
 
   try {
-    final profileData = await authService.getUserProfile(user.id);
+    final profileData = await authService
+        .getUserProfile(user.id)
+        .timeout(const Duration(seconds: 10));
     if (profileData == null) return null;
 
     return UserProfile.fromJson(profileData);
@@ -122,6 +124,7 @@ class AuthActions {
     }
 
     // Refresh providers
+    _ref.invalidate(authStateProvider);
     _ref.invalidate(currentUserProfileProvider);
   }
 
@@ -146,13 +149,21 @@ class AuthActions {
     }
 
     // Refresh providers
+    _ref.invalidate(authStateProvider);
     _ref.invalidate(currentUserProfileProvider);
   }
 
   /// Sign out
   Future<void> signOut() async {
-    await _authService.signOut();
-    _ref.invalidate(currentUserProfileProvider);
+    try {
+      await _authService.signOut();
+    } catch (e) {
+      print('Logout error: $e');
+    } finally {
+      // Always clear local state
+      _ref.invalidate(authStateProvider);
+      _ref.invalidate(currentUserProfileProvider);
+    }
   }
 
   /// Reset password

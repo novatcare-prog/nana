@@ -227,7 +227,7 @@ class RoleChecker extends ConsumerWidget {
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text('Loading profile...'),
+              Text('Verifying credentials...'),
             ],
           ),
         ),

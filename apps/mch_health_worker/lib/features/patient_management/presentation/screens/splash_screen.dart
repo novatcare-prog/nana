@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
                     padding: EdgeInsets.zero,
                     child: ClipOval(
                       child: Image.asset(
-                        'assets/images/BLUE_app_launcher_ICON-01.png',
+                        'assets/images/blue_login_icon-01.png',
                         fit: BoxFit.cover,
                         // If the logo fails to load, this prevents a crash
                         errorBuilder: (c, o, s) => const Icon(

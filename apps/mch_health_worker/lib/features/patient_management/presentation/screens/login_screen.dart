@@ -42,7 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✓ Login successful!'),
+            content: Text('✓ Login successful! Verifying credentials...'),
             backgroundColor: Colors.green,
           ),
         );
@@ -108,10 +108,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Title
                     Text(
                       'MCH Kenya',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
@@ -195,7 +196,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: _isLoading ? null : _navigateToForgotPassword,
+                        onPressed:
+                            _isLoading ? null : _navigateToForgotPassword,
                         child: const Text(
                           'Forgot Password?',
                           style: TextStyle(

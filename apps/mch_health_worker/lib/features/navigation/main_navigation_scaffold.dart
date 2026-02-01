@@ -271,6 +271,42 @@ class _MainNavigationScaffoldState
           // User Profile Footer
           const Divider(height: 1),
           _UserProfileHeader(),
+
+          // Logout Button (for Desktop/Tablet)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: const Icon(Icons.logout, color: Colors.red),
+              tooltip: 'Logout',
+              onPressed: () {
+                final authActions = ref.read(authActionsProvider);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Logout'),
+                    content: const Text('Are you sure you want to logout?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          // Perform logout
+                          await authActions.signOut();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Logout',
+                            style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -616,7 +652,11 @@ class _LogoutTile extends ConsumerWidget {
       leading: const Icon(Icons.logout, color: Colors.red),
       title: const Text('Logout', style: TextStyle(color: Colors.red)),
       onTap: () {
-        Navigator.pop(context);
+        // Capture provider BEFORE the widget is potentially disposed (Drawer closing)
+        final authActions = ref.read(authActionsProvider);
+
+        Navigator.pop(context); // Close Drawer first (before dialog)
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -629,18 +669,29 @@ class _LogoutTile extends ConsumerWidget {
               ),
               TextButton(
                 onPressed: () async {
-                  // Perform logout
-                  final authActions = ref.read(authActionsProvider);
-                  await authActions.signOut();
+                  try {
+                    // Use captured authActions
+                    await authActions.signOut();
 
-                  if (context.mounted) {
-                    Navigator.pop(context); // Close dialog
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('✓ Logged out successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    if (context.mounted) {
+                      Navigator.pop(context); // Close dialog
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('✓ Logged out successfully'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      Navigator.pop(context); // Close dialog anyway
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error logging out: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   }
                 },
                 child:
