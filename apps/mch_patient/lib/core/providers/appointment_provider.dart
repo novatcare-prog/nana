@@ -33,12 +33,16 @@ class AppointmentRepository {
   /// Get upcoming appointments for a patient
   Future<List<Appointment>> getUpcomingAppointments(String maternalProfileId) async {
     try {
-      final now = DateTime.now().toIso8601String();
+      final now = DateTime.now();
+      // Use start of today to include appointments that might be slightly in the past today
+      // This prevents "disappearing" appointments on the day of the visit
+      final startOfToday = DateTime(now.year, now.month, now.day).toIso8601String();
+      
       final response = await _supabase
           .from('appointments')
           .select()
           .eq('maternal_profile_id', maternalProfileId)
-          .gte('appointment_date', now)
+          .gte('appointment_date', startOfToday)
           .inFilter('appointment_status', ['scheduled', 'confirmed'])
           .order('appointment_date', ascending: true);
 

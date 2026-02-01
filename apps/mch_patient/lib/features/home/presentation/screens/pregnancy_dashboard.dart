@@ -141,7 +141,7 @@ class _PregnancyDashboardState extends ConsumerState<PregnancyDashboard>
 }
 
 /// Pregnancy View Tab Content
-class _PregnancyView extends StatelessWidget {
+class _PregnancyView extends ConsumerWidget {
   final AsyncValue maternalProfileAsync;
   final int? pregnancyWeek;
   final int? daysUntilDue;
@@ -153,10 +153,21 @@ class _PregnancyView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return RefreshIndicator(
       onRefresh: () async {
-        await Future.delayed(const Duration(seconds: 1));
+        // Invalidate providers to force a re-fetch from Supabase
+        ref.invalidate(currentMaternalProfileProvider);
+        ref.invalidate(upcomingAppointmentsProvider);
+        ref.invalidate(nextAppointmentProvider);
+        
+        // Wait for the profile to reload (which drives other data)
+        try {
+          await ref.read(currentMaternalProfileProvider.future);
+        } catch (e) {
+          // Ignore errors during refresh to prevent UI crash
+          debugPrint('Refresh failed: $e');
+        }
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),

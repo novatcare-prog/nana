@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 
+import 'high_risk_report_screen.dart';
+import 'patients_due_soon_screen.dart';
+import 'missed_appointments_screen.dart';
+import 'anc_coverage_report_screen.dart';
+
 /// Reports & Analytics Screen
 /// Shows facility-level statistics and reports
 class ReportsScreen extends ConsumerStatefulWidget {
@@ -431,28 +436,40 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         ),
         const SizedBox(height: 12),
         _ReportTile(
-          icon: Icons.summarize,
-          title: 'Monthly Summary',
-          subtitle: 'Overview of all activities this month',
-          onTap: () => _showReportDialog('Monthly Summary'),
+          icon: Icons.warning,
+          title: 'High Risk Patients',
+          subtitle: 'List of patients needing attention',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HighRiskReportScreen()),
+          ),
+        ),
+        _ReportTile(
+          icon: Icons.schedule,
+          title: 'Patients Due Soon',
+          subtitle: 'Delivery expected within 30 days',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PatientsDueSoonScreen()),
+          ),
+        ),
+        _ReportTile(
+          icon: Icons.event_busy,
+          title: 'Missed Appointments',
+          subtitle: 'Follow up with no-shows',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const MissedAppointmentsScreen()),
+          ),
         ),
         _ReportTile(
           icon: Icons.pregnant_woman,
           title: 'ANC Coverage Report',
           subtitle: 'Antenatal care statistics',
-          onTap: () => _showReportDialog('ANC Coverage'),
-        ),
-        _ReportTile(
-          icon: Icons.vaccines,
-          title: 'Immunization Report',
-          subtitle: 'Vaccination coverage and due dates',
-          onTap: () => _showReportDialog('Immunization'),
-        ),
-        _ReportTile(
-          icon: Icons.warning,
-          title: 'High Risk Patients',
-          subtitle: 'List of patients needing attention',
-          onTap: () => _showReportDialog('High Risk'),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AncCoverageReportScreen()),
+          ),
         ),
       ],
     );
