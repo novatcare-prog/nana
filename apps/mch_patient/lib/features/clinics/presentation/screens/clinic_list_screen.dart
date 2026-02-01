@@ -4,6 +4,7 @@ import '../providers/clinic_provider.dart';
 import '../widgets/clinic_card.dart';
 import '../widgets/clinic_map_view.dart';
 import '../../../../core/utils/error_helper.dart';
+import 'package:go_router/go_router.dart';
 
 class ClinicListScreen extends ConsumerStatefulWidget {
   const ClinicListScreen({super.key});
@@ -63,6 +64,13 @@ class _ClinicListScreenState extends ConsumerState<ClinicListScreen>
                 itemBuilder: (context, index) {
                   return ClinicCard(
                     clinic: clinics[index],
+                    onTap: () {
+                      context.pushNamed(
+                        'clinic-details',
+                        pathParameters: {'id': clinics[index].id},
+                        extra: clinics[index],
+                      );
+                    },
                     onDirectionsTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

@@ -1,5 +1,6 @@
 import 'package:latlong2/latlong.dart';
 import '../../domain/models/clinic.dart';
+import '../../domain/models/health_worker.dart';
 
 class ClinicRepository {
   Future<List<Clinic>> getNearbyClinics() async {
@@ -55,6 +56,45 @@ class ClinicRepository {
         services: ['Maternity', 'Child Welfare'],
         isOpen: true,
         rating: 3.9,
+      ),
+    ];
+  }
+
+  Future<List<HealthWorker>> getHealthWorkersByClinicId(String clinicId) async {
+    // Mock data
+    await Future.delayed(const Duration(milliseconds: 600));
+    return [
+      HealthWorker(
+        id: 'hw1',
+        name: 'Sarah Kimani',
+        role: 'Nurse Midwife',
+        facilityId: clinicId,
+        rating: 4.8,
+        isAvailable: true,
+      ),
+      HealthWorker(
+        id: 'hw2',
+        name: 'Dr. James Omondi',
+        role: 'Pediatrician',
+        facilityId: clinicId,
+        rating: 4.9,
+        isAvailable: true,
+      ),
+      HealthWorker(
+        id: 'hw3',
+        name: 'Beatrice Wanjiku',
+        role: 'Clinical Officer',
+        facilityId: clinicId,
+        rating: 4.5,
+        isAvailable: true,
+      ),
+      HealthWorker(
+        id: 'hw4',
+        name: 'Grace Mwangi',
+        role: 'Nutritionist',
+        facilityId: clinicId,
+        rating: 4.7,
+        isAvailable: false,
       ),
     ];
   }

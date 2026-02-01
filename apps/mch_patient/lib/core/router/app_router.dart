@@ -23,6 +23,10 @@ import '../../features/education/presentation/screens/handbook_screen.dart';
 import '../../features/support/presentation/screens/help_support_screen.dart';
 import '../../features/support/presentation/screens/privacy_policy_screen.dart';
 import '../../features/clinics/presentation/screens/clinic_list_screen.dart';
+import '../../features/clinics/presentation/screens/clinic_details_screen.dart';
+import '../../features/clinics/presentation/screens/book_appointment_screen.dart';
+import '../../features/clinics/domain/models/clinic.dart';
+import '../../features/clinics/domain/models/health_worker.dart';
 import '../../features/journal/presentation/screens/journal_list_screen.dart';
 import '../../features/journal/presentation/screens/journal_entry_screen.dart';
 import '../../features/journal/domain/models/journal_entry.dart';
@@ -217,11 +221,41 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AncVisitHistoryScreen(),
       ),
 
-      // Clinics Route
       GoRoute(
         path: '/clinics',
         name: 'clinics',
         builder: (context, state) => const ClinicListScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: 'clinic-details',
+            builder: (context, state) {
+              final clinicId = state.pathParameters['id']!;
+              final clinic = state.extra as Clinic?;
+              return ClinicDetailsScreen(clinicId: clinicId, clinic: clinic);
+            },
+            routes: [
+              GoRoute(
+                path: 'book/:workerId',
+                name: 'book-appointment',
+                builder: (context, state) {
+                  final clinicId = state.pathParameters['id']!;
+                  final workerId = state.pathParameters['workerId']!;
+                  final extra = state.extra as Map<String, dynamic>?;
+                  final clinic = extra?['clinic'] as Clinic?;
+                  final worker = extra?['worker'] as HealthWorker?;
+
+                  return BookAppointmentScreen(
+                    clinicId: clinicId,
+                    workerId: workerId,
+                    clinic: clinic,
+                    worker: worker,
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
 
       // Journal Routes
