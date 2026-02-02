@@ -175,34 +175,74 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
       return days >= 0 && days <= 30;
     }).length;
 
-    return Column(
-      children: [
-        // Summary Bar
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              _buildStatChip('${filtered.length}', 'Total', Colors.blue),
-              const SizedBox(width: 12),
-              _buildStatChip('$highRiskCount', 'High Risk', Colors.red),
-              const SizedBox(width: 12),
-              _buildStatChip('$dueSoonCount', 'Due Soon', Colors.orange),
-            ],
-          ),
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 800;
 
-        // List
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-            itemCount: filtered.length,
-            itemBuilder: (context, index) {
-              final patient = filtered[index];
-              return _buildPatientCard(patient);
-            },
-          ),
+        return Column(
+          children: [
+            // Summary Bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  _buildStatChip('${filtered.length}', 'Total', Colors.blue),
+                  const SizedBox(width: 12),
+                  _buildStatChip('$highRiskCount', 'High Risk', Colors.red),
+                  const SizedBox(width: 12),
+                  _buildStatChip('$dueSoonCount', 'Due Soon', Colors.orange),
+                ],
+              ),
+            ),
+
+            // List/Grid
+            Expanded(
+              child: isDesktop
+                  ? _buildDesktopPatientGrid(filtered, constraints.maxWidth)
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) {
+                        final patient = filtered[index];
+                        return _buildPatientCard(patient);
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Desktop grid layout for patient cards
+  Widget _buildDesktopPatientGrid(
+      List<MaternalProfile> patients, double availableWidth) {
+    // Calculate optimal card width and column count
+    const minCardWidth = 380.0;
+    const maxCardWidth = 500.0;
+    const spacing = 16.0;
+    const horizontalPadding = 24.0;
+
+    final usableWidth = availableWidth - (horizontalPadding * 2);
+    final columnCount = (usableWidth / minCardWidth).floor().clamp(1, 3);
+    final cardWidth =
+        ((usableWidth - (spacing * (columnCount - 1))) / columnCount)
+            .clamp(minCardWidth, maxCardWidth);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 80),
+      child: Center(
+        child: Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: patients.map((patient) {
+            return SizedBox(
+              width: cardWidth,
+              child: _buildPatientCard(patient),
+            );
+          }).toList(),
         ),
-      ],
+      ),
     );
   }
 

@@ -43,13 +43,11 @@ class ImmunizationCoverageStats {
     required this.otherVaccines,
   });
 
-  double get ttCoveragePercent => totalActivePatients > 0 
-      ? (ttVaccinated / totalActivePatients) * 100 
-      : 0;
-      
-  double get tdCoveragePercent => totalActivePatients > 0 
-      ? (tdVaccinated / totalActivePatients) * 100 
-      : 0;
+  double get ttCoveragePercent =>
+      totalActivePatients > 0 ? (ttVaccinated / totalActivePatients) * 100 : 0;
+
+  double get tdCoveragePercent =>
+      totalActivePatients > 0 ? (tdVaccinated / totalActivePatients) * 100 : 0;
 }
 
 /// Simple count for a vaccine type
@@ -83,20 +81,22 @@ class HighRiskPatientReport {
   /// Priority level based on EDD proximity and risk factors
   int get priorityScore {
     int score = 0;
-    
+
     // More risk factors = higher priority
     score += riskFactors.length * 10;
-    
+
     // Closer to EDD = higher priority
     if (daysUntilEdd != null) {
-      if (daysUntilEdd! <= 7) score += 50;
-      else if (daysUntilEdd! <= 14) score += 30;
+      if (daysUntilEdd! <= 7) {
+        score += 50;
+      } else if (daysUntilEdd! <= 14)
+        score += 30;
       else if (daysUntilEdd! <= 30) score += 15;
     }
-    
+
     // Overdue for visit = higher priority
     if (isOverdueForVisit) score += 20;
-    
+
     return score;
   }
 }

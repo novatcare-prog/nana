@@ -165,29 +165,77 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ? _buildErrorView(theme)
               : RefreshIndicator(
                   onRefresh: _loadStats,
-                  child: ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      // Header
-                      _buildHeader(theme),
-                      const SizedBox(height: 20),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isDesktop = constraints.maxWidth >= 900;
 
-                      // Summary Stats
-                      _buildSummarySection(theme),
-                      const SizedBox(height: 20),
+                      if (isDesktop) {
+                        return SingleChildScrollView(
+                          padding: const EdgeInsets.all(24),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1300),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Header
+                                  _buildHeader(theme),
+                                  const SizedBox(height: 24),
 
-                      // Patient Status Distribution
-                      _buildPatientStatusSection(theme),
-                      const SizedBox(height: 20),
+                                  // Desktop: Two-column layout
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Left Column: Stats and Activity
+                                      Expanded(
+                                        flex: 5,
+                                        child: Column(
+                                          children: [
+                                            _buildSummarySection(theme),
+                                            const SizedBox(height: 20),
+                                            _buildActivitySection(theme),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 24),
+                                      // Right Column: Status and Reports
+                                      Expanded(
+                                        flex: 5,
+                                        child: Column(
+                                          children: [
+                                            _buildPatientStatusSection(theme),
+                                            const SizedBox(height: 20),
+                                            _buildQuickReportsSection(theme),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }
 
-                      // Activity Section
-                      _buildActivitySection(theme),
-                      const SizedBox(height: 20),
-
-                      // Quick Reports
-                      _buildQuickReportsSection(theme),
-                      const SizedBox(height: 24),
-                    ],
+                      // Mobile layout
+                      return ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          _buildHeader(theme),
+                          const SizedBox(height: 20),
+                          _buildSummarySection(theme),
+                          const SizedBox(height: 20),
+                          _buildPatientStatusSection(theme),
+                          const SizedBox(height: 20),
+                          _buildActivitySection(theme),
+                          const SizedBox(height: 20),
+                          _buildQuickReportsSection(theme),
+                          const SizedBox(height: 24),
+                        ],
+                      );
+                    },
                   ),
                 ),
     );

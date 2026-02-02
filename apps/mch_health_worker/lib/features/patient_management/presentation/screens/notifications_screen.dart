@@ -22,7 +22,8 @@ class NotificationsScreen extends ConsumerWidget {
             tooltip: 'Mark all as read',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('All notifications marked as read')),
+                const SnackBar(
+                    content: Text('All notifications marked as read')),
               );
             },
           ),
@@ -44,27 +45,71 @@ class NotificationsScreen extends ConsumerWidget {
                   Text(
                     'No notifications',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                          color: Colors.grey[600],
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'You\'re all caught up!',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[500],
-                    ),
+                          color: Colors.grey[500],
+                        ),
                   ),
                 ],
               ),
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: notifications.length,
-            itemBuilder: (context, index) {
-              final notification = notifications[index];
-              return _buildNotificationCard(context, notification);
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth >= 800;
+
+              if (isDesktop) {
+                // Desktop: Centered grid with constrained card widths
+                const minCardWidth = 400.0;
+                const maxCardWidth = 550.0;
+                const spacing = 16.0;
+                const horizontalPadding = 24.0;
+
+                final usableWidth =
+                    constraints.maxWidth - (horizontalPadding * 2);
+                final columnCount =
+                    (usableWidth / minCardWidth).floor().clamp(1, 3);
+                final cardWidth =
+                    ((usableWidth - (spacing * (columnCount - 1))) /
+                            columnCount)
+                        .clamp(minCardWidth, maxCardWidth);
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1400),
+                      child: Wrap(
+                        spacing: spacing,
+                        runSpacing: spacing,
+                        children: notifications.map((notification) {
+                          return SizedBox(
+                            width: cardWidth,
+                            child:
+                                _buildNotificationCard(context, notification),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              // Mobile: Standard list
+              return ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: notifications.length,
+                itemBuilder: (context, index) {
+                  final notification = notifications[index];
+                  return _buildNotificationCard(context, notification);
+                },
+              );
             },
           );
         },
@@ -88,7 +133,8 @@ class NotificationsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNotificationCard(BuildContext context, AppNotification notification) {
+  Widget _buildNotificationCard(
+      BuildContext context, AppNotification notification) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(
@@ -109,7 +155,8 @@ class NotificationsScreen extends ConsumerWidget {
         title: Text(
           notification.title,
           style: TextStyle(
-            fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+            fontWeight:
+                notification.isRead ? FontWeight.normal : FontWeight.bold,
           ),
         ),
         subtitle: Column(

@@ -23,7 +23,8 @@ class PdfExportService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        header: (context) => _buildHeader('High Risk Patients Report', facilityName),
+        header: (context) =>
+            _buildHeader('High Risk Patients Report', facilityName),
         footer: (context) => _buildFooter(context),
         build: (context) => [
           _buildSummaryBox([
@@ -34,18 +35,32 @@ class PdfExportService {
           pw.SizedBox(height: 20),
           pw.Table.fromTextArray(
             context: context,
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+            headerStyle:
+                pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
             cellStyle: const pw.TextStyle(fontSize: 9),
-            headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
-            headers: ['Name', 'ANC #', 'Age', 'EDD', 'Risk Factors', 'Last Visit'],
-            data: patients.map((p) => [
-              p.profile.clientName,
-              p.profile.ancNumber,
-              '${p.profile.age}',
-              p.profile.edd != null ? _dateFormat.format(p.profile.edd!) : '-',
-              p.riskFactors.join(', '),
-              p.lastVisitDate != null ? _dateFormat.format(p.lastVisitDate!) : 'Never',
-            ]).toList(),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+            headers: [
+              'Name',
+              'ANC #',
+              'Age',
+              'EDD',
+              'Risk Factors',
+              'Last Visit'
+            ],
+            data: patients
+                .map((p) => [
+                      p.profile.clientName,
+                      p.profile.ancNumber,
+                      '${p.profile.age}',
+                      p.profile.edd != null
+                          ? _dateFormat.format(p.profile.edd!)
+                          : '-',
+                      p.riskFactors.join(', '),
+                      p.lastVisitDate != null
+                          ? _dateFormat.format(p.lastVisitDate!)
+                          : 'Never',
+                    ])
+                .toList(),
           ),
         ],
       ),
@@ -63,16 +78,17 @@ class PdfExportService {
 
     // Sort by EDD
     final sorted = [...patients]..sort((a, b) {
-      if (a.edd == null) return 1;
-      if (b.edd == null) return -1;
-      return a.edd!.compareTo(b.edd!);
-    });
+        if (a.edd == null) return 1;
+        if (b.edd == null) return -1;
+        return a.edd!.compareTo(b.edd!);
+      });
 
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        header: (context) => _buildHeader('Patients Due Soon Report', facilityName),
+        header: (context) =>
+            _buildHeader('Patients Due Soon Report', facilityName),
         footer: (context) => _buildFooter(context),
         build: (context) => [
           _buildSummaryBox([
@@ -83,18 +99,23 @@ class PdfExportService {
           pw.SizedBox(height: 20),
           pw.Table.fromTextArray(
             context: context,
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+            headerStyle:
+                pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
             cellStyle: const pw.TextStyle(fontSize: 9),
-            headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
             headers: ['Name', 'ANC #', 'Phone', 'EDD', 'Days Left', 'Address'],
-            data: sorted.map((p) => [
-              p.clientName,
-              p.ancNumber,
-              p.telephone ?? '-',
-              p.edd != null ? _dateFormat.format(p.edd!) : '-',
-              '${_daysUntilEdd(p)}',
-              [p.village, p.ward, p.subCounty].where((s) => s != null).join(', '),
-            ]).toList(),
+            data: sorted
+                .map((p) => [
+                      p.clientName,
+                      p.ancNumber,
+                      p.telephone ?? '-',
+                      p.edd != null ? _dateFormat.format(p.edd!) : '-',
+                      '${_daysUntilEdd(p)}',
+                      [p.village, p.ward, p.subCounty]
+                          .where((s) => s != null)
+                          .join(', '),
+                    ])
+                .toList(),
           ),
         ],
       ),
@@ -114,7 +135,8 @@ class PdfExportService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        header: (context) => _buildHeader('Missed Appointments Report', facilityName),
+        header: (context) =>
+            _buildHeader('Missed Appointments Report', facilityName),
         footer: (context) => _buildFooter(context),
         build: (context) => [
           _buildSummaryBox([
@@ -123,16 +145,19 @@ class PdfExportService {
           pw.SizedBox(height: 20),
           pw.Table.fromTextArray(
             context: context,
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+            headerStyle:
+                pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
             cellStyle: const pw.TextStyle(fontSize: 9),
-            headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
             headers: ['Patient Name', 'Appointment Date', 'Type', 'Notes'],
-            data: appointments.map((a) => [
-              a.patientName,
-              _dateFormat.format(a.appointmentDate),
-              _formatAppointmentType(a.appointmentType),
-              a.notes ?? '-',
-            ]).toList(),
+            data: appointments
+                .map((a) => [
+                      a.patientName,
+                      _dateFormat.format(a.appointmentDate),
+                      _formatAppointmentType(a.appointmentType),
+                      a.notes ?? '-',
+                    ])
+                .toList(),
           ),
         ],
       ),
@@ -162,19 +187,20 @@ class PdfExportService {
               'MOH Target: 80% coverage per visit',
             ]),
             pw.SizedBox(height: 30),
-            pw.Text('Coverage by Visit Number', 
-                style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.Text('Coverage by Visit Number',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 12),
-            _buildCoverageBar('1st ANC Visit', stats.firstVisitCount, 
+            _buildCoverageBar('1st ANC Visit', stats.firstVisitCount,
                 stats.totalActivePatients, PdfColors.green),
             pw.SizedBox(height: 8),
-            _buildCoverageBar('2nd ANC Visit', stats.secondVisitCount, 
+            _buildCoverageBar('2nd ANC Visit', stats.secondVisitCount,
                 stats.totalActivePatients, PdfColors.blue),
             pw.SizedBox(height: 8),
-            _buildCoverageBar('3rd ANC Visit', stats.thirdVisitCount, 
+            _buildCoverageBar('3rd ANC Visit', stats.thirdVisitCount,
                 stats.totalActivePatients, PdfColors.orange),
             pw.SizedBox(height: 8),
-            _buildCoverageBar('4th+ ANC Visit', stats.fourthPlusVisitCount, 
+            _buildCoverageBar('4th+ ANC Visit', stats.fourthPlusVisitCount,
                 stats.totalActivePatients, PdfColors.purple),
             pw.Spacer(),
             _buildFooter(context),
@@ -213,14 +239,16 @@ class PdfExportService {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(title, 
-                    style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                pw.Text(title,
+                    style: pw.TextStyle(
+                        fontSize: 18, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 4),
                 pw.Text(facilityName, style: const pw.TextStyle(fontSize: 12)),
               ],
             ),
             pw.Text('Generated: ${_timestampFormat.format(DateTime.now())}',
-                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
+                style:
+                    const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
           ],
         ),
         pw.Divider(thickness: 1),
@@ -235,10 +263,12 @@ class PdfExportService {
         pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
-            pw.Text('MCH Kenya Health System', 
-                style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+            pw.Text('MCH Kenya Health System',
+                style:
+                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
             pw.Text('Page ${context.pageNumber} of ${context.pagesCount}',
-                style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+                style:
+                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
           ],
         ),
       ],
@@ -255,17 +285,20 @@ class PdfExportService {
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: items.map((item) => pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(vertical: 2),
-          child: pw.Text(item, style: const pw.TextStyle(fontSize: 11)),
-        )).toList(),
+        children: items
+            .map((item) => pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                  child: pw.Text(item, style: const pw.TextStyle(fontSize: 11)),
+                ))
+            .toList(),
       ),
     );
   }
 
-  static pw.Widget _buildCoverageBar(String label, int count, int total, PdfColor color) {
+  static pw.Widget _buildCoverageBar(
+      String label, int count, int total, PdfColor color) {
     final percent = total > 0 ? (count / total * 100) : 0.0;
-    
+
     return pw.Row(
       children: [
         pw.SizedBox(
@@ -277,9 +310,9 @@ class PdfExportService {
             children: [
               pw.Container(
                 height: 16,
-                decoration: pw.BoxDecoration(
+                decoration: const pw.BoxDecoration(
                   color: PdfColors.grey200,
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+                  borderRadius: pw.BorderRadius.all(pw.Radius.circular(4)),
                 ),
               ),
               pw.Container(
@@ -287,7 +320,8 @@ class PdfExportService {
                 width: (percent / 100) * 300,
                 decoration: pw.BoxDecoration(
                   color: color,
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+                  borderRadius:
+                      const pw.BorderRadius.all(pw.Radius.circular(4)),
                 ),
               ),
             ],
@@ -307,14 +341,22 @@ class PdfExportService {
 
   static String _formatAppointmentType(AppointmentType type) {
     switch (type) {
-      case AppointmentType.ancVisit: return 'ANC Visit';
-      case AppointmentType.pncVisit: return 'PNC Visit';
-      case AppointmentType.labTest: return 'Lab Test';
-      case AppointmentType.ultrasound: return 'Ultrasound';
-      case AppointmentType.delivery: return 'Delivery';
-      case AppointmentType.immunization: return 'Immunization';
-      case AppointmentType.consultation: return 'Consultation';
-      case AppointmentType.followUp: return 'Follow-up';
+      case AppointmentType.ancVisit:
+        return 'ANC Visit';
+      case AppointmentType.pncVisit:
+        return 'PNC Visit';
+      case AppointmentType.labTest:
+        return 'Lab Test';
+      case AppointmentType.ultrasound:
+        return 'Ultrasound';
+      case AppointmentType.delivery:
+        return 'Delivery';
+      case AppointmentType.immunization:
+        return 'Immunization';
+      case AppointmentType.consultation:
+        return 'Consultation';
+      case AppointmentType.followUp:
+        return 'Follow-up';
     }
   }
 }

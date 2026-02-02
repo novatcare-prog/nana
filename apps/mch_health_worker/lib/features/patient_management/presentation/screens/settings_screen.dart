@@ -66,47 +66,177 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             );
           }
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Profile Card
-                _ProfileCard(profile: profile),
-                const SizedBox(height: 8),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth >= 900;
 
-                // Notification Settings
-                _buildSectionHeader('Notifications'),
-                _buildNotificationSettings(),
-                const Divider(height: 32),
+              if (isDesktop) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Profile Card - centered, constrained width
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 600),
+                              child: _ProfileCard(profile: profile),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
 
-                // App Preferences
-                _buildSectionHeader('App Preferences'),
-                _buildAppPreferences(),
-                const Divider(height: 32),
+                          // Two-column layout for settings
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Left Column: Notifications and Preferences
+                              Expanded(
+                                child: Card(
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    side: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant
+                                          .withOpacity(0.5),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _buildSectionHeader('Notifications'),
+                                        _buildNotificationSettings(),
+                                        const SizedBox(height: 24),
+                                        _buildSectionHeader('App Preferences'),
+                                        _buildAppPreferences(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 24),
+                              // Right Column: About, Account, and Debug
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            _buildSectionHeader('About'),
+                                            _buildAboutSection(),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Card(
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            _buildSectionHeader('Account',
+                                                color: Colors.blueGrey),
+                                            _buildAccountSection(context),
+                                            const SizedBox(height: 16),
+                                            _buildSectionHeader('Danger Zone',
+                                                color: Colors.red),
+                                            _buildDangerZone(context),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildDebugSection(context),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 32),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
 
-                // About
-                _buildSectionHeader('About'),
-                _buildAboutSection(),
-                const Divider(height: 32),
+              // Mobile layout
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile Card
+                    _ProfileCard(profile: profile),
+                    const SizedBox(height: 8),
 
-                // Account Section
-                _buildSectionHeader('Account', color: Colors.blueGrey),
-                _buildAccountSection(context),
-                const Divider(height: 32),
+                    // Notification Settings
+                    _buildSectionHeader('Notifications'),
+                    _buildNotificationSettings(),
+                    const Divider(height: 32),
 
-                // Danger Zone
-                _buildSectionHeader('Danger Zone', color: Colors.red),
-                _buildDangerZone(context),
+                    // App Preferences
+                    _buildSectionHeader('App Preferences'),
+                    _buildAppPreferences(),
+                    const Divider(height: 32),
 
-                const Divider(height: 32),
+                    // About
+                    _buildSectionHeader('About'),
+                    _buildAboutSection(),
+                    const Divider(height: 32),
 
-                // Debug Section
-                _buildSectionHeader('Debug', color: Colors.orange),
-                _buildDebugSection(context),
+                    // Account Section
+                    _buildSectionHeader('Account', color: Colors.blueGrey),
+                    _buildAccountSection(context),
+                    const Divider(height: 32),
 
-                const SizedBox(height: 32),
-              ],
-            ),
+                    // Danger Zone
+                    _buildSectionHeader('Danger Zone', color: Colors.red),
+                    _buildDangerZone(context),
+
+                    const Divider(height: 32),
+
+                    // Debug Section
+                    _buildSectionHeader('Debug', color: Colors.orange),
+                    _buildDebugSection(context),
+
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              );
+            },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

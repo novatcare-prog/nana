@@ -197,7 +197,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             // Date Picker
-            _SectionTitle(title: 'Date'),
+            const _SectionTitle(title: 'Date'),
             const SizedBox(height: 8),
             InkWell(
               onTap: _pickDate,
@@ -249,7 +249,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
             const SizedBox(height: 24),
 
             // Mood Selector
-            _SectionTitle(title: 'How are you feeling?'),
+            const _SectionTitle(title: 'How are you feeling?'),
             const SizedBox(height: 12),
             _MoodSelector(
               selectedMood: _selectedMood,
@@ -261,7 +261,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
             const SizedBox(height: 24),
 
             // Category Dropdown
-            _SectionTitle(title: 'Category'),
+            const _SectionTitle(title: 'Category'),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -276,7 +276,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
                 ),
               ),
               child: DropdownButtonFormField<String>(
-                value: _categories.contains(_selectedCategory)
+                initialValue: _categories.contains(_selectedCategory)
                     ? _selectedCategory
                     : null,
                 decoration: InputDecoration(
@@ -309,7 +309,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
             const SizedBox(height: 24),
 
             // Title
-            _SectionTitle(title: 'Title'),
+            const _SectionTitle(title: 'Title'),
             const SizedBox(height: 8),
             TextFormField(
               controller: _titleController,
@@ -350,7 +350,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
             const SizedBox(height: 24),
 
             // Content
-            _SectionTitle(title: 'Your thoughts'),
+            const _SectionTitle(title: 'Your thoughts'),
             const SizedBox(height: 8),
             TextFormField(
               controller: _contentController,

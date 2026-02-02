@@ -18,7 +18,7 @@ class CsvExportService {
     required String facilityName,
   }) async {
     final rows = <List<String>>[];
-    
+
     // Header row
     rows.add([
       'Patient Name',
@@ -62,7 +62,7 @@ class CsvExportService {
     required String facilityName,
   }) async {
     final rows = <List<String>>[];
-    
+
     // Header row
     rows.add([
       'Patient Name',
@@ -82,16 +82,15 @@ class CsvExportService {
 
     // Data rows (sorted by EDD)
     final sorted = [...patients]..sort((a, b) {
-      if (a.edd == null) return 1;
-      if (b.edd == null) return -1;
-      return a.edd!.compareTo(b.edd!);
-    });
+        if (a.edd == null) return 1;
+        if (b.edd == null) return -1;
+        return a.edd!.compareTo(b.edd!);
+      });
 
     for (final p in sorted) {
-      final daysUntil = p.edd != null 
-          ? p.edd!.difference(DateTime.now()).inDays 
-          : '';
-      
+      final daysUntil =
+          p.edd != null ? p.edd!.difference(DateTime.now()).inDays : '';
+
       rows.add([
         p.clientName,
         p.ancNumber,
@@ -118,7 +117,7 @@ class CsvExportService {
     required String facilityName,
   }) async {
     final rows = <List<String>>[];
-    
+
     // Header row
     rows.add([
       'Patient Name',
@@ -133,7 +132,7 @@ class CsvExportService {
     // Data rows
     for (final a in appointments) {
       final daysSince = DateTime.now().difference(a.appointmentDate).inDays;
-      
+
       rows.add([
         a.patientName,
         _dateFormat.format(a.appointmentDate),
@@ -154,7 +153,7 @@ class CsvExportService {
     required String facilityName,
   }) async {
     final rows = <List<String>>[];
-    
+
     // Header row
     rows.add([
       'Visit Number',
@@ -174,10 +173,10 @@ class CsvExportService {
 
     for (final v in visits) {
       final count = v[1] as int;
-      final percent = stats.totalActivePatients > 0 
-          ? (count / stats.totalActivePatients * 100) 
+      final percent = stats.totalActivePatients > 0
+          ? (count / stats.totalActivePatients * 100)
           : 0.0;
-      
+
       rows.add([
         v[0] as String,
         count.toString(),
@@ -205,21 +204,21 @@ class CsvExportService {
 
   /// Save CSV to file and share it
   static Future<String> _saveAndShareCsv(
-    List<List<String>> rows, 
-    String reportType, 
+    List<List<String>> rows,
+    String reportType,
     String facilityName,
   ) async {
     final csvContent = _generateCsvContent(rows);
     final timestamp = _timestampFormat.format(DateTime.now());
-    final filename = '${reportType}_${timestamp}.csv';
-    
+    final filename = '${reportType}_$timestamp.csv';
+
     // Get temporary directory
     final directory = await getTemporaryDirectory();
     final file = File('${directory.path}/$filename');
-    
+
     // Write CSV content
     await file.writeAsString(csvContent, encoding: utf8);
-    
+
     return file.path;
   }
 
@@ -235,14 +234,22 @@ class CsvExportService {
 
   static String _formatAppointmentType(AppointmentType type) {
     switch (type) {
-      case AppointmentType.ancVisit: return 'ANC Visit';
-      case AppointmentType.pncVisit: return 'PNC Visit';
-      case AppointmentType.labTest: return 'Lab Test';
-      case AppointmentType.ultrasound: return 'Ultrasound';
-      case AppointmentType.delivery: return 'Delivery';
-      case AppointmentType.immunization: return 'Immunization';
-      case AppointmentType.consultation: return 'Consultation';
-      case AppointmentType.followUp: return 'Follow-up';
+      case AppointmentType.ancVisit:
+        return 'ANC Visit';
+      case AppointmentType.pncVisit:
+        return 'PNC Visit';
+      case AppointmentType.labTest:
+        return 'Lab Test';
+      case AppointmentType.ultrasound:
+        return 'Ultrasound';
+      case AppointmentType.delivery:
+        return 'Delivery';
+      case AppointmentType.immunization:
+        return 'Immunization';
+      case AppointmentType.consultation:
+        return 'Consultation';
+      case AppointmentType.followUp:
+        return 'Follow-up';
     }
   }
 }

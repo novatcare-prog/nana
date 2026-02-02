@@ -134,134 +134,296 @@ class _ProfileTab extends StatelessWidget {
         ? DateTime.now().difference(patient.lmp!).inDays ~/ 7
         : null;
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Header Card
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: theme.colorScheme.primary,
-                  child: Text(
-                    patient.clientName.isNotEmpty
-                        ? patient.clientName[0].toUpperCase()
-                        : '?',
-                    style: const TextStyle(
-                      fontSize: 32,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  patient.clientName,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${patient.age} years • ${patient.ancNumber}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Stats Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 900;
+
+        if (isDesktop) {
+          // Desktop: Two-column layout with centered, constrained content
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _StatItem(value: '${patient.gravida}', label: 'Gravida'),
-                    _StatItem(value: '${patient.parity}', label: 'Parity'),
-                    _StatItem(
-                      value:
-                          gestationWeeks != null ? '${gestationWeeks}w' : '-',
-                      label: 'Gestation',
+                    // Left Column: Header Card
+                    SizedBox(
+                      width: 380,
+                      child: Column(
+                        children: [
+                          _buildHeaderCard(context, theme, gestationWeeks),
+                          const SizedBox(height: 16),
+                          // Next of Kin
+                          if (patient.nextOfKinName != null)
+                            _buildInfoSection(
+                              context,
+                              'Next of Kin',
+                              Icons.people,
+                              [
+                                _InfoItem('Name', patient.nextOfKinName!),
+                                if (patient.nextOfKinRelationship != null)
+                                  _InfoItem('Relationship',
+                                      patient.nextOfKinRelationship!),
+                                if (patient.nextOfKinPhone != null)
+                                  _InfoItem('Phone', patient.nextOfKinPhone!),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    // Right Columns: Info Cards in a grid
+                    Expanded(
+                      child: Wrap(
+                        spacing: 16,
+                        runSpacing: 16,
+                        children: [
+                          // Facility Info
+                          SizedBox(
+                            width: 360,
+                            child: _buildInfoSection(
+                              context,
+                              'Facility Information',
+                              Icons.local_hospital,
+                              [
+                                _InfoItem('Facility', patient.facilityName),
+                                _InfoItem('KMHFL Code', patient.kmhflCode),
+                                _InfoItem('ANC Number', patient.ancNumber),
+                                if (patient.pncNumber != null)
+                                  _InfoItem('PNC Number', patient.pncNumber!),
+                              ],
+                            ),
+                          ),
+                          // Obstetric Info
+                          SizedBox(
+                            width: 360,
+                            child: _buildInfoSection(
+                              context,
+                              'Obstetric Information',
+                              Icons.pregnant_woman,
+                              [
+                                _InfoItem('Height', '${patient.heightCm} cm'),
+                                _InfoItem('Weight', '${patient.weightKg} kg'),
+                                if (patient.lmp != null)
+                                  _InfoItem('LMP', _formatDate(patient.lmp!)),
+                                if (patient.edd != null) ...[
+                                  _InfoItem('EDD', _formatDate(patient.edd!)),
+                                  _InfoItem(
+                                    'Days Until Due',
+                                    '${patient.edd!.difference(DateTime.now()).inDays} days',
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          // Contact Info
+                          SizedBox(
+                            width: 360,
+                            child: _buildInfoSection(
+                              context,
+                              'Contact Information',
+                              Icons.phone,
+                              [
+                                if (patient.telephone != null)
+                                  _InfoItem('Phone', patient.telephone!),
+                                if (patient.county != null)
+                                  _InfoItem('County', patient.county!),
+                                if (patient.subCounty != null)
+                                  _InfoItem('Sub County', patient.subCounty!),
+                                if (patient.ward != null)
+                                  _InfoItem('Ward', patient.ward!),
+                                if (patient.village != null)
+                                  _InfoItem('Village', patient.village!),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+              ),
+            ),
+          );
+        }
+
+        // Mobile: Original stacked layout
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _buildHeaderCard(context, theme, gestationWeeks),
+            const SizedBox(height: 16),
+            _buildInfoSection(
+                context, 'Facility Information', Icons.local_hospital, [
+              _InfoItem('Facility', patient.facilityName),
+              _InfoItem('KMHFL Code', patient.kmhflCode),
+              _InfoItem('ANC Number', patient.ancNumber),
+              if (patient.pncNumber != null)
+                _InfoItem('PNC Number', patient.pncNumber!),
+            ]),
+            const SizedBox(height: 12),
+            _buildInfoSection(
+                context, 'Obstetric Information', Icons.pregnant_woman, [
+              _InfoItem('Height', '${patient.heightCm} cm'),
+              _InfoItem('Weight', '${patient.weightKg} kg'),
+              if (patient.lmp != null)
+                _InfoItem('LMP', _formatDate(patient.lmp!)),
+              if (patient.edd != null) ...[
+                _InfoItem('EDD', _formatDate(patient.edd!)),
+                _InfoItem(
+                  'Days Until Due',
+                  '${patient.edd!.difference(DateTime.now()).inDays} days',
+                ),
+              ],
+            ]),
+            const SizedBox(height: 12),
+            _buildInfoSection(context, 'Contact Information', Icons.phone, [
+              if (patient.telephone != null)
+                _InfoItem('Phone', patient.telephone!),
+              if (patient.county != null) _InfoItem('County', patient.county!),
+              if (patient.subCounty != null)
+                _InfoItem('Sub County', patient.subCounty!),
+              if (patient.ward != null) _InfoItem('Ward', patient.ward!),
+              if (patient.village != null)
+                _InfoItem('Village', patient.village!),
+            ]),
+            const SizedBox(height: 12),
+            if (patient.nextOfKinName != null)
+              _buildInfoSection(context, 'Next of Kin', Icons.people, [
+                _InfoItem('Name', patient.nextOfKinName!),
+                if (patient.nextOfKinRelationship != null)
+                  _InfoItem('Relationship', patient.nextOfKinRelationship!),
+                if (patient.nextOfKinPhone != null)
+                  _InfoItem('Phone', patient.nextOfKinPhone!),
+              ]),
+            const SizedBox(height: 24),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildHeaderCard(
+      BuildContext context, ThemeData theme, int? gestationWeeks) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: theme.colorScheme.primary,
+              child: Text(
+                patient.clientName.isNotEmpty
+                    ? patient.clientName[0].toUpperCase()
+                    : '?',
+                style: const TextStyle(
+                  fontSize: 32,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              patient.clientName,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${patient.age} years • ${patient.ancNumber}',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _StatItem(value: '${patient.gravida}', label: 'Gravida'),
+                _StatItem(value: '${patient.parity}', label: 'Parity'),
+                _StatItem(
+                  value: gestationWeeks != null ? '${gestationWeeks}w' : '-',
+                  label: 'Gestation',
+                ),
               ],
             ),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Facility Info
-        _InfoSection(
-          title: 'Facility Information',
-          icon: Icons.local_hospital,
-          items: [
-            _InfoItem('Facility', patient.facilityName),
-            _InfoItem('KMHFL Code', patient.kmhflCode),
-            _InfoItem('ANC Number', patient.ancNumber),
-            if (patient.pncNumber != null)
-              _InfoItem('PNC Number', patient.pncNumber!),
           ],
         ),
+      ),
+    );
+  }
 
-        const SizedBox(height: 12),
+  Widget _buildInfoSection(BuildContext context, String title, IconData icon,
+      List<_InfoItem> items) {
+    if (items.isEmpty) return const SizedBox.shrink();
+    final theme = Theme.of(context);
 
-        // Obstetric Info
-        _InfoSection(
-          title: 'Obstetric Information',
-          icon: Icons.pregnant_woman,
-          items: [
-            _InfoItem('Height', '${patient.heightCm} cm'),
-            _InfoItem('Weight', '${patient.weightKg} kg'),
-            if (patient.lmp != null)
-              _InfoItem('LMP', _formatDate(patient.lmp!)),
-            if (patient.edd != null) ...[
-              _InfoItem('EDD', _formatDate(patient.edd!)),
-              _InfoItem(
-                'Days Until Due',
-                '${patient.edd!.difference(DateTime.now()).inDays} days',
-              ),
-            ],
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 18, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            ...items.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 110,
+                        child: Text(
+                          item.label,
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 13),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          item.value,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
           ],
         ),
-
-        const SizedBox(height: 12),
-
-        // Contact Info
-        _InfoSection(
-          title: 'Contact Information',
-          icon: Icons.phone,
-          items: [
-            if (patient.telephone != null)
-              _InfoItem('Phone', patient.telephone!),
-            if (patient.county != null) _InfoItem('County', patient.county!),
-            if (patient.subCounty != null)
-              _InfoItem('Sub County', patient.subCounty!),
-            if (patient.ward != null) _InfoItem('Ward', patient.ward!),
-            if (patient.village != null) _InfoItem('Village', patient.village!),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        // Next of Kin
-        if (patient.nextOfKinName != null)
-          _InfoSection(
-            title: 'Next of Kin',
-            icon: Icons.people,
-            items: [
-              _InfoItem('Name', patient.nextOfKinName!),
-              if (patient.nextOfKinRelationship != null)
-                _InfoItem('Relationship', patient.nextOfKinRelationship!),
-              if (patient.nextOfKinPhone != null)
-                _InfoItem('Phone', patient.nextOfKinPhone!),
-            ],
-          ),
-
-        const SizedBox(height: 24),
-      ],
+      ),
     );
   }
 
@@ -324,15 +486,16 @@ class _MedicalTab extends StatelessWidget {
               title: 'High Risk Conditions',
               conditions: [
                 if (patient.diabetes == true)
-                  _Condition('Diabetes', Icons.medication, Colors.red),
+                  const _Condition('Diabetes', Icons.medication, Colors.red),
                 if (patient.hypertension == true)
-                  _Condition('Hypertension', Icons.favorite, Colors.red),
+                  const _Condition('Hypertension', Icons.favorite, Colors.red),
                 if (patient.tuberculosis == true)
-                  _Condition('Tuberculosis', Icons.coronavirus, Colors.red),
+                  const _Condition(
+                      'Tuberculosis', Icons.coronavirus, Colors.red),
               ],
             ),
           if (patient.previousCs == true)
-            _ConditionSection(
+            const _ConditionSection(
               title: 'Obstetric History',
               conditions: [
                 _Condition('Previous Cesarean Section', Icons.local_hospital,
@@ -350,7 +513,8 @@ class _MedicalTab extends StatelessWidget {
                     Colors.orange,
                   ),
                 if (patient.bloodTransfusion == true)
-                  _Condition('Blood Transfusion', Icons.bloodtype, Colors.blue),
+                  const _Condition(
+                      'Blood Transfusion', Icons.bloodtype, Colors.blue),
               ],
             ),
         ],
@@ -695,72 +859,6 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
-    );
-  }
-}
-
-class _InfoSection extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final List<_InfoItem> items;
-
-  const _InfoSection({
-    required this.title,
-    required this.icon,
-    required this.items,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (items.isEmpty) return const SizedBox.shrink();
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon,
-                    size: 18, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
-            ...items.map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        child: Text(
-                          item.label,
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 13),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          item.value,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 13),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-          ],
-        ),
-      ),
     );
   }
 }

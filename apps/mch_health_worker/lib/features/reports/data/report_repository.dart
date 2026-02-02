@@ -4,12 +4,12 @@ import 'package:mch_core/mch_core.dart';
 import '../domain/report_models.dart';
 
 /// Report Repository for fetching report-specific data
-/// 
+///
 /// Note: Uses existing SupabaseMaternalProfileRepository for:
 /// - getHighRiskProfiles()
 /// - getProfilesDueSoon()
 /// - getStatistics()
-/// 
+///
 /// This repository adds additional report-specific queries.
 class ReportRepository {
   final SupabaseClient _supabase;
@@ -72,7 +72,7 @@ class ReportRepository {
           .select('maternal_profile_id, visit_number');
 
       final visits = visitsResponse as List;
-      
+
       // Count unique patients per visit number
       final visitsByNumber = <int, Set<String>>{};
       for (final visit in visits) {
@@ -96,7 +96,7 @@ class ReportRepository {
     }
   }
 
-  /// Get immunization coverage statistics  
+  /// Get immunization coverage statistics
   Future<ImmunizationCoverageStats> getImmunizationStats() async {
     try {
       // Get total active patients
@@ -160,7 +160,7 @@ class ReportRepository {
       // OPTIMIZED: Get all last visits in a single query using RPC or aggregation
       // Instead of N+1 queries, we fetch all visits and group client-side
       final profileIds = profiles.map((p) => p.id!).toList();
-      
+
       final visitsResponse = await _supabase
           .from('anc_visits')
           .select('maternal_profile_id, visit_date')
@@ -186,9 +186,7 @@ class ReportRepository {
           profile: profile,
           riskFactors: _getRiskFactors(profile),
           lastVisitDate: lastVisitMap[profile.id],
-          daysUntilEdd: profile.edd != null 
-              ? profile.edd!.difference(DateTime.now()).inDays 
-              : null,
+          daysUntilEdd: profile.edd?.difference(DateTime.now()).inDays,
         );
       }).toList();
 

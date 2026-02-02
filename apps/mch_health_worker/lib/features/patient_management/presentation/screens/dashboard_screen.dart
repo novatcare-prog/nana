@@ -114,6 +114,8 @@ class DashboardScreen extends ConsumerWidget {
     final today = DateTime.now();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 900;
 
     final dueThisWeek = profiles.where((p) {
       if (p.edd == null) return false;
@@ -123,6 +125,106 @@ class DashboardScreen extends ConsumerWidget {
 
     final highRisk = profiles.where(_isHighRisk).length;
 
+    if (isDesktop) {
+      // Desktop: Two-column layout with constrained widths
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1400),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left Column: Welcome, Stats, Quick Actions
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 500),
+                        child:
+                            _buildWelcomeCard(context, userProfileAsync, today),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildStatsRow(
+                          context, totalPatients, dueThisWeek, highRisk),
+                      const SizedBox(height: 24),
+                      _buildQuickActions(context),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // Right Column: Patient Lists
+                Expanded(
+                  flex: 6,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // High Risk Section
+                      if (highRisk > 0) ...[
+                        _buildSectionTitle(
+                          context,
+                          'High Risk Patients',
+                          Icons.warning_amber_rounded,
+                          Colors.red,
+                          () => _navigateToPatientList(context),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildPatientCardGrid(
+                          context,
+                          profiles.where(_isHighRisk).take(4).toList(),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Due This Week Section
+                      if (dueThisWeek > 0) ...[
+                        _buildSectionTitle(
+                          context,
+                          'Due This Week',
+                          Icons.schedule,
+                          Colors.orange,
+                          () => _navigateToPatientList(context),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildPatientCardGrid(
+                          context,
+                          profiles
+                              .where((p) {
+                                if (p.edd == null) return false;
+                                final daysUntilDue =
+                                    p.edd!.difference(today).inDays;
+                                return daysUntilDue >= 0 && daysUntilDue <= 7;
+                              })
+                              .take(4)
+                              .toList(),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Recent Patients Section
+                      _buildSectionTitle(
+                        context,
+                        'Recent Patients',
+                        Icons.people,
+                        colorScheme.primary,
+                        () => _navigateToPatientList(context),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildPatientCardGrid(context, profiles.take(6).toList()),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Mobile: Original stacked layout
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -190,6 +292,151 @@ class DashboardScreen extends ConsumerWidget {
         // Bottom spacing for FAB
         const SizedBox(height: 80),
       ],
+    );
+  }
+
+  /// Builds a grid of patient cards for desktop view
+  Widget _buildPatientCardGrid(
+      BuildContext context, List<MaternalProfile> patients) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: patients.map((p) {
+        return SizedBox(
+          width: 340,
+          child: _buildCompactPatientCard(context, p),
+        );
+      }).toList(),
+    );
+  }
+
+  /// Compact patient card for desktop grid layout
+  Widget _buildCompactPatientCard(
+      BuildContext context, MaternalProfile patient) {
+    final daysUntilDue = patient.edd?.difference(DateTime.now()).inDays;
+    final isHighRisk = _isHighRisk(patient);
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isHighRisk
+              ? Colors.red.withOpacity(0.3)
+              : theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          if (patient.id != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PatientDetailScreen(patientId: patient.id!),
+              ),
+            );
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: isHighRisk
+                    ? Colors.red.shade100
+                    : theme.colorScheme.primaryContainer,
+                child: Text(
+                  patient.clientName.isNotEmpty
+                      ? patient.clientName[0].toUpperCase()
+                      : '?',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isHighRisk
+                        ? Colors.red.shade700
+                        : theme.colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            patient.clientName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isHighRisk)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade100,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'HIGH',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          'ANC: ${patient.ancNumber.isNotEmpty ? patient.ancNumber : "N/A"}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        if (daysUntilDue != null && daysUntilDue >= 0) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: daysUntilDue <= 7
+                                  ? Colors.orange.shade100
+                                  : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '${daysUntilDue}d',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: daysUntilDue <= 7
+                                    ? Colors.orange.shade800
+                                    : Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
