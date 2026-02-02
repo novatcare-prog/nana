@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/models/clinic.dart';
 import '../../domain/models/health_worker.dart';
 
@@ -64,7 +65,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       if (response == null || response['is_available'] == false) {
         if (mounted) {
           setState(() {
-            _availabilityError = 'Not available on this day';
+            _availabilityError = 'booking.not_available'.tr();
             _checkingAvailability = false;
           });
         }
@@ -103,7 +104,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _availabilityError = 'Could not check availability';
+          _availabilityError = 'booking.could_not_check'.tr();
           _checkingAvailability = false;
         });
       }
@@ -119,7 +120,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   Future<void> _submitBooking() async {
     if (_selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a time slot')),
+        SnackBar(content: Text('booking.please_select_time'.tr())),
       );
       return;
     }
@@ -133,7 +134,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       final user = supabase.auth.currentUser;
 
       if (user == null) {
-        throw Exception('You must be logged in to book an appointment');
+        throw Exception('booking.must_be_logged_in'.tr());
       }
 
       // 1. Get Maternal Profile ID
@@ -144,7 +145,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
           .maybeSingle();
 
       if (profileResponse == null) {
-        throw Exception('Please complete your maternal profile first.');
+        throw Exception('booking.complete_profile'.tr());
       }
 
       final maternalProfileId = profileResponse['id'] as String;
@@ -193,7 +194,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
       // 4. Create Notification for Patient
       await supabase.from('notifications').insert({
         'user_id': user.id,
-        'title': 'Appointment Confirmed',
+        'title': 'booking.appointment_booked'.tr(),
         'body':
             'Your appointment with ${widget.worker?.name ?? "Health Worker"} is confirmed for $_selectedTime on ${_selectedDate.toString().split(" ")[0]}.',
         'type': 'appointment_booked',
@@ -223,15 +224,15 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
           builder: (context) => AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            title: const Column(
+            title: Column(
               children: [
-                Icon(Icons.check_circle, color: Colors.green, size: 60),
-                SizedBox(height: 16),
-                Text('Appointment Booked!', textAlign: TextAlign.center),
+                const Icon(Icons.check_circle, color: Colors.green, size: 60),
+                const SizedBox(height: 16),
+                Text('booking.appointment_booked'.tr(), textAlign: TextAlign.center),
               ],
             ),
-            content: const Text(
-              'Your appointment has been successfully scheduled. Both you and the health worker have been notified.',
+            content: Text(
+              'booking.booking_success'.tr(),
               textAlign: TextAlign.center,
             ),
             actions: [
@@ -239,13 +240,13 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                 onPressed: () {
                   context.go('/appointments'); // Navigate to appointments list
                 },
-                child: const Text('View Appointments'),
+                child: Text('booking.view_appointments'.tr()),
               ),
               TextButton(
                 onPressed: () {
                   context.go('/home');
                 },
-                child: const Text('Go Home'),
+                child: Text('booking.go_home'.tr()),
               ),
             ],
           ),
@@ -257,7 +258,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  'Error booking appointment: ${e.toString().replaceAll("Exception: ", "")}')),
+                  '${\'booking.error_booking\'.tr()}: ${e.toString().replaceAll("Exception: ", "")}')),
         );
       }
     }
@@ -267,7 +268,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Appointment'),
+        title: Text('booking.title'.tr()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -309,8 +310,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
             ),
 
             const SizedBox(height: 24),
-            const Text('Select Date',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text('booking.select_date'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
             CalendarDatePicker(
               initialDate: _selectedDate,
@@ -328,9 +329,9 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
             const SizedBox(height: 24),
             Row(
               children: [
-                const Text('Available Time Slots',
+                Text('booking.available_time_slots'.tr(),
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 if (_checkingAvailability) ...[
                   const SizedBox(width: 12),
                   const SizedBox(
@@ -366,9 +367,9 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                   color: Colors.grey[50],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'No slots available',
-                  style: TextStyle(color: Colors.grey),
+                child: Text(
+                  'booking.no_slots'.tr(),
+                  style: const TextStyle(color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
               )
@@ -397,13 +398,13 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
               ),
 
             const SizedBox(height: 24),
-            const Text('Reason for Visit (Optional)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text('booking.reason_for_visit'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
             TextField(
               controller: _notesController,
               decoration: InputDecoration(
-                hintText: 'e.g., Follow up, vaccination...',
+                hintText: 'booking.reason_hint'.tr(),
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 filled: true,
@@ -429,8 +430,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                         height: 20,
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                    : const Text('Confirm Appointment',
-                        style: TextStyle(
+                    : Text('booking.confirm_appointment'.tr(),
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold)),

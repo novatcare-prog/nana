@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/immunization_provider.dart';
 import '../../../../core/utils/error_helper.dart';
@@ -25,7 +26,7 @@ class VaccinationScheduleScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Vaccination Schedule'),
+        title: Text('vaccination.title'.tr()),
         backgroundColor: const Color(0xFF4CAF50), // Keep green for health theme
         foregroundColor: Colors.white,
         actions: [
@@ -41,7 +42,7 @@ class VaccinationScheduleScreen extends ConsumerWidget {
       body: childAsync.when(
         data: (child) {
           if (child == null) {
-            return const Center(child: Text('Child not found'));
+            return Center(child: Text('vaccination.child_not_found'.tr()));
           }
 
           return coverageAsync.when(
@@ -55,13 +56,13 @@ class VaccinationScheduleScreen extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            error: (e, _) => Center(child: Text('${e.toString()}')),
           );
         },
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
         ),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(child: Text('${e.toString()}')),
       ),
     );
   }
@@ -93,17 +94,21 @@ class VaccinationScheduleScreen extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // Legend
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                _LegendItem(color: Colors.green, label: 'Given'),
-                SizedBox(width: 16),
-                _LegendItem(color: Colors.orange, label: 'Due'),
-                SizedBox(width: 16),
-                _LegendItem(color: Colors.red, label: 'Overdue'),
-                SizedBox(width: 16),
-                _LegendItem(color: Colors.grey, label: 'Upcoming'),
+                _LegendItem(
+                    color: Colors.green, label: 'vaccination.given'.tr()),
+                const SizedBox(width: 16),
+                _LegendItem(
+                    color: Colors.orange, label: 'vaccination.due'.tr()),
+                const SizedBox(width: 16),
+                _LegendItem(
+                    color: Colors.red, label: 'vaccination.overdue'.tr()),
+                const SizedBox(width: 16),
+                _LegendItem(
+                    color: Colors.grey, label: 'vaccination.upcoming'.tr()),
               ],
             ),
           ),
@@ -148,15 +153,17 @@ class _StatusHeader extends StatelessWidget {
 
     if (status.isUpToDate) {
       statusColor = Colors.green;
-      statusText = 'Up to Date';
+      statusText = 'vaccination.up_to_date'.tr();
       statusIcon = Icons.check_circle;
     } else if (status.overdue <= 2) {
       statusColor = Colors.orange;
-      statusText = '${status.overdue} Vaccine(s) Due';
+      statusText = 'vaccination.vaccines_due'
+          .tr(namedArgs: {'count': status.overdue.toString()});
       statusIcon = Icons.warning_amber;
     } else {
       statusColor = Colors.red;
-      statusText = '${status.overdue} Vaccine(s) Overdue';
+      statusText = 'vaccination.vaccines_overdue'
+          .tr(namedArgs: {'count': status.overdue.toString()});
       statusIcon = Icons.error;
     }
 
@@ -229,7 +236,11 @@ class _StatusHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '${status.totalReceived}/${status.totalDue} vaccines (${status.percentComplete}%)',
+                      'vaccination.vaccines_progress'.tr(namedArgs: {
+                        'received': status.totalReceived.toString(),
+                        'total': status.totalDue.toString(),
+                        'percent': status.percentComplete.toString()
+                      }),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withOpacity(0.1),
@@ -246,17 +257,23 @@ class _StatusHeader extends StatelessWidget {
   }
 
   String _formatAge(int weeks) {
-    if (weeks < 6) return '$weeks weeks old';
+    if (weeks < 6) {
+      return 'vaccination.weeks_old'.tr(namedArgs: {'weeks': weeks.toString()});
+    }
     if (weeks < 52) {
       final months = (weeks / 4.3).floor();
-      return '$months months old';
+      return 'vaccination.months_old'
+          .tr(namedArgs: {'months': months.toString()});
     }
     final years = (weeks / 52).floor();
     final remainingMonths = ((weeks % 52) / 4.3).floor();
     if (remainingMonths > 0) {
-      return '$years years, $remainingMonths months old';
+      return 'vaccination.years_months_old'.tr(namedArgs: {
+        'years': years.toString(),
+        'months': remainingMonths.toString()
+      });
     }
-    return '$years years old';
+    return 'vaccination.years_old'.tr(namedArgs: {'years': years.toString()});
   }
 }
 
@@ -383,7 +400,7 @@ class _VaccineMilestoneCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Due: ${DateFormat('d MMM yyyy').format(dueDate)}',
+                        '${DateFormat('d MMM yyyy').format(dueDate)}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -400,9 +417,9 @@ class _VaccineMilestoneCard extends StatelessWidget {
                       color: const Color(0xFF4CAF50),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      'CURRENT',
-                      style: TextStyle(
+                    child: Text(
+                      'vaccination.current'.tr(),
+                      style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -482,15 +499,15 @@ class _VaccineRow extends StatelessWidget {
     if (isGiven) {
       statusColor = Colors.green;
       statusIcon = Icons.check_circle;
-      statusLabel = 'Given';
+      statusLabel = 'vaccination.given'.tr();
     } else if (isPast) {
       statusColor = Colors.red;
       statusIcon = Icons.error;
-      statusLabel = 'Overdue';
+      statusLabel = 'vaccination.overdue'.tr();
     } else {
       statusColor = Colors.grey;
       statusIcon = Icons.schedule;
-      statusLabel = 'Upcoming';
+      statusLabel = 'vaccination.upcoming'.tr();
     }
 
     return Container(
@@ -519,7 +536,9 @@ class _VaccineRow extends StatelessWidget {
                 ),
                 if (record != null)
                   Text(
-                    'Given on ${DateFormat('d MMM yyyy').format(record.dateGiven)}',
+                    'vaccination.given_on'.tr(namedArgs: {
+                      'date': DateFormat('d MMM yyyy').format(record.dateGiven)
+                    }),
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.grey[600],

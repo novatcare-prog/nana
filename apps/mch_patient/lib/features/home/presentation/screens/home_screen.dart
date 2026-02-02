@@ -23,7 +23,8 @@ class HomeScreen extends ConsumerWidget {
     final facilityName = maternalProfileAsync.value?.facilityName;
 
     // 3. Get ID for SHA card (use ID number from user metadata)
-    final shaNumber = userIdNumber != null ? "ID: $userIdNumber" : "No ID";
+    final shaNumber =
+        userIdNumber != null ? "ID: $userIdNumber" : 'home.no_id'.tr();
 
     // --- MOCK DATA (Connect to Hive/Riverpod in Phase 2) ---
     const bool isOffline = false;
@@ -147,14 +148,21 @@ class HomeScreen extends ConsumerWidget {
                     if (hasUrgentAlert) ...[
                       _UrgentActionAlert(
                         title: 'home.action_required'.tr(),
-                        message: "Baby John missed 6-week Polio vaccine.",
+                        message: 'home.missed_vaccine_message'.tr(namedArgs: {
+                          'name': 'Baby John',
+                          'vaccine': 'Polio'
+                        }),
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
                               title: Text('home.missed_vaccine'.tr()),
-                              content: const Text(
-                                  'Baby John missed the Polio vaccine due at 6 weeks. Please book an appointment immediately to catch up.'),
+                              content: Text('home.missed_vaccine_detail'.tr(
+                                  namedArgs: {
+                                    'name': 'Baby John',
+                                    'vaccine': 'Polio',
+                                    'weeks': '6'
+                                  })),
                               actions: [
                                 TextButton(
                                     onPressed: () => Navigator.pop(context),

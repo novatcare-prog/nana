@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/error_helper.dart';
@@ -24,9 +25,9 @@ class ChildDetailScreen extends ConsumerWidget {
       data: (child) {
         if (child == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Child Not Found')),
-            body: const Center(
-              child: Text('This child could not be found.'),
+            appBar: AppBar(title: Text('children.not_found'.tr())),
+            body: Center(
+              child: Text('children.not_found_desc'.tr()),
             ),
           );
         }
@@ -34,13 +35,13 @@ class ChildDetailScreen extends ConsumerWidget {
         return _buildChildDetail(context, child);
       },
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Loading...')),
+        appBar: AppBar(title: Text('common.loading'.tr())),
         body: const Center(
           child: CircularProgressIndicator(color: Color(0xFFE91E63)),
         ),
       ),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('Error')),
+        appBar: AppBar(title: Text('children.error'.tr())),
         body: ErrorHelper.buildErrorWidget(
           error,
           onRetry: () => ref.invalidate(childByIdProvider(childId)),
@@ -63,7 +64,7 @@ class ChildDetailScreen extends ConsumerWidget {
             icon: const Icon(Icons.share),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share feature coming soon')),
+                SnackBar(content: Text('children.share_coming_soon'.tr())),
               );
             },
           ),
@@ -161,7 +162,7 @@ class _ChildProfileHeader extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Born ${DateFormat('d MMMM yyyy').format(child.dateOfBirth)}',
+            '${'children.born'.tr()} ${DateFormat('d MMMM yyyy').format(child.dateOfBirth)}',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withOpacity(0.1),
@@ -193,20 +194,35 @@ class _ChildProfileHeader extends StatelessWidget {
     final difference = now.difference(birthDate);
     final days = difference.inDays;
 
-    if (days < 0) return 'Not born yet';
-    if (days < 30) return '$days days old';
-    if (days < 120) return '${(days / 7).floor()} weeks old';
+    if (days < 0) return 'children.not_born_yet'.tr();
+    if (days < 30) {
+      return 'children.days_old'.tr(namedArgs: {'days': days.toString()});
+    }
+    if (days < 120) {
+      final weeks = (days / 7).floor();
+      return 'children.weeks_old'.tr(namedArgs: {'weeks': weeks.toString()});
+    }
     if (days < 365) {
       final months = (days / 30).floor();
-      return '$months ${months == 1 ? 'month' : 'months'} old';
+      if (months == 1) {
+        return 'children.month_old'
+            .tr(namedArgs: {'months': months.toString()});
+      }
+      return 'children.months_old'.tr(namedArgs: {'months': months.toString()});
     }
 
     final years = days ~/ 365;
     final remainingMonths = ((days % 365) / 30).floor();
     if (remainingMonths > 0) {
-      return '$years yr $remainingMonths mo old';
+      return 'children.years_months_old'.tr(namedArgs: {
+        'years': years.toString(),
+        'months': remainingMonths.toString()
+      });
     }
-    return '$years ${years == 1 ? 'year' : 'years'} old';
+    if (years == 1) {
+      return 'children.year_old'.tr(namedArgs: {'years': years.toString()});
+    }
+    return 'children.years_old'.tr(namedArgs: {'years': years.toString()});
   }
 }
 
@@ -225,7 +241,7 @@ class _QuickStatsSection extends StatelessWidget {
           Expanded(
             child: _StatCard(
               icon: Icons.monitor_weight_outlined,
-              label: 'Birth Weight',
+              label: 'children.birth_weight'.tr(),
               value: '${(child.birthWeightGrams / 1000).toStringAsFixed(2)} kg',
               color: AppColors.info,
             ),
@@ -234,7 +250,7 @@ class _QuickStatsSection extends StatelessWidget {
           Expanded(
             child: _StatCard(
               icon: Icons.height,
-              label: 'Birth Length',
+              label: 'children.birth_length'.tr(),
               value: '${child.birthLengthCm.toStringAsFixed(1)} cm',
               color: AppColors.success,
             ),
@@ -243,10 +259,10 @@ class _QuickStatsSection extends StatelessWidget {
           Expanded(
             child: _StatCard(
               icon: Icons.circle_outlined,
-              label: 'Head Circ.',
+              label: 'children.head_circ'.tr(),
               value: child.headCircumferenceCm != null
                   ? '${child.headCircumferenceCm!.toStringAsFixed(1)} cm'
-                  : 'N/A',
+                  : 'children.na'.tr(),
               color: AppColors.warning,
             ),
           ),
@@ -316,9 +332,9 @@ class _BirthDetailsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Birth Details',
-            style: TextStyle(
+          Text(
+            'children.birth_details'.tr(),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -330,37 +346,38 @@ class _BirthDetailsSection extends StatelessWidget {
               child: Column(
                 children: [
                   _DetailRow(
-                    label: 'Gestation at Birth',
-                    value: '${child.gestationAtBirthWeeks} weeks',
+                    label: 'children.gestation_at_birth'.tr(),
+                    value:
+                        '${child.gestationAtBirthWeeks} ${'children.weeks'.tr()}',
                   ),
                   const Divider(height: 24),
                   _DetailRow(
-                    label: 'Birth Order',
-                    value: child.birthOrder?.toString() ?? 'N/A',
+                    label: 'children.birth_order'.tr(),
+                    value: child.birthOrder?.toString() ?? 'children.na'.tr(),
                   ),
                   const Divider(height: 24),
                   _DetailRow(
-                    label: 'Place of Birth',
+                    label: 'children.place_of_birth'.tr(),
                     value: child.placeOfBirth,
                   ),
                   if (child.healthFacilityName != null) ...[
                     const Divider(height: 24),
                     _DetailRow(
-                      label: 'Facility Name',
+                      label: 'children.facility_name'.tr(),
                       value: child.healthFacilityName!,
                     ),
                   ],
                   if (child.birthNotificationNumber != null) ...[
                     const Divider(height: 24),
                     _DetailRow(
-                      label: 'Birth Notification No.',
+                      label: 'children.birth_notification_no'.tr(),
                       value: child.birthNotificationNumber!,
                     ),
                   ],
                   if (child.birthCertificateNumber != null) ...[
                     const Divider(height: 24),
                     _DetailRow(
-                      label: 'Birth Certificate No.',
+                      label: 'children.birth_certificate_no'.tr(),
                       value: child.birthCertificateNumber!,
                     ),
                   ],
@@ -394,9 +411,9 @@ class _FamilyDetailsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Family Details',
-            style: TextStyle(
+          Text(
+            'children.family_details'.tr(),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -409,7 +426,7 @@ class _FamilyDetailsSection extends StatelessWidget {
                 children: [
                   if (child.motherName != null)
                     _DetailRow(
-                      label: 'Mother',
+                      label: 'children.mother'.tr(),
                       value: child.motherName!,
                       icon: Icons.woman,
                     ),
@@ -417,14 +434,14 @@ class _FamilyDetailsSection extends StatelessWidget {
                     const Divider(height: 24),
                   if (child.fatherName != null)
                     _DetailRow(
-                      label: 'Father',
+                      label: 'children.father'.tr(),
                       value: child.fatherName!,
                       icon: Icons.man,
                     ),
                   if (child.guardianName != null) ...[
                     const Divider(height: 24),
                     _DetailRow(
-                      label: 'Guardian',
+                      label: 'children.guardian'.tr(),
                       value: child.guardianName!,
                       icon: Icons.person,
                     ),
@@ -432,7 +449,7 @@ class _FamilyDetailsSection extends StatelessWidget {
                   if (child.village != null || child.county != null) ...[
                     const Divider(height: 24),
                     _DetailRow(
-                      label: 'Location',
+                      label: 'children.location'.tr(),
                       value: [child.village, child.subCounty, child.county]
                           .where((e) => e != null)
                           .join(', '),
@@ -462,9 +479,9 @@ class _HealthStatusSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Health Status',
-            style: TextStyle(
+          Text(
+            'children.health_status'.tr(),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -476,29 +493,29 @@ class _HealthStatusSection extends StatelessWidget {
               child: Column(
                 children: [
                   _HealthIndicator(
-                    label: 'HIV Status',
-                    value: child.hivStatus ?? 'Not Tested',
+                    label: 'children.hiv_status'.tr(),
+                    value: child.hivStatus ?? 'children.not_tested'.tr(),
                     isPositive: child.hivStatus?.toLowerCase() != 'positive',
                   ),
                   const Divider(height: 24),
                   _HealthIndicator(
-                    label: 'TB Screening',
+                    label: 'children.tb_screening'.tr(),
                     value: child.tbScreened == true
-                        ? (child.tbScreeningResult ?? 'Done')
-                        : 'Not Screened',
+                        ? (child.tbScreeningResult ?? 'children.done'.tr())
+                        : 'children.not_screened'.tr(),
                     isPositive:
                         child.tbScreeningResult?.toLowerCase() != 'positive',
                   ),
                   const Divider(height: 24),
                   _HealthIndicator(
-                    label: 'Breastfeeding',
+                    label: 'children.breastfeeding'.tr(),
                     value: child.breastfeedingWell == true
-                        ? 'Breastfeeding Well'
+                        ? 'children.breastfeeding_well'.tr()
                         : child.breastfeedingPoorly == true
-                            ? 'Breastfeeding Poorly'
+                            ? 'children.breastfeeding_poorly'.tr()
                             : child.unableToBreastfeed == true
-                                ? 'Unable to Breastfeed'
-                                : 'Not Recorded',
+                                ? 'children.unable_to_breastfeed'.tr()
+                                : 'children.not_recorded'.tr(),
                     isPositive: child.breastfeedingWell == true,
                   ),
                 ],
@@ -610,7 +627,7 @@ class _QuickActionsSection extends StatelessWidget {
           Expanded(
             child: _ActionButton(
               icon: Icons.vaccines,
-              label: 'Vaccinations',
+              label: 'children.vaccinations'.tr(),
               color: const Color(0xFF4CAF50),
               onTap: () => context.push('/child/$childId/vaccinations'),
             ),
@@ -619,7 +636,7 @@ class _QuickActionsSection extends StatelessWidget {
           Expanded(
             child: _ActionButton(
               icon: Icons.show_chart,
-              label: 'Growth Charts',
+              label: 'children.growth_charts'.tr(),
               color: const Color(0xFF2196F3),
               onTap: () => context.push('/child/$childId/growth'),
             ),
@@ -628,7 +645,7 @@ class _QuickActionsSection extends StatelessWidget {
           Expanded(
             child: _ActionButton(
               icon: Icons.history,
-              label: 'Visit History',
+              label: 'children.visit_history'.tr(),
               color: const Color(0xFFFF9800),
               onTap: () => context.push('/child/$childId/visits'),
             ),

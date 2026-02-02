@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../data/share_repository.dart';
 
 class ShareRecordsScreen extends ConsumerStatefulWidget {
@@ -83,7 +84,7 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Share Medical Records'),
+        title: Text('share.title'.tr()),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -94,16 +95,17 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
             children: [
               const Icon(Icons.share_location, size: 64, color: Colors.blue),
               const SizedBox(height: 16),
-              const Text(
-                'Show this code to the Health Worker',
+              Text(
+                'share.show_code_title'.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'This will grant temporary access to your medical history.',
+              Text(
+                'share.grant_access'.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 32),
               if (_isLoading)
@@ -111,12 +113,12 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
               else if (_error != null)
                 Column(
                   children: [
-                    Text('Error: $_error',
+                    Text('${_error}',
                         style: const TextStyle(color: Colors.red)),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _generateCode,
-                      child: const Text('Try Again'),
+                      child: Text('share.try_again'.tr()),
                     ),
                   ],
                 )
@@ -145,8 +147,8 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
                 const SizedBox(height: 32),
 
                 // Manual Code Display
-                const Text('OR ENTER CODE',
-                    style: TextStyle(
+                Text('share.or_enter_code'.tr(),
+                    style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
@@ -183,7 +185,8 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
                               : Colors.blue),
                       const SizedBox(width: 8),
                       Text(
-                        'Expires in ${_formatTime(_timeLeft)}',
+                        'share.expires_in'
+                            .tr(namedArgs: {'time': _formatTime(_timeLeft)}),
                         style: TextStyle(
                           color: _timeLeft.inSeconds < 60
                               ? Colors.red
@@ -200,7 +203,7 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
                 OutlinedButton.icon(
                   onPressed: _generateCode,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Generate New Code'),
+                  label: Text('share.generate_new'.tr()),
                 ),
               ],
             ],

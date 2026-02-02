@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';

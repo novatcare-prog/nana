@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/models/clinic.dart';
 import '../../domain/models/health_worker.dart';
 import '../providers/clinic_provider.dart';
@@ -22,7 +23,7 @@ class ClinicDetailsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clinic Details'),
+        title: Text('clinic.title'.tr()),
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -34,11 +35,11 @@ class ClinicDetailsScreen extends ConsumerWidget {
             // Clinic Header
             if (clinic != null) _buildClinicHeader(context, clinic!),
 
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
               child: Text(
-                'Available Health Workers',
-                style: TextStyle(
+                'clinic.available_health_workers'.tr(),
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -49,9 +50,9 @@ class ClinicDetailsScreen extends ConsumerWidget {
             healthWorkersAsync.when(
               data: (workers) {
                 if (workers.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('No health workers available at this time.'),
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('clinic.no_workers'.tr()),
                   );
                 }
                 return ListView.separated(
@@ -151,7 +152,8 @@ class ClinicDetailsScreen extends ConsumerWidget {
             _buildInfoChip(Icons.star, clinic.rating.toString()),
           ]),
           const SizedBox(height: 16),
-          const Text("Services", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('clinic.services'.tr(),
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -260,7 +262,8 @@ class _HealthWorkerCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
-              child: Text(worker.isAvailable ? 'Book' : 'Busy'),
+              child: Text(
+                  worker.isAvailable ? 'clinic.book'.tr() : 'clinic.busy'.tr()),
             ),
           ],
         ),

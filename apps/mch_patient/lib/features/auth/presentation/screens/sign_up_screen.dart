@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/error_helper.dart';
@@ -53,10 +54,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account created successfully! Please check your email to verify.'),
+          SnackBar(
+            content: Text('auth.account_created'.tr()),
             backgroundColor: AppColors.success,
-            duration: Duration(seconds: 5),
+            duration: const Duration(seconds: 5),
           ),
         );
         context.go('/login');
@@ -80,7 +81,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/login'),
         ),
-        title: const Text('Create Account'),
+        title: Text('auth.create_account'.tr()),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -92,25 +93,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               children: [
                 const SizedBox(height: 24),
 
-                // ----------- LOGO UPDATE -----------
-                // Consistent with Login and ForgotPassword screens
+                // Logo
                 Center(
                   child: SizedBox(
-                    height: 150, 
+                    height: 150,
                     width: 150,
                     child: Image.asset(
-                      'assets/images/Asset_2.png', // Ensure this matches the file in your assets folder
+                      Theme.of(context).brightness == Brightness.dark
+                          ? 'assets/images/Asset_2.png'
+                          : 'assets/images/Asset_3.png',
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
-                // -----------------------------------
 
                 const SizedBox(height: 24),
 
                 // Title
                 Text(
-                  'Join Nana',
+                  'auth.join_nana'.tr(),
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         color: AppColors.primaryPink,
                         fontWeight: FontWeight.bold,
@@ -122,7 +123,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 // Subtitle
                 Text(
-                  'Create your account to start tracking your maternal and child health',
+                  'auth.create_account_subtitle'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.grey600,
                       ),
@@ -135,17 +136,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 TextFormField(
                   controller: _fullNameController,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                    labelText: 'Full Name',
-                    hintText: 'Enter your full name',
-                    prefixIcon: Icon(Icons.person_outlined),
+                  decoration: InputDecoration(
+                    labelText: 'auth.full_name'.tr(),
+                    hintText: 'auth.enter_full_name'.tr(),
+                    prefixIcon: const Icon(Icons.person_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your full name';
+                      return 'auth.enter_name'.tr();
                     }
                     if (value.length < 3) {
-                      return 'Name must be at least 3 characters';
+                      return 'auth.name_too_short'.tr();
                     }
                     return null;
                   },
@@ -161,18 +162,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(8),
                   ],
-                  decoration: const InputDecoration(
-                    labelText: 'National ID Number',
-                    hintText: 'e.g., 12345678',
-                    prefixIcon: Icon(Icons.badge_outlined),
-                    helperText: 'Your Kenyan National ID (7-8 digits)',
+                  decoration: InputDecoration(
+                    labelText: 'auth.national_id'.tr(),
+                    hintText: 'auth.national_id_hint'.tr(),
+                    prefixIcon: const Icon(Icons.badge_outlined),
+                    helperText: 'auth.national_id_helper'.tr(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your National ID number';
+                      return 'auth.enter_national_id'.tr();
                     }
                     if (value.length < 7 || value.length > 8) {
-                      return 'ID number must be 7-8 digits';
+                      return 'auth.id_digits'.tr();
                     }
                     return null;
                   },
@@ -184,17 +185,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number',
+                  decoration: InputDecoration(
+                    labelText: 'auth.phone_number'.tr(),
                     hintText: 'e.g., 0712345678',
-                    prefixIcon: Icon(Icons.phone_outlined),
+                    prefixIcon: const Icon(Icons.phone_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
+                      return 'auth.enter_phone_validation'.tr();
                     }
                     if (value.length < 10) {
-                      return 'Please enter a valid phone number';
+                      return 'auth.valid_phone_number'.tr();
                     }
                     return null;
                   },
@@ -206,17 +207,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Enter your email',
-                    prefixIcon: Icon(Icons.email_outlined),
+                  decoration: InputDecoration(
+                    labelText: 'auth.email'.tr(),
+                    hintText: 'auth.enter_email'.tr(),
+                    prefixIcon: const Icon(Icons.email_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'auth.enter_email_validation'.tr();
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return 'auth.valid_email_validation'.tr();
                     }
                     return null;
                   },
@@ -229,8 +230,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Create a password',
+                    labelText: 'auth.password'.tr(),
+                    hintText: 'auth.create_password'.tr(),
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -247,10 +248,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
+                      return 'auth.enter_password_validation'.tr();
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return 'auth.password_too_short'.tr();
                     }
                     return null;
                   },
@@ -263,8 +264,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    hintText: 'Re-enter your password',
+                    labelText: 'auth.confirm_password'.tr(),
+                    hintText: 'auth.reenter_password'.tr(),
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -281,10 +282,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return 'auth.confirm_password_validation'.tr();
                     }
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return 'auth.passwords_not_match'.tr();
                     }
                     return null;
                   },
@@ -308,7 +309,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                               ),
                             ),
                           )
-                        : const Text('Create Account'),
+                        : Text('auth.create_account'.tr()),
                   ),
                 ),
 
@@ -316,7 +317,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 // Terms and Privacy
                 Text(
-                  'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                  'auth.terms_agree'.tr(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.grey600,
                       ),
@@ -330,7 +331,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Already have an account? ',
+                      '${'auth.already_have_account'.tr()} ',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     TextButton(
@@ -339,7 +340,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           : () {
                               context.go('/login');
                             },
-                      child: const Text('Sign In'),
+                      child: Text('auth.sign_in'.tr()),
                     ),
                   ],
                 ),

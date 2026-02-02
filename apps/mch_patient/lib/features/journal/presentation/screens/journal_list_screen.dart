@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../providers/journal_provider.dart';
 import '../../domain/models/journal_entry.dart';
 import '../../../../core/utils/error_helper.dart';
@@ -28,7 +29,7 @@ class JournalListScreen extends ConsumerWidget {
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
-                'My Journal',
+                'journal.title'.tr(),
                 style: TextStyle(
                   color: isDark ? theme.colorScheme.onSurface : Colors.white,
                   fontWeight: FontWeight.bold,
@@ -171,9 +172,9 @@ class JournalListScreen extends ConsumerWidget {
         backgroundColor: const Color(0xFFE91E63),
         elevation: 4,
         icon: const Icon(Icons.edit_outlined, color: Colors.white),
-        label: const Text(
-          'New Entry',
-          style: TextStyle(
+        label: Text(
+          'journal.new_entry'.tr(),
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
@@ -232,7 +233,7 @@ class _MoodStatsBar extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Your mood:',
+                'journal.your_mood'.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -306,14 +307,14 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Your journey starts here',
+              'journal.empty_title'.tr(),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Document your pregnancy journey,\ntrack your moods, and create memories.',
+              'journal.empty_subtitle'.tr(),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -331,9 +332,9 @@ class _EmptyState extends StatelessWidget {
                 ),
               ),
               icon: const Icon(Icons.edit_outlined, size: 20),
-              label: const Text(
-                'Write Your First Entry',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              label: Text(
+                'journal.write_first_entry'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ],

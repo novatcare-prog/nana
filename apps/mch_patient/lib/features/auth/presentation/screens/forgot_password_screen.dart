@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/utils/error_helper.dart';
@@ -54,8 +55,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Reset code sent! Check your email.'),
+          SnackBar(
+            content: Text('auth.code_sent'.tr()),
             backgroundColor: AppColors.success,
           ),
         );
@@ -84,8 +85,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password reset successfully!'),
+          SnackBar(
+            content: Text('auth.password_reset_success'.tr()),
             backgroundColor: AppColors.success,
           ),
         );
@@ -105,7 +106,6 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[50], // Removed to allow theme background
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -132,24 +132,25 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         children: [
           const SizedBox(height: 20),
 
-          // ----------- LOGO UPDATE -----------
+          // Logo
           Center(
             child: SizedBox(
-              width: 120, // Adjust size as needed
+              width: 120,
               height: 120,
               child: Image.asset(
-                'assets/images/Asset_2.png', // Ensure this matches your file name
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/Asset_2.png'
+                    : 'assets/images/Asset_3.png',
                 fit: BoxFit.contain,
               ),
             ),
           ),
-          // -----------------------------------
 
           const SizedBox(height: 32),
 
           // Title
           Text(
-            'Forgot Password?',
+            'auth.forgot_password_title'.tr(),
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -162,7 +163,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
           // Subtitle
           Text(
-            'Enter your email address and we\'ll send you a code to reset your password.',
+            'auth.forgot_password_subtitle'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -179,13 +180,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             enabled: !_isLoading,
-            style: const TextStyle(
-              color: Colors.black87,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 16,
             ),
             decoration: InputDecoration(
-              labelText: 'Email Address',
-              hintText: 'Enter your email',
+              labelText: 'auth.email_address'.tr(),
+              hintText: 'auth.enter_email'.tr(),
               hintStyle: TextStyle(color: Colors.grey[400]),
               labelStyle: TextStyle(color: Colors.grey[700]),
               prefixIcon: Icon(Icons.email_outlined, color: Colors.grey[600]),
@@ -207,11 +208,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return 'auth.enter_email'.tr();
               }
               if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                   .hasMatch(value)) {
-                return 'Please enter a valid email';
+                return 'auth.valid_email'.tr();
               }
               return null;
             },
@@ -243,9 +244,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Text(
-                      'Send Reset Code',
-                      style: TextStyle(
+                  : Text(
+                      'auth.send_reset_code'.tr(),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -260,7 +261,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Remember your password? ',
+                '${'auth.remember_password'.tr()} ',
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,
@@ -273,9 +274,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   minimumSize: const Size(50, 30),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'Sign In',
-                  style: TextStyle(
+                child: Text(
+                  'auth.sign_in'.tr(),
+                  style: const TextStyle(
                     color: Color(0xFFFF6B9D),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -297,25 +298,25 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         children: [
           const SizedBox(height: 20),
 
-          // ----------- LOGO UPDATE -----------
-          // Showing the logo here too instead of the checkmark icon
+          // Logo
           Center(
             child: SizedBox(
               width: 120,
               height: 120,
               child: Image.asset(
-                'assets/images/Asset_2.png',
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/Asset_2.png'
+                    : 'assets/images/Asset_3.png',
                 fit: BoxFit.contain,
               ),
             ),
           ),
-          // -----------------------------------
 
           const SizedBox(height: 32),
 
           // Title
           Text(
-            'Enter Reset Code',
+            'auth.enter_reset_code'.tr(),
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -328,7 +329,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
           // Subtitle
           Text(
-            'We sent a code to',
+            'auth.we_sent_code'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -364,7 +365,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
             textAlign: TextAlign.center,
             decoration: InputDecoration(
-              labelText: 'Reset Code',
+              labelText: 'auth.reset_code'.tr(),
               hintText: '000000',
               hintStyle: TextStyle(
                 color: Colors.grey[300],
@@ -390,10 +391,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter the reset code';
+                return 'auth.enter_code'.tr();
               }
               if (value.length != 6) {
-                return 'Code must be 6 digits';
+                return 'auth.code_6_digits'.tr();
               }
               return null;
             },
@@ -412,8 +413,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               fontSize: 16,
             ),
             decoration: InputDecoration(
-              labelText: 'New Password',
-              hintText: 'Enter new password',
+              labelText: 'auth.new_password'.tr(),
+              hintText: 'auth.enter_new_password'.tr(),
               hintStyle: TextStyle(color: Colors.grey[400]),
               labelStyle: TextStyle(color: Colors.grey[700]),
               prefixIcon: Icon(Icons.lock_outlined, color: Colors.grey[600]),
@@ -441,14 +442,15 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     const BorderSide(color: Color(0xFFFF6B9D), width: 2),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
+                  Theme.of(context).cardColor,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter a password';
+                return 'auth.enter_password_validation'.tr();
               }
               if (value.length < 6) {
-                return 'Password must be at least 6 characters';
+                return 'auth.password_too_short'.tr();
               }
               return null;
             },
@@ -467,8 +469,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               fontSize: 16,
             ),
             decoration: InputDecoration(
-              labelText: 'Confirm Password',
-              hintText: 'Re-enter new password',
+              labelText: 'auth.confirm_password'.tr(),
+              hintText: 'auth.confirm_new_password'.tr(),
               hintStyle: TextStyle(color: Colors.grey[400]),
               labelStyle: TextStyle(color: Colors.grey[700]),
               prefixIcon: Icon(Icons.lock_outlined, color: Colors.grey[600]),
@@ -497,14 +499,15 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     const BorderSide(color: Color(0xFFFF6B9D), width: 2),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
+                  Theme.of(context).cardColor,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please confirm your password';
+                return 'auth.confirm_password_validation'.tr();
               }
               if (value != _passwordController.text) {
-                return 'Passwords do not match';
+                return 'auth.passwords_not_match'.tr();
               }
               return null;
             },
@@ -531,7 +534,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Check your email for the 6-digit reset code. It may take a few minutes to arrive.',
+                    'auth.check_email_info'.tr(),
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.blue[800],
@@ -568,9 +571,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Text(
-                      'Reset Password',
-                      style: TextStyle(
+                  : Text(
+                      'auth.reset_password'.tr(),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -588,9 +591,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   : () {
                       setState(() => _codeSent = false);
                     },
-              child: const Text(
-                'Didn\'t receive code? Resend',
-                style: TextStyle(
+              child: Text(
+                'auth.resend_code'.tr(),
+                style: const TextStyle(
                   color: Color(0xFFFF6B9D),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
