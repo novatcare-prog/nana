@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 
@@ -62,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _getTimeGreeting(),
+                          _getTimeGreeting(context),
                           style:
                               TextStyle(fontSize: 10, color: Colors.grey[600]),
                         ),
@@ -104,7 +105,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          isOffline ? "Offline" : "Synced",
+                          isOffline ? 'home.offline'.tr() : 'home.synced'.tr(),
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -145,19 +146,19 @@ class HomeScreen extends ConsumerWidget {
                     // B. URGENT ALERT (Only visible if needed)
                     if (hasUrgentAlert) ...[
                       _UrgentActionAlert(
-                        title: "Action Required",
+                        title: 'home.action_required'.tr(),
                         message: "Baby John missed 6-week Polio vaccine.",
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Missed Vaccine'),
+                              title: Text('home.missed_vaccine'.tr()),
                               content: const Text(
                                   'Baby John missed the Polio vaccine due at 6 weeks. Please book an appointment immediately to catch up.'),
                               actions: [
                                 TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: const Text('Later')),
+                                    child: Text('home.later'.tr())),
                                 FilledButton(
                                     onPressed: () {
                                       Navigator.pop(context);
@@ -165,7 +166,7 @@ class HomeScreen extends ConsumerWidget {
                                     },
                                     style: FilledButton.styleFrom(
                                         backgroundColor: Colors.red),
-                                    child: const Text('Book Now')),
+                                    child: Text('home.book_now'.tr())),
                               ],
                             ),
                           );
@@ -182,7 +183,7 @@ class HomeScreen extends ConsumerWidget {
 
                     // D. QUICK ACTIONS GRID
                     Text(
-                      "Quick Actions",
+                      'home.quick_actions'.tr(),
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -208,11 +209,11 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  String _getTimeGreeting() {
+  String _getTimeGreeting(BuildContext context) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Habari ya Asubuhi';
-    if (hour < 16) return 'Habari ya Mchana';
-    return 'Habari ya Jioni';
+    if (hour < 12) return 'home.greeting_morning'.tr();
+    if (hour < 16) return 'home.greeting_afternoon'.tr();
+    return 'home.greeting_evening'.tr();
   }
 }
 
@@ -299,7 +300,7 @@ class _ShaCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "SOCIAL HEALTH AUTHORITY",
+                              'sha_card.title'.tr(),
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 10,
@@ -307,9 +308,9 @@ class _ShaCard extends StatelessWidget {
                                 letterSpacing: 1.2,
                               ),
                             ),
-                            const Text(
-                              "Universal Coverage",
-                              style: TextStyle(
+                            Text(
+                              'sha_card.universal_coverage'.tr(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
@@ -336,15 +337,15 @@ class _ShaCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white.withValues(alpha: 0.3)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check_circle,
+                        const Icon(Icons.check_circle,
                             color: Color(0xFF69F0AE), size: 14),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
-                          "Primary Healthcare Fund (PHF)", // Correct Legal Term
-                          style: TextStyle(
+                          'sha_card.phf'.tr(),
+                          style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 11),
@@ -360,9 +361,10 @@ class _ShaCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "REGISTERED FACILITY",
-                        style: TextStyle(color: Colors.white60, fontSize: 9),
+                      Text(
+                        'sha_card.registered_facility'.tr(),
+                        style:
+                            const TextStyle(color: Colors.white60, fontSize: 9),
                       ),
                       const SizedBox(height: 2),
                       Row(
@@ -397,9 +399,10 @@ class _ShaCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "MEMBER NAME",
-                          style: TextStyle(color: Colors.white60, fontSize: 9),
+                        Text(
+                          'sha_card.member_name'.tr(),
+                          style: const TextStyle(
+                              color: Colors.white60, fontSize: 9),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -416,9 +419,10 @@ class _ShaCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text(
-                          "SHA / ID NUMBER",
-                          style: TextStyle(color: Colors.white60, fontSize: 9),
+                        Text(
+                          'sha_card.sha_id_number'.tr(),
+                          style: const TextStyle(
+                              color: Colors.white60, fontSize: 9),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -456,7 +460,7 @@ class _ChildrenCarousel extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'MY CHILDREN',
+                'home.my_children'.tr(),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -466,8 +470,8 @@ class _ChildrenCarousel extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () => context.go('/children'),
-                child: const Text('View All',
-                    style: TextStyle(color: Color(0xFFE91E63))),
+                child: Text('home.view_all'.tr(),
+                    style: const TextStyle(color: Color(0xFFE91E63))),
               ),
             ],
           ),
@@ -477,42 +481,18 @@ class _ChildrenCarousel extends StatelessWidget {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              const _ChildSummaryCard(
+              _ChildSummaryCard(
                 name: 'Grace',
-                status: 'Healthy',
+                status: 'home.healthy'.tr(),
                 color: Colors.blue,
                 icon: Icons.face_3,
               ),
-              const _ChildSummaryCard(
+              _ChildSummaryCard(
                 name: 'John',
-                status: 'Vaccine Due',
+                status: 'home.vaccine_due'.tr(),
                 color: Colors.orange,
                 icon: Icons.face_6,
                 isAlert: true,
-              ),
-              // "Add Child" Placeholder
-              InkWell(
-                onTap: () => context.push('/children/add'),
-                child: Container(
-                  width: 100,
-                  margin: const EdgeInsets.only(right: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: Colors.grey[300]!, style: BorderStyle.solid),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, color: Colors.grey[600]),
-                      const SizedBox(height: 4),
-                      Text("Add Child",
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 12)),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
@@ -606,37 +586,37 @@ class _QuickActionsGrid extends StatelessWidget {
       children: [
         _QuickActionBtn(
           icon: Icons.calendar_month,
-          label: 'My Visits',
+          label: 'home.my_visits'.tr(),
           color: Colors.blue,
           onTap: () => context.push('/anc-visits'),
         ),
         _QuickActionBtn(
           icon: Icons.edit_note,
-          label: 'Journal',
+          label: 'home.journal'.tr(),
           color: Colors.pink,
           onTap: () => context.push('/journal'),
         ),
         _QuickActionBtn(
           icon: Icons.local_hospital,
-          label: 'Clinics',
+          label: 'home.clinics'.tr(),
           color: Colors.teal,
           onTap: () => context.push('/clinics'),
         ),
         _QuickActionBtn(
           icon: Icons.menu_book,
-          label: 'Resources',
+          label: 'home.resources'.tr(),
           color: Colors.purple,
           onTap: () => context.push('/handbook'),
         ),
         _QuickActionBtn(
           icon: Icons.emergency,
-          label: 'Emergency',
+          label: 'home.emergency'.tr(),
           color: Colors.red,
           onTap: () => context.push('/help'),
         ),
         _QuickActionBtn(
           icon: Icons.settings,
-          label: 'Settings',
+          label: 'home.settings'.tr(),
           color: Colors.grey,
           onTap: () => context.push('/settings'),
         ),
@@ -780,28 +760,28 @@ class _HealthTipOfTheDay extends StatelessWidget {
         color: const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lightbulb, color: Color(0xFF1976D2), size: 28),
-          SizedBox(width: 16),
+          const Icon(Icons.lightbulb, color: Color(0xFF1976D2), size: 28),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "DID YOU KNOW?",
-                  style: TextStyle(
+                  'health_tip.did_you_know'.tr(),
+                  style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1976D2),
                     letterSpacing: 1.5,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "Iron-rich foods like spinach and beans help prevent anemia during pregnancy.",
-                  style: TextStyle(
+                  'health_tip.iron_tip'.tr(),
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFF0D47A1),
                     height: 1.4,

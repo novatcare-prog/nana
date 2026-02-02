@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 
@@ -48,8 +50,8 @@ class ProfileScreen extends ConsumerWidget {
     final userPhone = profile?.telephone ??
         user?.userMetadata?['phone'] as String? ??
         '+254 7XX XXX XXX';
-    final ancNumber = profile?.ancNumber ?? 'Not registered';
-    final facilityName = profile?.facilityName ?? 'No facility';
+    final ancNumber = profile?.ancNumber ?? 'common.not_registered'.tr();
+    final facilityName = profile?.facilityName ?? 'common.no_facility'.tr();
 
     return CustomScrollView(
       slivers: [
@@ -174,57 +176,57 @@ class ProfileScreen extends ConsumerWidget {
 
             // PERSONAL INFO SECTION
             if (profile != null) ...[
-              const _SectionHeader(title: "PERSONAL INFORMATION"),
+              _SectionHeader(title: 'profile.personal_info'.tr()),
               _ProfileInfoCard(profile: profile),
               const SizedBox(height: 24),
 
               // PREGNANCY INFO
-              const _SectionHeader(title: "PREGNANCY INFORMATION"),
+              _SectionHeader(title: 'profile.pregnancy_info'.tr()),
               _PregnancyInfoCard(profile: profile),
               const SizedBox(height: 24),
 
               // EMERGENCY CONTACT
               if (profile.nextOfKinName != null ||
                   profile.nextOfKinPhone != null) ...[
-                const _SectionHeader(title: "EMERGENCY CONTACT"),
+                _SectionHeader(title: 'profile.emergency_contact'.tr()),
                 _EmergencyContactCard(profile: profile),
                 const SizedBox(height: 24),
               ],
             ],
 
             // MY HEALTH RECORDS SECTION
-            const _SectionHeader(title: "MY HEALTH RECORDS"),
+            _SectionHeader(title: 'profile.health_records'.tr()),
             _SettingsCard(
               children: [
                 _SettingsTile(
                   icon: Icons.pregnant_woman,
                   color: const Color(0xFFE91E63),
-                  title: "ANC Visits",
-                  subtitle: "Antenatal care history",
+                  title: 'profile.anc_visits'.tr(),
+                  subtitle: 'profile.anc_visits_subtitle'.tr(),
                   onTap: () => context.push('/anc-visits'),
                 ),
                 const _Divider(),
                 _SettingsTile(
                   icon: Icons.child_care,
                   color: Colors.teal,
-                  title: "My Children",
-                  subtitle: "View registered children",
+                  title: 'profile.my_children'.tr(),
+                  subtitle: 'profile.my_children_subtitle'.tr(),
                   onTap: () => context.go('/children'),
                 ),
                 const _Divider(),
                 _SettingsTile(
                   icon: Icons.edit_note,
                   color: Colors.pink,
-                  title: "My Journal",
-                  subtitle: "Pregnancy diary & mood tracker",
+                  title: 'profile.my_journal'.tr(),
+                  subtitle: 'profile.my_journal_subtitle'.tr(),
                   onTap: () => context.push('/journal'),
                 ),
                 const _Divider(),
                 _SettingsTile(
                   icon: Icons.qr_code,
                   color: Colors.blue,
-                  title: "Share Medical Records",
-                  subtitle: "Generate QR code for health workers",
+                  title: 'profile.share_records'.tr(),
+                  subtitle: 'profile.share_records_subtitle'.tr(),
                   onTap: () => context.push('/share-records'),
                 ),
               ],
@@ -232,29 +234,26 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // ACCOUNT SECTION
-            const _SectionHeader(title: "APP SETTINGS"),
+            _SectionHeader(title: 'profile.app_settings'.tr()),
             _SettingsCard(
               children: [
                 _SettingsTile(
                   icon: Icons.language,
                   color: Colors.blue,
-                  title: "Language / Lugha",
-                  subtitle: "English",
+                  title: 'profile.language'.tr(),
+                  subtitle: context.locale.languageCode == 'sw'
+                      ? 'settings.swahili'.tr()
+                      : 'settings.english'.tr(),
                   trailing: const Icon(Icons.arrow_forward_ios,
                       size: 14, color: Colors.grey),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Language settings coming soon')),
-                    );
-                  },
+                  onTap: () => _showLanguageDialog(context),
                 ),
                 const _Divider(),
                 _SettingsTile(
                   icon: Icons.notifications_active,
                   color: Colors.orange,
-                  title: "Notifications",
-                  subtitle: "Vaccines & Appointments",
+                  title: 'profile.notifications'.tr(),
+                  subtitle: 'profile.notifications_subtitle'.tr(),
                   trailing: Switch(
                     value: true,
                     onChanged: (val) {},
@@ -265,7 +264,7 @@ class ProfileScreen extends ConsumerWidget {
                 _SettingsTile(
                   icon: Icons.lock,
                   color: Colors.purple,
-                  title: "Change Password",
+                  title: 'profile.change_password'.tr(),
                   onTap: () {
                     context.push('/forgot-password');
                   },
@@ -276,16 +275,16 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // SUPPORT SECTION
-            const _SectionHeader(title: "SUPPORT"),
+            _SectionHeader(title: 'profile.support'.tr()),
             _SettingsCard(
               children: [
                 _SettingsTile(
                   icon: Icons.help_outline,
                   color: Colors.green,
-                  title: "Help & FAQ",
+                  title: 'profile.help_faq'.tr(),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Help coming soon')),
+                      SnackBar(content: Text('settings.coming_soon'.tr())),
                     );
                   },
                 ),
@@ -293,8 +292,8 @@ class ProfileScreen extends ConsumerWidget {
                 _SettingsTile(
                   icon: Icons.call,
                   color: Colors.red,
-                  title: "Emergency Contacts",
-                  subtitle: "Call for urgent help",
+                  title: 'profile.emergency_contacts'.tr(),
+                  subtitle: 'profile.emergency_contacts_subtitle'.tr(),
                   onTap: () {
                     _showEmergencyContactsDialog(context);
                   },
@@ -316,8 +315,8 @@ class ProfileScreen extends ConsumerWidget {
                   }
                 },
                 icon: const Icon(Icons.logout, color: Colors.red),
-                label:
-                    const Text("Sign Out", style: TextStyle(color: Colors.red)),
+                label: Text('profile.sign_out'.tr(),
+                    style: const TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                   side: const BorderSide(color: Colors.red),
@@ -331,10 +330,10 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 40),
 
             // VERSION INFO
-            const Center(
+            Center(
               child: Text(
-                "MCH Patient App v1.0.0",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                'profile.version'.tr(),
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ),
             const SizedBox(height: 40),
@@ -348,17 +347,17 @@ class ProfileScreen extends ConsumerWidget {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: Text('profile.logout'.tr()),
+        content: Text('profile.logout_confirm'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr()),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Logout'),
+            child: Text('profile.logout'.tr()),
           ),
         ],
       ),
@@ -373,27 +372,27 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Icon(Icons.emergency, color: Colors.red[700]),
             const SizedBox(width: 8),
-            const Text('Emergency Contacts'),
+            Text('help.emergency_numbers'.tr()),
           ],
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _EmergencyNumber(
               icon: Icons.local_hospital,
-              label: 'Ambulance',
+              label: 'help.ambulance'.tr(),
               number: '999',
               color: Colors.red,
             ),
             _EmergencyNumber(
               icon: Icons.medical_services,
-              label: 'Health Helpline',
+              label: 'help.health_helpline'.tr(),
               number: '0800 720 720',
               color: Colors.green,
             ),
             _EmergencyNumber(
               icon: Icons.phone,
-              label: 'General Emergency',
+              label: 'help.general_emergency'.tr(),
               number: '112',
               color: Colors.blue,
             ),
@@ -402,7 +401,56 @@ class ProfileScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text('common.close'.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final currentLocale = context.locale;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.language, color: Colors.blue),
+            const SizedBox(width: 8),
+            Text('settings.select_language'.tr()),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _LanguageOption(
+              name: 'English',
+              nativeName: 'English',
+              locale: const Locale('en'),
+              isSelected: currentLocale.languageCode == 'en',
+              onTap: () {
+                context.setLocale(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(height: 8),
+            _LanguageOption(
+              name: 'Swahili',
+              nativeName: 'Kiswahili',
+              locale: const Locale('sw'),
+              isSelected: currentLocale.languageCode == 'sw',
+              onTap: () {
+                context.setLocale(const Locale('sw'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('common.cancel'.tr()),
           ),
         ],
       ),
@@ -436,9 +484,100 @@ class _EmergencyNumber extends StatelessWidget {
           Text(number, style: const TextStyle(fontWeight: FontWeight.bold)),
       trailing: IconButton(
         icon: const Icon(Icons.call, color: Colors.green),
-        onPressed: () {
-          // TODO: Open phone dialer
-        },
+        onPressed: () => _makePhoneCall(number),
+      ),
+    );
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
+  }
+}
+
+// Language Option Widget
+class _LanguageOption extends StatelessWidget {
+  final String name;
+  final String nativeName;
+  final Locale locale;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LanguageOption({
+    required this.name,
+    required this.nativeName,
+    required this.locale,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFFE91E63).withOpacity(0.1)
+              : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFE91E63) : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Flag icon placeholder
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFE91E63) : Colors.grey,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  locale.languageCode.toUpperCase(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    nativeName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color:
+                          isSelected ? const Color(0xFFE91E63) : Colors.black87,
+                    ),
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: Color(0xFFE91E63)),
+          ],
+        ),
       ),
     );
   }
@@ -475,21 +614,23 @@ class _ProfileInfoCard extends StatelessWidget {
         children: [
           _InfoRow(
               icon: Icons.badge,
-              label: 'ID Number',
-              value: profile.idNumber ?? 'Not provided'),
+              label: 'profile.id_number'.tr(),
+              value: profile.idNumber ?? 'profile.not_provided'.tr()),
           const Divider(height: 20),
           _InfoRow(
-              icon: Icons.cake, label: 'Age', value: '${profile.age} years'),
+              icon: Icons.cake,
+              label: 'profile.age'.tr(),
+              value: '${profile.age} ${'profile.years'.tr()}'),
           const Divider(height: 20),
           _InfoRow(
               icon: Icons.location_on,
-              label: 'County',
-              value: profile.county ?? 'Not provided'),
+              label: 'profile.county'.tr(),
+              value: profile.county ?? 'profile.not_provided'.tr()),
           const Divider(height: 20),
           _InfoRow(
               icon: Icons.location_city,
-              label: 'Sub-County',
-              value: profile.subCounty ?? 'Not provided'),
+              label: 'profile.sub_county'.tr(),
+              value: profile.subCounty ?? 'profile.not_provided'.tr()),
         ],
       ),
     );
@@ -527,32 +668,32 @@ class _PregnancyInfoCard extends StatelessWidget {
         children: [
           _InfoRow(
               icon: Icons.pregnant_woman,
-              label: 'Gravida',
+              label: 'profile.total_pregnancies'.tr(),
               value: '${profile.gravida ?? "--"}'),
           const Divider(height: 20),
           _InfoRow(
               icon: Icons.child_friendly,
-              label: 'Parity',
+              label: 'profile.children_born_alive'.tr(),
               value: '${profile.parity ?? "--"}'),
           if (profile.lmp != null) ...[
             const Divider(height: 20),
             _InfoRow(
                 icon: Icons.event,
-                label: 'Last Period (LMP)',
+                label: 'profile.last_period_date'.tr(),
                 value: DateFormat('d MMM yyyy').format(profile.lmp!)),
           ],
           if (profile.edd != null) ...[
             const Divider(height: 20),
             _InfoRow(
                 icon: Icons.celebration,
-                label: 'Due Date (EDD)',
+                label: 'profile.expected_due_date'.tr(),
                 value: DateFormat('d MMM yyyy').format(profile.edd!)),
           ],
           const Divider(height: 20),
           _InfoRow(
               icon: Icons.bloodtype,
-              label: 'Blood Group',
-              value: profile.bloodGroup?.label ?? 'Not tested'),
+              label: 'profile.blood_group'.tr(),
+              value: profile.bloodGroup?.label ?? 'profile.not_tested'.tr()),
         ],
       ),
     );
@@ -592,8 +733,8 @@ class _EmergencyContactCard extends StatelessWidget {
         children: [
           _InfoRow(
             icon: Icons.person,
-            label: 'Next of Kin',
-            value: profile.nextOfKinName ?? 'Not provided',
+            label: 'profile.next_of_kin'.tr(),
+            value: profile.nextOfKinName ?? 'profile.not_provided'.tr(),
           ),
           if (profile.nextOfKinPhone != null) ...[
             const Divider(height: 20),
@@ -613,7 +754,7 @@ class _EmergencyContactCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Phone',
+                        'profile.phone'.tr(),
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       Text(
@@ -625,9 +766,7 @@ class _EmergencyContactCard extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.call, color: Colors.green),
-                  onPressed: () {
-                    // TODO: Make phone call
-                  },
+                  onPressed: () => _makePhoneCall(profile.nextOfKinPhone!),
                 ),
               ],
             ),
@@ -636,13 +775,20 @@ class _EmergencyContactCard extends StatelessWidget {
             const Divider(height: 20),
             _InfoRow(
               icon: Icons.family_restroom,
-              label: 'Relationship',
+              label: 'profile.relationship'.tr(),
               value: profile.nextOfKinRelationship!,
             ),
           ],
         ],
       ),
     );
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
   }
 }
 

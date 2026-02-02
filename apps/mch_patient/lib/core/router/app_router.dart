@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/home/presentation/screens/home_wrapper.dart';
@@ -378,22 +379,22 @@ class BottomNavBar extends StatelessWidget {
       currentIndex: selectedIndex,
       onTap: (index) => _onItemTapped(context, index),
       type: BottomNavigationBarType.fixed,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+          icon: const Icon(Icons.home),
+          label: 'nav.home'.tr(),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.child_care),
-          label: 'Children',
+          icon: const Icon(Icons.child_care),
+          label: 'nav.children'.tr(),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
-          label: 'Visits',
+          icon: const Icon(Icons.calendar_today),
+          label: 'nav.appointments'.tr(),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Me',
+          icon: const Icon(Icons.person),
+          label: 'nav.profile'.tr(),
         ),
       ],
     );

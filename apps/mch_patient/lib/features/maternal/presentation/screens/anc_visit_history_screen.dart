@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/anc_visit_provider.dart';
 import '../../../../core/providers/appointment_provider.dart';
@@ -19,7 +20,7 @@ class AncVisitHistoryScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('ANC Visit History'),
+        title: Text('anc.title'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -76,7 +77,7 @@ class AncVisitHistoryScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'No ANC Visits Yet',
+                'anc.no_visits'.tr(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -85,7 +86,7 @@ class AncVisitHistoryScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Your antenatal care visits will appear here after your clinic appointments.',
+                'anc.no_visits_desc'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Theme.of(context).textTheme.bodySmall?.color,
@@ -184,10 +185,10 @@ class _AncSummaryHeader extends StatelessWidget {
           if (profile.edd != null) ...[
             const SizedBox(height: 4),
             Text(
-              'EDD: ${DateFormat('d MMM yyyy').format(profile.edd!)}',
+              'Expected Due Date: ${DateFormat('d MMM yyyy').format(profile.edd!)}',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withOpacity(0.9),
               ),
             ),
           ],
@@ -198,18 +199,18 @@ class _AncSummaryHeader extends StatelessWidget {
               _SummaryItem(
                 icon: Icons.event_note,
                 value: '${visits.length}',
-                label: 'Total Visits',
+                label: 'anc.total_visits'.tr(),
               ),
               if (latestVisit != null) ...[
                 _SummaryItem(
                   icon: Icons.calendar_today,
                   value: DateFormat('d MMM').format(latestVisit.visitDate),
-                  label: 'Last Visit',
+                  label: 'anc.last_visit'.tr(),
                 ),
                 _SummaryItem(
                   icon: Icons.child_care,
                   value: '${latestVisit.gestationWeeks}w',
-                  label: 'Gestation',
+                  label: 'anc.gestation'.tr(),
                 ),
               ],
             ],
@@ -219,7 +220,7 @@ class _AncSummaryHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -276,7 +277,7 @@ class _SummaryItem extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 10,
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withOpacity(0.85),
           ),
         ),
       ],
@@ -329,7 +330,7 @@ class _AncVisitCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Visit ${visit.contactNumber}',
+                      '${'anc.visit'.tr()} ${visit.contactNumber}',
                       style: TextStyle(
                         color: isLatest
                             ? Colors.white
@@ -349,14 +350,15 @@ class _AncVisitCard extends StatelessWidget {
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.warning, size: 12, color: Colors.white),
-                          SizedBox(width: 4),
+                          const Icon(Icons.warning,
+                              size: 12, color: Colors.white),
+                          const SizedBox(width: 4),
                           Text(
-                            'High Risk',
-                            style: TextStyle(
+                            'anc.high_risk'.tr(),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
@@ -503,7 +505,7 @@ class _AncVisitCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'Tap for details',
+                    'anc.tap_for_details'.tr(),
                     style: TextStyle(fontSize: 10, color: Colors.grey[400]),
                   ),
                   Icon(Icons.chevron_right, size: 14, color: Colors.grey[400]),

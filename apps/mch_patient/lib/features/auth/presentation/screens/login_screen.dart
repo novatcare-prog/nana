@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/auth_provider.dart';
 
 /// Flexible login screen - supports both email and phone number
@@ -88,24 +89,24 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
     // Invalid credentials
     if (errorLower.contains('invalid_credentials') ||
         errorLower.contains('invalid login credentials')) {
-      return 'Incorrect email or password. Please try again.';
+      return 'auth.invalid_credentials'.tr();
     }
 
     // User not found
     if (errorLower.contains('user not found') ||
         errorLower.contains('no user found')) {
-      return 'Account not found. Please check your email or sign up.';
+      return 'auth.user_not_found'.tr();
     }
 
     // Email not confirmed
     if (errorLower.contains('email not confirmed')) {
-      return 'Please verify your email before signing in.';
+      return 'auth.email_not_confirmed'.tr();
     }
 
     // Too many attempts
     if (errorLower.contains('too many requests') ||
         errorLower.contains('rate limit')) {
-      return 'Too many attempts. Please wait a few minutes and try again.';
+      return 'auth.too_many_requests'.tr();
     }
 
     // Network error
@@ -113,27 +114,27 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
         errorLower.contains('connection') ||
         errorLower.contains('socket') ||
         errorLower.contains('timeout')) {
-      return 'Connection error. Please check your internet and try again.';
+      return 'auth.network_error'.tr();
     }
 
     // Invalid email format
     if (errorLower.contains('invalid email')) {
-      return 'Please enter a valid email address.';
+      return 'auth.invalid_email'.tr();
     }
 
     // Password too weak
     if (errorLower.contains('password') && errorLower.contains('weak')) {
-      return 'Password is too weak. Use at least 6 characters.';
+      return 'auth.weak_password'.tr();
     }
 
     // Account disabled
     if (errorLower.contains('disabled') || errorLower.contains('banned')) {
-      return 'This account has been disabled. Please contact support.';
+      return 'auth.account_disabled'.tr();
     }
 
     // Role mismatch (Patient App vs Health Worker App)
     if (errorLower.contains('app is for patients only')) {
-      return 'This account is not a patient account. Please use the Health Worker app.';
+      return 'auth.not_patient_account'.tr();
     }
 
     // Default fallback - show the actual error message if possible
@@ -146,7 +147,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
       return cleanError;
     }
 
-    return 'Something went wrong. Please try again.';
+    return 'auth.something_wrong'.tr();
   }
 
   String _formatPhoneNumber(String phone) {
@@ -191,7 +192,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
 
                 // Title
                 Text(
-                  'Welcome Back',
+                  'auth.welcome_back'.tr(),
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -203,7 +204,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                 const SizedBox(height: 8),
 
                 Text(
-                  'Sign in to continue to MCH Kenya',
+                  'auth.sign_in_continue'.tr(),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],
@@ -244,7 +245,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Phone',
+                                  'auth.phone'.tr(),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -281,7 +282,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Email',
+                                  'auth.email'.tr(),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -319,7 +320,9 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                         ]
                       : null,
                   decoration: InputDecoration(
-                    labelText: _isPhoneMode ? 'Phone Number' : 'Email',
+                    labelText: _isPhoneMode
+                        ? 'auth.phone_number'.tr()
+                        : 'auth.email'.tr(),
                     hintText: _isPhoneMode ? '0712345678' : 'you@example.com',
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     labelStyle: TextStyle(color: Colors.grey[700]),
@@ -350,20 +353,20 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return _isPhoneMode
-                          ? 'Please enter your phone number'
-                          : 'Please enter your email';
+                          ? 'auth.enter_phone'.tr()
+                          : 'auth.enter_email'.tr();
                     }
 
                     if (_isPhoneMode) {
                       // Kenyan phone numbers: 07XX, 01XX (10 digits starting with 0)
                       if (!RegExp(r'^0[17]\d{8}$').hasMatch(value)) {
-                        return 'Enter valid phone (e.g., 0712345678)';
+                        return 'auth.valid_phone'.tr();
                       }
                     } else {
                       // Email validation
                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                           .hasMatch(value)) {
-                        return 'Please enter a valid email';
+                        return 'auth.valid_email'.tr();
                       }
                     }
 
@@ -383,8 +386,8 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter your password',
+                    labelText: 'auth.password'.tr(),
+                    hintText: 'auth.enter_password'.tr(),
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     labelStyle: TextStyle(color: Colors.grey[700]),
                     prefixIcon: Icon(
@@ -421,10 +424,10 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return 'auth.enter_password'.tr();
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return 'auth.min_password'.tr();
                     }
                     return null;
                   },
@@ -438,9 +441,9 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => context.push('/forgot-password'),
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
+                    child: Text(
+                      'auth.forgot_password'.tr(),
+                      style: const TextStyle(
                         color: Color(0xFFE91E63),
                         fontWeight: FontWeight.w600,
                       ),
@@ -475,9 +478,9 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                               ),
                             ),
                           )
-                        : const Text(
-                            'Sign In',
-                            style: TextStyle(
+                        : Text(
+                            'auth.sign_in'.tr(),
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -494,7 +497,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'OR',
+                        'auth.or'.tr(),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -512,7 +515,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Don't have an account? ",
+                      "${'auth.no_account'.tr()} ",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -526,9 +529,9 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                         minimumSize: const Size(50, 30),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(
+                      child: Text(
+                        'auth.sign_up'.tr(),
+                        style: const TextStyle(
                           color: Color(0xFFE91E63),
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -562,7 +565,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Phone Number Login',
+                              'auth.phone_login_info'.tr(),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -571,7 +574,7 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Use your Kenyan mobile number (Safaricom, Airtel) or email to sign in.',
+                              'auth.phone_login_desc'.tr(),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.blue[800],

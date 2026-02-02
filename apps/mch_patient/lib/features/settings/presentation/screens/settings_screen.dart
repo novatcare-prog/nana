@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
@@ -20,7 +21,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text('settings.title'.tr()),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -36,23 +37,23 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 8),
 
             // Notifications Section
-            _buildSectionHeader('NOTIFICATIONS'),
+            _buildSectionHeader('settings.notifications_section'.tr()),
             _buildNotificationSettings(context, ref, notificationSettings),
 
             // Theme Section
-            _buildSectionHeader('APPEARANCE'),
+            _buildSectionHeader('settings.appearance_section'.tr()),
             _buildThemeSettings(context, ref, themeMode),
 
             // Language Section
-            _buildSectionHeader('LANGUAGE'),
+            _buildSectionHeader('settings.language_section'.tr()),
             _buildLanguageSettings(context),
 
             // About Section
-            _buildSectionHeader('ABOUT'),
+            _buildSectionHeader('settings.about_section'.tr()),
             _buildAboutSection(context),
 
             // Account Section
-            _buildSectionHeader('ACCOUNT'),
+            _buildSectionHeader('settings.account_section'.tr()),
             _buildAccountSection(context, ref),
 
             const SizedBox(height: 40),
@@ -160,11 +161,11 @@ class SettingsScreen extends ConsumerWidget {
       children: [
         SwitchListTile(
           title: Text(
-            'Enable Notifications',
+            'settings.enable_notifications'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           subtitle: Text(
-            'Receive reminders and alerts',
+            'settings.receive_reminders'.tr(),
             style: TextStyle(color: subtitleColor, fontSize: 12),
           ),
           value: settings.enabled,
@@ -187,14 +188,14 @@ class SettingsScreen extends ConsumerWidget {
         const Divider(indent: 72),
         SwitchListTile(
           title: Text(
-            'Appointment Reminders',
+            'settings.appointment_reminders'.tr(),
             style: TextStyle(
               color: settings.enabled ? textColor : Colors.grey,
               fontWeight: FontWeight.w500,
             ),
           ),
           subtitle: Text(
-            'Upcoming clinic visits',
+            'settings.upcoming_clinic_visits'.tr(),
             style: TextStyle(
               color: settings.enabled ? subtitleColor : Colors.grey.shade400,
               fontSize: 12,
@@ -213,14 +214,14 @@ class SettingsScreen extends ConsumerWidget {
         const Divider(indent: 72),
         SwitchListTile(
           title: Text(
-            'Vaccine Reminders',
+            'settings.vaccine_reminders'.tr(),
             style: TextStyle(
               color: settings.enabled ? textColor : Colors.grey,
               fontWeight: FontWeight.w500,
             ),
           ),
           subtitle: Text(
-            'Due immunizations',
+            'settings.due_immunizations'.tr(),
             style: TextStyle(
               color: settings.enabled ? subtitleColor : Colors.grey.shade400,
               fontSize: 12,
@@ -239,14 +240,14 @@ class SettingsScreen extends ConsumerWidget {
         const Divider(indent: 72),
         SwitchListTile(
           title: Text(
-            'Visit Reminders',
+            'settings.visit_reminders'.tr(),
             style: TextStyle(
               color: settings.enabled ? textColor : Colors.grey,
               fontWeight: FontWeight.w500,
             ),
           ),
           subtitle: Text(
-            'ANC and postnatal visits',
+            'settings.anc_pnc_visits'.tr(),
             style: TextStyle(
               color: settings.enabled ? subtitleColor : Colors.grey.shade400,
               fontSize: 12,
@@ -286,7 +287,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.brightness_6, color: Colors.purple),
           ),
           title: Text(
-            'Theme',
+            'settings.theme'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           subtitle: Text(
@@ -303,6 +304,9 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildLanguageSettings(BuildContext context) {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color;
     final subtitleColor = Theme.of(context).textTheme.bodySmall?.color;
+    final currentLang = context.locale.languageCode == 'sw'
+        ? 'settings.swahili'.tr()
+        : 'settings.english'.tr();
 
     return _SettingsCard(
       children: [
@@ -316,11 +320,11 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.language, color: Colors.blue),
           ),
           title: Text(
-            'Language / Lugha',
+            'profile.language'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           subtitle: Text(
-            'English',
+            currentLang,
             style: TextStyle(color: subtitleColor, fontSize: 12),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
@@ -346,7 +350,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.info, color: Colors.grey),
           ),
           title: Text(
-            'App Version',
+            'settings.app_version'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           subtitle: Text(
@@ -365,11 +369,11 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.book, color: Colors.green),
           ),
           title: Text(
-            'MCH Handbook',
+            'settings.mch_handbook'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           subtitle: Text(
-            'Kenya MCH Handbook 2020',
+            'settings.kenya_mch_handbook'.tr(),
             style: TextStyle(color: subtitleColor, fontSize: 12),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
@@ -386,7 +390,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.privacy_tip, color: Colors.teal),
           ),
           title: Text(
-            'Privacy Policy',
+            'settings.privacy_policy'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
@@ -403,7 +407,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.help, color: Colors.orange),
           ),
           title: Text(
-            'Help & Support',
+            'settings.help_support'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
@@ -428,7 +432,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Icon(Icons.lock, color: Colors.orange),
           ),
           title: Text(
-            'Change Password',
+            'settings.change_password'.tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           ),
           trailing: const Icon(Icons.chevron_right, color: Colors.grey),
@@ -444,9 +448,10 @@ class SettingsScreen extends ConsumerWidget {
             ),
             child: const Icon(Icons.logout, color: Colors.red),
           ),
-          title: const Text(
-            'Logout',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+          title: Text(
+            'settings.logout'.tr(),
+            style:
+                const TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
           ),
           onTap: () => _showLogoutDialog(context, ref),
         ),
@@ -457,11 +462,11 @@ class SettingsScreen extends ConsumerWidget {
   String _getThemeName(ThemeMode mode) {
     switch (mode) {
       case ThemeMode.light:
-        return 'Light';
+        return 'settings.theme_light'.tr();
       case ThemeMode.dark:
-        return 'Dark';
+        return 'settings.theme_dark'.tr();
       case ThemeMode.system:
-        return 'System default';
+        return 'settings.theme_system'.tr();
     }
   }
 
@@ -470,50 +475,50 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Choose Theme'),
+        title: Text('settings.choose_theme'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<ThemeMode>(
-              title: const Text('Light'),
+              title: Text('settings.theme_light'.tr()),
               value: ThemeMode.light,
               groupValue: currentMode,
               onChanged: (value) {
                 ref.read(themeModeProvider.notifier).setThemeMode(value!);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('✓ Light theme activated'),
+                  SnackBar(
+                    content: Text('✓ ${'settings.light_activated'.tr()}'),
                     backgroundColor: Colors.green,
                   ),
                 );
               },
             ),
             RadioListTile<ThemeMode>(
-              title: const Text('Dark'),
+              title: Text('settings.theme_dark'.tr()),
               value: ThemeMode.dark,
               groupValue: currentMode,
               onChanged: (value) {
                 ref.read(themeModeProvider.notifier).setThemeMode(value!);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('✓ Dark theme activated'),
+                  SnackBar(
+                    content: Text('✓ ${'settings.dark_activated'.tr()}'),
                     backgroundColor: Colors.green,
                   ),
                 );
               },
             ),
             RadioListTile<ThemeMode>(
-              title: const Text('System default'),
+              title: Text('settings.theme_system'.tr()),
               value: ThemeMode.system,
               groupValue: currentMode,
               onChanged: (value) {
                 ref.read(themeModeProvider.notifier).setThemeMode(value!);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('✓ Using system theme'),
+                  SnackBar(
+                    content: Text('✓ ${'settings.using_system'.tr()}'),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -526,30 +531,31 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showLanguageDialog(BuildContext context) {
+    final currentLocale = context.locale;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Choose Language'),
+        title: Text('settings.select_language'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<String>(
               title: const Text('English'),
               value: 'en',
-              groupValue: 'en',
+              groupValue: currentLocale.languageCode,
               onChanged: (value) {
+                context.setLocale(const Locale('en'));
                 Navigator.pop(context);
               },
             ),
             RadioListTile<String>(
               title: const Text('Kiswahili'),
               value: 'sw',
-              groupValue: 'en',
+              groupValue: currentLocale.languageCode,
               onChanged: (value) {
+                context.setLocale(const Locale('sw'));
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Swahili coming soon')),
-                );
               },
             ),
           ],
@@ -562,12 +568,12 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: Text('settings.logout'.tr()),
+        content: Text('settings.logout_confirm'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr()),
           ),
           FilledButton(
             onPressed: () async {
@@ -598,7 +604,7 @@ class SettingsScreen extends ConsumerWidget {
               }
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Logout'),
+            child: Text('settings.logout'.tr()),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/appointment_provider.dart';
 import '../../../../core/utils/error_helper.dart';
 
@@ -34,8 +35,8 @@ class _VisitsScreenState extends ConsumerState<AppointmentsScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('My Visits',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('appointment.title'.tr(),
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         actions: [
           IconButton(
@@ -52,9 +53,9 @@ class _VisitsScreenState extends ConsumerState<AppointmentsScreen>
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          tabs: const [
-            Tab(text: 'Upcoming'),
-            Tab(text: 'History'),
+          tabs: [
+            Tab(text: 'appointment.upcoming'.tr()),
+            Tab(text: 'appointment.history'.tr()),
           ],
         ),
       ),
@@ -71,7 +72,8 @@ class _VisitsScreenState extends ConsumerState<AppointmentsScreen>
         },
         backgroundColor: const Color(0xFFE91E63),
         icon: const Icon(Icons.add_location_alt, color: Colors.white),
-        label: const Text("Find Clinic", style: TextStyle(color: Colors.white)),
+        label: Text('appointment.find_clinic'.tr(),
+            style: const TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -86,11 +88,10 @@ class _UpcomingAppointmentsTab extends ConsumerWidget {
     return appointmentsAsync.when(
       data: (appointments) {
         if (appointments.isEmpty) {
-          return const _EmptyState(
+          return _EmptyState(
             icon: Icons.event_available,
-            title: 'No Upcoming Visits',
-            message:
-                'You have no scheduled appointments. Book a visit at your nearest health facility.',
+            title: 'appointment.no_upcoming_visits'.tr(),
+            message: 'appointment.no_upcoming_message'.tr(),
           );
         }
 
@@ -132,10 +133,10 @@ class _PastAppointmentsTab extends ConsumerWidget {
     return appointmentsAsync.when(
       data: (appointments) {
         if (appointments.isEmpty) {
-          return const _EmptyState(
+          return _EmptyState(
             icon: Icons.history,
-            title: 'No Visit History',
-            message: 'Your past appointments will appear here.',
+            title: 'appointment.no_history'.tr(),
+            message: 'appointment.no_history_message'.tr(),
           );
         }
 
@@ -200,27 +201,27 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
     switch (appointment.appointmentStatus) {
       case AppointmentStatus.scheduled:
         statusColor = Colors.blue;
-        statusText = "Scheduled";
+        statusText = 'appointment.status_scheduled'.tr();
         break;
       case AppointmentStatus.confirmed:
         statusColor = Colors.green;
-        statusText = "Confirmed";
+        statusText = 'appointment.status_confirmed'.tr();
         break;
       case AppointmentStatus.completed:
         statusColor = Colors.teal;
-        statusText = "Completed";
+        statusText = 'appointment.status_completed'.tr();
         break;
       case AppointmentStatus.cancelled:
         statusColor = Colors.red;
-        statusText = "Cancelled";
+        statusText = 'appointment.status_cancelled'.tr();
         break;
       case AppointmentStatus.missed:
         statusColor = Colors.orange;
-        statusText = "Missed";
+        statusText = 'appointment.status_missed'.tr();
         break;
       case AppointmentStatus.rescheduled:
         statusColor = Colors.purple;
-        statusText = "Rescheduled";
+        statusText = 'appointment.status_rescheduled'.tr();
         break;
     }
 
@@ -355,7 +356,7 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
                       if (appointment.patientName.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Text(
-                          "Patient: ${appointment.patientName}",
+                          "${'appointment.patient'.tr()}: ${appointment.patientName}",
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 13),
                         ),
@@ -370,7 +371,7 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
                             child: Text(
                               appointment.facilityName.isNotEmpty
                                   ? appointment.facilityName
-                                  : 'Health Facility',
+                                  : 'appointment.health_facility'.tr(),
                               style: TextStyle(
                                   color: Colors.grey[600], fontSize: 12),
                               overflow: TextOverflow.ellipsis,
@@ -424,9 +425,10 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
                                     if (mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        const SnackBar(
+                                        SnackBar(
                                           content: Text(
-                                              'Appointment confirmed successfully!'),
+                                              'appointment.confirmed_success'
+                                                  .tr()),
                                           backgroundColor: Colors.green,
                                         ),
                                       );
@@ -461,8 +463,8 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
                                   child: CircularProgressIndicator(
                                       strokeWidth: 2, color: Colors.white))
                               : const Icon(Icons.check_circle, size: 16),
-                          label: const Text("Confirm",
-                              style: TextStyle(fontSize: 12)),
+                          label: Text('appointment.confirm'.tr(),
+                              style: const TextStyle(fontSize: 12)),
                         ),
                       ),
                     ),
@@ -472,8 +474,9 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
                     child: OutlinedButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Contact facility to reschedule')),
+                          SnackBar(
+                              content: Text(
+                                  'appointment.contact_to_reschedule'.tr())),
                         );
                       },
                       style: OutlinedButton.styleFrom(
@@ -482,7 +485,7 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: Text("Reschedule",
+                      child: Text('appointment.reschedule'.tr(),
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 12)),
@@ -500,21 +503,21 @@ class _AppointmentCardState extends ConsumerState<_AppointmentCard> {
   String _formatAppointmentType(AppointmentType type) {
     switch (type) {
       case AppointmentType.ancVisit:
-        return 'ANC Visit';
+        return 'appointment.next_anc_visit'.tr();
       case AppointmentType.pncVisit:
-        return 'PNC Visit';
+        return 'appointment.next_pnc_visit'.tr();
       case AppointmentType.immunization:
-        return 'Immunization';
+        return 'appointment.immunization'.tr();
       case AppointmentType.labTest:
-        return 'Lab Test';
+        return 'appointment.lab_test'.tr();
       case AppointmentType.ultrasound:
-        return 'Ultrasound';
+        return 'appointment.ultrasound'.tr();
       case AppointmentType.delivery:
-        return 'Delivery';
+        return 'appointment.delivery'.tr();
       case AppointmentType.consultation:
-        return 'Consultation';
+        return 'appointment.consultation'.tr();
       case AppointmentType.followUp:
-        return 'Follow Up';
+        return 'appointment.follow_up'.tr();
     }
   }
 }

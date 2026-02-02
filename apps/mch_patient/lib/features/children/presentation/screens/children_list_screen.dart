@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mch_core/mch_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/child_provider.dart';
 
 class ChildrenListScreen extends ConsumerWidget {
@@ -16,9 +17,9 @@ class ChildrenListScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'My Children',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          'children.title'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
         actions: [
@@ -30,14 +31,6 @@ class ChildrenListScreen extends ConsumerWidget {
             },
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.push('/children/add');
-        },
-        backgroundColor: const Color(0xFFE91E63),
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text("Add Child", style: TextStyle(color: Colors.white)),
       ),
       body: childrenAsync.when(
         data: (children) {
@@ -59,13 +52,14 @@ class ChildrenListScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(
+        loading: () => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(color: Color(0xFFE91E63)),
-              SizedBox(height: 16),
-              Text('Loading children...', style: TextStyle(color: Colors.grey)),
+              const CircularProgressIndicator(color: Color(0xFFE91E63)),
+              const SizedBox(height: 16),
+              Text('children.loading'.tr(),
+                  style: const TextStyle(color: Colors.grey)),
             ],
           ),
         ),
@@ -78,7 +72,7 @@ class ChildrenListScreen extends ConsumerWidget {
                 Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
                 const SizedBox(height: 16),
                 Text(
-                  'Failed to load children',
+                  'children.failed_to_load'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -95,7 +89,7 @@ class ChildrenListScreen extends ConsumerWidget {
                 ElevatedButton.icon(
                   onPressed: () => ref.invalidate(patientChildrenProvider),
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
+                  label: Text('children.retry'.tr()),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE91E63),
                     foregroundColor: Colors.white,
@@ -232,7 +226,7 @@ class _ChildListItem extends StatelessWidget {
                           Icon(Icons.cake, size: 16, color: Colors.grey[500]),
                           const SizedBox(width: 8),
                           Text(
-                            "Born: ",
+                            "${'children.born'.tr()}: ",
                             style: TextStyle(
                                 fontSize: 13, color: Colors.grey[600]),
                           ),
@@ -306,7 +300,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'No Children Registered',
+              'children.no_children'.tr(),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[800],
@@ -314,7 +308,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Children registered at your health facility will appear here automatically. You can also add a child manually using the button below.',
+              'children.no_children_desc'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.grey[600],
