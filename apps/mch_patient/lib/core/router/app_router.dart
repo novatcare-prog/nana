@@ -29,6 +29,7 @@ import '../../features/clinics/domain/models/clinic.dart';
 import '../../features/clinics/domain/models/health_worker.dart';
 import '../../features/journal/presentation/screens/journal_list_screen.dart';
 import '../../features/journal/presentation/screens/journal_entry_screen.dart';
+import '../../features/journal/presentation/screens/journal_detail_screen.dart';
 import '../../features/journal/domain/models/journal_entry.dart';
 import '../../../../core/providers/auth_provider.dart';
 
@@ -268,6 +269,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'add',
             name: 'add-journal',
             builder: (context, state) => const JournalEntryScreen(),
+          ),
+          GoRoute(
+            path: 'view/:id',
+            name: 'view-journal',
+            builder: (context, state) {
+              final entryId = state.pathParameters['id']!;
+              final entry = state.extra as JournalEntry?;
+              return JournalDetailScreen(entryId: entryId, entry: entry);
+            },
           ),
           GoRoute(
             path: 'edit/:id',

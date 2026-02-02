@@ -599,10 +599,10 @@ class _QuickActionsGrid extends StatelessWidget {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      childAspectRatio: 1.5,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
+      crossAxisCount: 3,
+      childAspectRatio: 0.95,
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
       children: [
         _QuickActionBtn(
           icon: Icons.calendar_month,
@@ -611,16 +611,16 @@ class _QuickActionsGrid extends StatelessWidget {
           onTap: () => context.push('/anc-visits'),
         ),
         _QuickActionBtn(
-          icon: Icons.emergency,
-          label: 'Emergency',
-          color: Colors.red,
-          onTap: () => context.push('/help'),
+          icon: Icons.edit_note,
+          label: 'Journal',
+          color: Colors.pink,
+          onTap: () => context.push('/journal'),
         ),
         _QuickActionBtn(
-          icon: Icons.medical_services,
+          icon: Icons.local_hospital,
           label: 'Clinics',
           color: Colors.teal,
-          onTap: () => context.go('/appointments'),
+          onTap: () => context.push('/clinics'),
         ),
         _QuickActionBtn(
           icon: Icons.menu_book,
@@ -629,10 +629,16 @@ class _QuickActionsGrid extends StatelessWidget {
           onTap: () => context.push('/handbook'),
         ),
         _QuickActionBtn(
-          icon: Icons.edit_note,
-          label: 'Journal',
-          color: Colors.pink,
-          onTap: () => context.push('/journal'),
+          icon: Icons.emergency,
+          label: 'Emergency',
+          color: Colors.red,
+          onTap: () => context.push('/help'),
+        ),
+        _QuickActionBtn(
+          icon: Icons.settings,
+          label: 'Settings',
+          color: Colors.grey,
+          onTap: () => context.push('/settings'),
         ),
       ],
     );
@@ -657,13 +663,13 @@ class _QuickActionBtn extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color ??
               (isDark ? const Color(0xFF1E1E1E) : Colors.white),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
               color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
           boxShadow: isDark
@@ -671,23 +677,29 @@ class _QuickActionBtn extends StatelessWidget {
               : [
                   BoxShadow(
                     color: Colors.grey.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundColor: color.withValues(alpha: 0.1),
-              radius: 22,
-              child: Icon(icon, color: color, size: 24),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 22),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               label,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

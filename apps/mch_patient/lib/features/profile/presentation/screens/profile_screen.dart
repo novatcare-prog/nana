@@ -213,6 +213,14 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const _Divider(),
                 _SettingsTile(
+                  icon: Icons.edit_note,
+                  color: Colors.pink,
+                  title: "My Journal",
+                  subtitle: "Pregnancy diary & mood tracker",
+                  onTap: () => context.push('/journal'),
+                ),
+                const _Divider(),
+                _SettingsTile(
                   icon: Icons.qr_code,
                   color: Colors.blue,
                   title: "Share Medical Records",

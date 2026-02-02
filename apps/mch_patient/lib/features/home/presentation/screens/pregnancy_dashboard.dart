@@ -160,7 +160,7 @@ class _PregnancyView extends ConsumerWidget {
         ref.invalidate(currentMaternalProfileProvider);
         ref.invalidate(upcomingAppointmentsProvider);
         ref.invalidate(nextAppointmentProvider);
-        
+
         // Wait for the profile to reload (which drives other data)
         try {
           await ref.read(currentMaternalProfileProvider.future);
@@ -711,14 +711,10 @@ class _QuickActionsRow extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _QuickActionButton(
-            icon: Icons.science_outlined,
-            label: 'Lab Results',
-            color: const Color(0xFF9C27B0),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Lab Results coming soon')),
-              );
-            },
+            icon: Icons.edit_note,
+            label: 'Journal',
+            color: Colors.pink,
+            onTap: () => context.push('/journal'),
           ),
         ),
         const SizedBox(width: 12),

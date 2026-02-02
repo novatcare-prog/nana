@@ -22,10 +22,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   Map<String, dynamic> _stats = {};
   String? _error;
 
-  // Date range
-  final DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
-  final DateTime _endDate = DateTime.now();
-
   @override
   void initState() {
     super.initState();
@@ -58,7 +54,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           .count(CountOption.exact);
 
       // Get high risk patients (those with diabetes, hypertension, or HIV positive)
-      // Using OR filter for medical conditions
       final highRiskResult = await supabase
           .from('maternal_profiles')
           .select('id')
@@ -167,57 +162,62 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline,
-                          size: 64, color: theme.colorScheme.error),
-                      const SizedBox(height: 16),
-                      Text('Error loading statistics',
-                          style: theme.textTheme.titleLarge),
-                      const SizedBox(height: 8),
-                      Text(_error!, style: theme.textTheme.bodyMedium),
-                      const SizedBox(height: 16),
-                      FilledButton.icon(
-                        onPressed: _loadStats,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                )
+              ? _buildErrorView(theme)
               : RefreshIndicator(
                   onRefresh: _loadStats,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
+                  child: ListView(
                     padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        _buildHeader(theme),
-                        const SizedBox(height: 24),
+                    children: [
+                      // Header
+                      _buildHeader(theme),
+                      const SizedBox(height: 20),
 
-                        // Summary Stats
-                        _buildSummaryCards(theme),
-                        const SizedBox(height: 24),
+                      // Summary Stats
+                      _buildSummarySection(theme),
+                      const SizedBox(height: 20),
 
-                        // Patient Status Distribution
-                        _buildPatientStatusSection(theme),
-                        const SizedBox(height: 24),
+                      // Patient Status Distribution
+                      _buildPatientStatusSection(theme),
+                      const SizedBox(height: 20),
 
-                        // Activity Section
-                        _buildActivitySection(theme),
-                        const SizedBox(height: 24),
+                      // Activity Section
+                      _buildActivitySection(theme),
+                      const SizedBox(height: 20),
 
-                        // Quick Reports
-                        _buildQuickReportsSection(theme),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
+                      // Quick Reports
+                      _buildQuickReportsSection(theme),
+                      const SizedBox(height: 24),
+                    ],
                   ),
                 ),
+    );
+  }
+
+  Widget _buildErrorView(ThemeData theme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading statistics', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: _loadStats,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -235,7 +235,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.analytics, color: Colors.white, size: 40),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.analytics, color: Colors.white, size: 32),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -243,14 +250,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               children: [
                 Text(
                   'Facility Dashboard',
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Last updated: ${DateFormat('MMM dd, yyyy HH:mm').format(DateTime.now())}',
+                  'Updated: ${DateFormat('MMM dd, HH:mm').format(DateTime.now())}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: Colors.white70,
                   ),
@@ -263,7 +270,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _buildSummaryCards(ThemeData theme) {
+  Widget _buildSummarySection(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -274,41 +281,52 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.5,
+        // First row of stat cards
+        Row(
           children: [
-            _StatCard(
-              title: 'Total Patients',
-              value: '${_stats['totalPatients'] ?? 0}',
-              icon: Icons.people,
-              color: Colors.blue,
-              subtitle: '+${_stats['newThisMonth'] ?? 0} this month',
+            Expanded(
+              child: _StatCard(
+                title: 'Total Patients',
+                value: '${_stats['totalPatients'] ?? 0}',
+                icon: Icons.people,
+                color: Colors.blue,
+                subtitle: '+${_stats['newThisMonth'] ?? 0} this month',
+              ),
             ),
-            _StatCard(
-              title: 'High Risk',
-              value: '${_stats['highRisk'] ?? 0}',
-              icon: Icons.warning,
-              color: Colors.red,
-              subtitle: 'Needs attention',
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatCard(
+                title: 'High Risk',
+                value: '${_stats['highRisk'] ?? 0}',
+                icon: Icons.warning_amber_rounded,
+                color: Colors.red,
+                subtitle: 'Needs attention',
+              ),
             ),
-            _StatCard(
-              title: 'ANC Visits',
-              value: '${_stats['totalAncVisits'] ?? 0}',
-              icon: Icons.medical_services,
-              color: Colors.green,
-              subtitle: '${_stats['visitsThisWeek'] ?? 0} this week',
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Second row of stat cards
+        Row(
+          children: [
+            Expanded(
+              child: _StatCard(
+                title: 'ANC Visits',
+                value: '${_stats['totalAncVisits'] ?? 0}',
+                icon: Icons.medical_services,
+                color: Colors.green,
+                subtitle: '${_stats['visitsThisWeek'] ?? 0} this week',
+              ),
             ),
-            _StatCard(
-              title: 'Appointments',
-              value: '${_stats['appointmentsToday'] ?? 0}',
-              icon: Icons.calendar_today,
-              color: Colors.orange,
-              subtitle: 'Today',
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatCard(
+                title: 'Appointments',
+                value: '${_stats['appointmentsToday'] ?? 0}',
+                icon: Icons.calendar_today,
+                color: Colors.orange,
+                subtitle: 'Scheduled today',
+              ),
             ),
           ],
         ),
@@ -323,16 +341,33 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     final delivered = (_stats['delivered'] ?? 0) as int;
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Patient Status Distribution',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.pie_chart_outline,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Patient Status',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             _ProgressRow(
@@ -341,14 +376,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               total: total,
               color: Colors.green,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             _ProgressRow(
               label: 'High Risk',
               value: highRisk,
               total: total,
               color: Colors.red,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             _ProgressRow(
               label: 'Delivered',
               value: delivered,
@@ -363,18 +398,36 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
   Widget _buildActivitySection(ThemeData theme) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'This Month\'s Activity',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.trending_up,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'This Month\'s Activity',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
+            // First row of activity tiles
             Row(
               children: [
                 Expanded(
@@ -397,12 +450,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ],
             ),
             const SizedBox(height: 12),
+            // Second row of activity tiles
             Row(
               children: [
                 Expanded(
                   child: _ActivityTile(
                     icon: Icons.event_available,
-                    label: 'Pending Appointments',
+                    label: 'Pending Appts',
                     value: '${_stats['pendingAppointments'] ?? 0}',
                     color: Colors.orange,
                   ),
@@ -410,7 +464,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _ActivityTile(
-                    icon: Icons.medical_services,
+                    icon: Icons.medical_services_outlined,
                     label: 'Visits This Week',
                     value: '${_stats['visitsThisWeek'] ?? 0}',
                     color: Colors.green,
@@ -436,9 +490,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         ),
         const SizedBox(height: 12),
         _ReportTile(
-          icon: Icons.warning,
+          icon: Icons.warning_amber_rounded,
           title: 'High Risk Patients',
-          subtitle: 'List of patients needing attention',
+          subtitle: 'Patients needing attention',
+          iconColor: Colors.red,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const HighRiskReportScreen()),
@@ -447,7 +502,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         _ReportTile(
           icon: Icons.schedule,
           title: 'Patients Due Soon',
-          subtitle: 'Delivery expected within 30 days',
+          subtitle: 'Delivery within 30 days',
+          iconColor: Colors.orange,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const PatientsDueSoonScreen()),
@@ -457,6 +513,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           icon: Icons.event_busy,
           title: 'Missed Appointments',
           subtitle: 'Follow up with no-shows',
+          iconColor: Colors.deepPurple,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const MissedAppointmentsScreen()),
@@ -466,44 +523,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           icon: Icons.pregnant_woman,
           title: 'ANC Coverage Report',
           subtitle: 'Antenatal care statistics',
+          iconColor: Colors.teal,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const AncCoverageReportScreen()),
           ),
         ),
       ],
-    );
-  }
-
-  void _showReportDialog(String reportName) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('$reportName Report'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.construction, size: 64, color: Colors.orange[300]),
-            const SizedBox(height: 16),
-            const Text(
-              'Detailed report generation coming soon!',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'This will allow you to generate and export $reportName reports.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -530,10 +556,18 @@ class _StatCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
@@ -541,31 +575,42 @@ class _StatCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const Spacer(),
               ],
             ),
-            const Spacer(),
-            Text(
-              value,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+            const SizedBox(height: 12),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                value,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            const SizedBox(height: 2),
             Text(
               title,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            const SizedBox(height: 2),
             Text(
               subtitle,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: color,
+                fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -589,6 +634,7 @@ class _ProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final percentage = total > 0 ? (value / total * 100) : 0.0;
 
     return Column(
@@ -597,15 +643,32 @@ class _ProgressRow extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label),
-            Text('$value (${percentage.toStringAsFixed(1)}%)'),
+            Flexible(
+              child: Text(
+                label,
+                style: theme.textTheme.bodyMedium,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$value (${percentage.toStringAsFixed(0)}%)',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 4),
-        LinearProgressIndicator(
-          value: total > 0 ? value / total : 0,
-          backgroundColor: color.withOpacity(0.1),
-          valueColor: AlwaysStoppedAnimation(color),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: total > 0 ? value / total : 0,
+            backgroundColor: color.withOpacity(0.15),
+            valueColor: AlwaysStoppedAnimation(color),
+            minHeight: 6,
+          ),
         ),
       ],
     );
@@ -630,26 +693,38 @@ class _ActivityTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+        ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 28),
+          Icon(icon, color: color, size: 26),
           const SizedBox(height: 8),
-          Text(
-            value,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             label,
-            style: theme.textTheme.labelSmall,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -661,12 +736,14 @@ class _ReportTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final Color iconColor;
   final VoidCallback onTap;
 
   const _ReportTile({
     required this.icon,
     required this.title,
     required this.subtitle,
+    required this.iconColor,
     required this.onTap,
   });
 
@@ -675,20 +752,62 @@ class _ReportTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: theme.colorScheme.primary),
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
         ),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+      ),
+      child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right,
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

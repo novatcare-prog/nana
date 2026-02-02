@@ -1,11 +1,38 @@
 import 'package:uuid/uuid.dart';
 
+/// Available moods for journal entries
+enum JournalMood {
+  happy('Happy', '😊'),
+  excited('Excited', '🤩'),
+  grateful('Grateful', '🙏'),
+  calm('Calm', '😌'),
+  tired('Tired', '😴'),
+  anxious('Anxious', '😰'),
+  sad('Sad', '😢'),
+  sick('Sick', '🤒');
+
+  final String label;
+  final String emoji;
+
+  const JournalMood(this.label, this.emoji);
+
+  static JournalMood? fromString(String? value) {
+    if (value == null) return null;
+    try {
+      return JournalMood.values.firstWhere((m) => m.name == value);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
 class JournalEntry {
   final String id;
   final DateTime date;
   final String title;
   final String content;
   final String? category;
+  final JournalMood? mood;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -15,6 +42,7 @@ class JournalEntry {
     required this.title,
     required this.content,
     this.category,
+    this.mood,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -23,6 +51,7 @@ class JournalEntry {
     required String title,
     required String content,
     String? category,
+    JournalMood? mood,
     DateTime? date,
   }) {
     final now = DateTime.now();
@@ -32,6 +61,7 @@ class JournalEntry {
       title: title,
       content: content,
       category: category,
+      mood: mood,
       createdAt: now,
       updatedAt: now,
     );
@@ -41,7 +71,9 @@ class JournalEntry {
     String? title,
     String? content,
     String? category,
+    JournalMood? mood,
     DateTime? date,
+    bool clearMood = false,
   }) {
     return JournalEntry(
       id: id,
@@ -49,6 +81,7 @@ class JournalEntry {
       title: title ?? this.title,
       content: content ?? this.content,
       category: category ?? this.category,
+      mood: clearMood ? null : (mood ?? this.mood),
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );
@@ -61,6 +94,7 @@ class JournalEntry {
       'title': title,
       'content': content,
       'category': category,
+      'mood': mood?.name,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -73,6 +107,7 @@ class JournalEntry {
       title: json['title'],
       content: json['content'],
       category: json['category'],
+      mood: JournalMood.fromString(json['mood']),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
