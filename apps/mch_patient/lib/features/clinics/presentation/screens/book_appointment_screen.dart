@@ -228,7 +228,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
               children: [
                 const Icon(Icons.check_circle, color: Colors.green, size: 60),
                 const SizedBox(height: 16),
-                Text('booking.appointment_booked'.tr(), textAlign: TextAlign.center),
+                Text('booking.appointment_booked'.tr(),
+                    textAlign: TextAlign.center),
               ],
             ),
             content: Text(
@@ -258,7 +259,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  '${\'booking.error_booking\'.tr()}: ${e.toString().replaceAll("Exception: ", "")}')),
+                  '${'booking.error_booking'.tr()}: ${e.toString().replaceAll("Exception: ", "")}')),
         );
       }
     }
@@ -311,7 +312,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
 
             const SizedBox(height: 24),
             Text('booking.select_date'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
             CalendarDatePicker(
               initialDate: _selectedDate,
@@ -330,8 +332,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
             Row(
               children: [
                 Text('booking.available_time_slots'.tr(),
-                    style:
-                        const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16)),
                 if (_checkingAvailability) ...[
                   const SizedBox(width: 12),
                   const SizedBox(
@@ -399,7 +401,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
 
             const SizedBox(height: 24),
             Text('booking.reason_for_visit'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
             TextField(
               controller: _notesController,

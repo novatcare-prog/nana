@@ -113,8 +113,7 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
               else if (_error != null)
                 Column(
                   children: [
-                    Text('${_error}',
-                        style: const TextStyle(color: Colors.red)),
+                    Text('$_error', style: const TextStyle(color: Colors.red)),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _generateCode,

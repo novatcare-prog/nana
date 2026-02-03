@@ -56,13 +56,13 @@ class VaccinationScheduleScreen extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('${e.toString()}')),
+            error: (e, _) => Center(child: Text(e.toString())),
           );
         },
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
         ),
-        error: (e, _) => Center(child: Text('${e.toString()}')),
+        error: (e, _) => Center(child: Text(e.toString())),
       ),
     );
   }
@@ -400,7 +400,7 @@ class _VaccineMilestoneCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${DateFormat('d MMM yyyy').format(dueDate)}',
+                        DateFormat('d MMM yyyy').format(dueDate),
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
