@@ -12,6 +12,7 @@
         "greeting_evening": "Good Evening",
         "quick_actions": "Quick Actions",
         "journal": "Journal",
+        "family_planning": "Family Planning",
         "emergency": "Emergency",
         "find_clinic": "Find Clinic",
         "upcoming_visits": "Upcoming Visits",
@@ -31,7 +32,8 @@
         "book_now": "Book Now",
         "healthy": "Healthy",
         "vaccine_due": "Vaccine Due",
-        "no_id": "No ID"
+        "no_id": "No ID",
+        "must_know": "Must Know"
     },
     "pregnancy": {
         "week": "Week",
@@ -419,5 +421,38 @@
         "expires_in": "Expires in {time}",
         "generate_new": "Generate New Code",
         "try_again": "Try Again"
+    },
+    "family_planning": {
+        "title": "Family Planning",
+        "status_period": "Period",
+        "status_fertile": "Fertile Window",
+        "status_ovulation": "Ovulation Day",
+        "status_safe": "Safe Day",
+        "today_status": "TODAY'S STATUS",
+        "days_to_period": "Days to period",
+        "prediction_disclaimer": "Predictions are estimates only",
+        "log_period": "Log Period",
+        "calendar_title": "Fertility Calendar",
+        "view_resources": "View Family Planning Resources",
+        "history_title": "Cycle History",
+        "no_history": "No period history logged",
+        "start_date": "Start Date",
+        "symptoms": "Symptoms",
+        "notes": "Notes",
+        "notes_hint": "Add any other details...",
+        "save": "Save Entry",
+        "entry_saved": "Period entry saved",
+        "resources_title": "Family Planning Resources",
+        "res_who_title": "WHO Guidelines",
+        "res_who_desc": "Comprehensive guide on family planning and contraception.",
+        "res_spacing_title": "Birth Spacing",
+        "res_spacing_desc": "Wait at least 24 months after a live birth before attempting the next pregnancy.",
+        "res_contraception_title": "Contraception Methods",
+        "res_contraception_desc": "Explore different options to plan your family size.",
+        "res_htsp_title": "Healthy Timing",
+        "res_htsp_desc": "Better outcomes for mother and baby.",
+        "tap_to_learn": "Tap to learn more",
+        "disclaimer_title": "Important Disclaimer",
+        "disclaimer_body": "The fertility predictions shown here are based on the calendar/rhythm method and are estimates only. This method is not a reliable form of contraception. Please consult a healthcare provider for personalized family planning advice."
     }
 }

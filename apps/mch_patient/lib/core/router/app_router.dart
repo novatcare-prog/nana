@@ -23,6 +23,13 @@ import '../../features/children/presentation/screens/add_child_screen.dart';
 import '../../features/education/presentation/screens/handbook_screen.dart';
 import '../../features/support/presentation/screens/help_support_screen.dart';
 import '../../features/support/presentation/screens/privacy_policy_screen.dart';
+import '../../features/education/presentation/screens/must_know_screen.dart';
+import '../../features/education/presentation/screens/immunization_schedule_screen.dart';
+import '../../features/education/presentation/screens/return_to_clinic_screen.dart';
+import '../../features/education/presentation/screens/fluids_screen.dart';
+import '../../features/education/presentation/screens/feeding_guide_screen.dart';
+import '../../features/education/presentation/screens/developmental_milestones_screen.dart';
+import '../../features/education/presentation/screens/healthy_foods_screen.dart';
 import '../../features/clinics/presentation/screens/clinic_list_screen.dart';
 import '../../features/clinics/presentation/screens/clinic_details_screen.dart';
 import '../../features/clinics/presentation/screens/book_appointment_screen.dart';
@@ -32,6 +39,9 @@ import '../../features/journal/presentation/screens/journal_list_screen.dart';
 import '../../features/journal/presentation/screens/journal_entry_screen.dart';
 import '../../features/journal/presentation/screens/journal_detail_screen.dart';
 import '../../features/journal/domain/models/journal_entry.dart';
+import '../../features/family_planning/presentation/screens/family_planning_screen.dart';
+import '../../features/family_planning/presentation/screens/add_period_screen.dart';
+import '../../features/family_planning/presentation/screens/family_planning_resources_screen.dart';
 import '../../../../core/providers/auth_provider.dart';
 
 // Router provider
@@ -176,6 +186,45 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const PrivacyPolicyScreen(),
       ),
 
+      // Must Know Routes
+      GoRoute(
+        path: '/must-know',
+        name: 'must-know',
+        builder: (context, state) => const MustKnowScreen(),
+        routes: [
+          GoRoute(
+            path: 'immunization',
+            name: 'must-know-immunization',
+            builder: (context, state) => const ImmunizationScheduleScreen(),
+          ),
+          GoRoute(
+            path: 'return-to-clinic',
+            name: 'must-know-return',
+            builder: (context, state) => const ReturnToClinicScreen(),
+          ),
+          GoRoute(
+            path: 'fluids',
+            name: 'must-know-fluids',
+            builder: (context, state) => const FluidsScreen(),
+          ),
+          GoRoute(
+            path: 'feeding',
+            name: 'must-know-feeding',
+            builder: (context, state) => const FeedingGuideScreen(),
+          ),
+          GoRoute(
+            path: 'milestones',
+            name: 'must-know-milestones',
+            builder: (context, state) => const DevelopmentalMilestonesScreen(),
+          ),
+          GoRoute(
+            path: 'healthy-foods',
+            name: 'must-know-healthy-foods',
+            builder: (context, state) => const HealthyFoodsScreen(),
+          ),
+        ],
+      ),
+
       // Child Detail Route (outside shell for full screen)
       GoRoute(
         path: '/child/:id',
@@ -303,6 +352,25 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/share-records',
         name: 'share-records',
         builder: (context, state) => const ShareRecordsScreen(),
+      ),
+
+      // Family Planning Routes
+      GoRoute(
+        path: '/family-planning',
+        name: 'family-planning',
+        builder: (context, state) => const FamilyPlanningScreen(),
+        routes: [
+          GoRoute(
+            path: 'add-period',
+            name: 'add-period',
+            builder: (context, state) => const AddPeriodScreen(),
+          ),
+          GoRoute(
+            path: 'resources',
+            name: 'family-planning-resources',
+            builder: (context, state) => const FamilyPlanningResourcesScreen(),
+          ),
+        ],
       ),
     ],
   );

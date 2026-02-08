@@ -12,6 +12,7 @@
         "greeting_evening": "Habari ya Jioni",
         "quick_actions": "Vitendo vya Haraka",
         "journal": "Jarida",
+        "family_planning": "Uzazi wa Mpango",
         "emergency": "Dharura",
         "find_clinic": "Tafuta Kliniki",
         "upcoming_visits": "Ziara Zijazo",
@@ -31,7 +32,8 @@
         "book_now": "Hifadhi Sasa",
         "healthy": "Afya Njema",
         "vaccine_due": "Chanjo Inahitajika",
-        "no_id": "Hakuna Kitambulisho"
+        "no_id": "Hakuna Kitambulisho",
+        "must_know": "Lazima Ujue"
     },
     "pregnancy": {
         "week": "Wiki",
@@ -419,5 +421,38 @@
         "expires_in": "Inaisha baada ya {time}",
         "generate_new": "Tengeneza Msimbo Mpya",
         "try_again": "Jaribu Tena"
+    },
+    "family_planning": {
+        "title": "Uzazi wa Mpango",
+        "status_period": "Hedhi",
+        "status_fertile": "Siku za Rutuba",
+        "status_ovulation": "Siku ya Upevushaji",
+        "status_safe": "Siku Salama",
+        "today_status": "HALI YA LEO",
+        "days_to_period": "Siku hadi hedhi",
+        "prediction_disclaimer": "Utabiri ni makadirio tu",
+        "log_period": "Rekodi Hedhi",
+        "calendar_title": "Kalenda ya Uzazi",
+        "view_resources": "Tazama Rasilimali za Uzazi",
+        "history_title": "Historia ya Mzunguko",
+        "no_history": "Hakuna rekodi ya hedhi iliyoingizwa",
+        "start_date": "Tarehe ya Kuanza",
+        "symptoms": "Dalili",
+        "notes": "Vidokezo",
+        "notes_hint": "Ongeza maelezo mengine...",
+        "save": "Hifadhi",
+        "entry_saved": "Rekodi ya hedhi imehifadhiwa",
+        "resources_title": "Rasilimali za Uzazi wa Mpango",
+        "res_who_title": "Mwongozo wa WHO",
+        "res_who_desc": "Mwongozo kamili kuhusu uzazi wa mpango.",
+        "res_spacing_title": "Nafasi ya Uzazi",
+        "res_spacing_desc": "Subiri angalau miezi 24 baada ya kujifungua kabla ya kupata mimba nyingine.",
+        "res_contraception_title": "Njia za Uzazi wa Mpango",
+        "res_contraception_desc": "Chunguza njia tofauti za kupanga uzazi.",
+        "res_htsp_title": "Muda Sahihi",
+        "res_htsp_desc": "Matokeo bora kwa mama na mtoto.",
+        "tap_to_learn": "Bonyeza kujifunza zaidi",
+        "disclaimer_title": "Onyo Muhimu",
+        "disclaimer_body": "Utabiri wa uzazi unaoonyeshwa hapa unategemea njia ya kalenda na ni makadirio tu. Njia hii si ya kutegemewa kwa kuzuia mimba. Tafadhali wasiliana na mhudumu wa afya kwa ushauri zaidi."
     }
 }

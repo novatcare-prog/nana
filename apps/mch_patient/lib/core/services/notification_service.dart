@@ -19,7 +19,9 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
-  final _supabase = Supabase.instance.client;
+  // Use a getter to access Supabase client safely
+  // This prevents accessing Supabase.instance before it's initialized
+  SupabaseClient get _supabase => Supabase.instance.client;
 
   /// Notification Channels
   static const String appointmentChannelId = 'mch_appointments';
@@ -169,35 +171,53 @@ class NotificationService {
     }
   }
 
+  /// Callback for notification taps (set by UI layer)
+  Function(String?)? onNotificationClick;
+
   /// Handle notification tap
   void _onNotificationTap(NotificationResponse response) {
     debugPrint('🔔 Notification tapped: ${response.payload}');
-    // TODO: Navigate to appropriate screen based on payload
-    // e.g., if payload is 'appointment:123', navigate to appointment details
+    onNotificationClick?.call(response.payload);
   }
+
+  bool _isRequestingPermissions = false;
 
   /// Request notification permissions (iOS)
   Future<bool> requestPermissions() async {
-    // Skip on web
-    if (kIsWeb) return true;
-
-    if (Platform.isIOS) {
-      final iosPlugin = _notifications.resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>();
-      final granted = await iosPlugin?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-      return granted ?? false;
-    } else if (Platform.isAndroid) {
-      final androidPlugin =
-          _notifications.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      final granted = await androidPlugin?.requestNotificationsPermission();
-      return granted ?? false;
+    // Prevent multiple concurrent permission requests
+    if (_isRequestingPermissions) {
+      debugPrint('🔔 Permission request already in progress');
+      return false;
     }
-    return true;
+
+    _isRequestingPermissions = true;
+    try {
+      // Skip on web
+      if (kIsWeb) return true;
+
+      if (Platform.isIOS) {
+        final iosPlugin = _notifications.resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>();
+        final granted = await iosPlugin?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        return granted ?? false;
+      } else if (Platform.isAndroid) {
+        final androidPlugin =
+            _notifications.resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>();
+        final granted = await androidPlugin?.requestNotificationsPermission();
+        return granted ?? false;
+      }
+      return true;
+    } catch (e) {
+      debugPrint('🔔 Error requesting permissions: $e');
+      return false;
+    } finally {
+      _isRequestingPermissions = false;
+    }
   }
 
   /// Schedule an appointment reminder

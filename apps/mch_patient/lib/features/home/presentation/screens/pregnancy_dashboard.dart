@@ -720,10 +720,10 @@ class _QuickActionsRow extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _QuickActionButton(
-            icon: Icons.emergency_outlined,
-            label: 'Emergency',
-            color: Colors.red,
-            onTap: () => context.push('/help'),
+            icon: Icons.campaign_outlined,
+            label: 'Must Know',
+            color: Colors.purple,
+            onTap: () => context.push('/must-know'),
           ),
         ),
       ],

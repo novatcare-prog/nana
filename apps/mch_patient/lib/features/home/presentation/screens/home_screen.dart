@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/maternal_profile_provider.dart';
+import '../../../../core/providers/child_provider.dart';
+import '../../../../core/providers/immunization_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -22,13 +24,15 @@ class HomeScreen extends ConsumerWidget {
     final daysUntilDue = ref.watch(daysUntilDueDateProvider);
     final facilityName = maternalProfileAsync.value?.facilityName;
 
-    // 3. Get ID for SHA card (use ID number from user metadata)
+    // 3. URGENT ALERTS - Real data from Immunization Records
+    final urgentAlertsAsync = ref.watch(urgentAlertsProvider);
+
+    // 4. Get ID for SHA card (use ID number from user metadata)
     final shaNumber =
         userIdNumber != null ? "ID: $userIdNumber" : 'home.no_id'.tr();
 
     // --- MOCK DATA (Connect to Hive/Riverpod in Phase 2) ---
     const bool isOffline = false;
-    const bool hasUrgentAlert = true; // Simulating an overdue vaccine
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -144,44 +148,47 @@ class HomeScreen extends ConsumerWidget {
 
                     const SizedBox(height: 24),
 
-                    // B. URGENT ALERT (Only visible if needed)
-                    if (hasUrgentAlert) ...[
-                      _UrgentActionAlert(
-                        title: 'home.action_required'.tr(),
-                        message: 'home.missed_vaccine_message'.tr(namedArgs: {
-                          'name': 'Baby John',
-                          'vaccine': 'Polio'
-                        }),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text('home.missed_vaccine'.tr()),
-                              content: Text('home.missed_vaccine_detail'.tr(
-                                  namedArgs: {
-                                    'name': 'Baby John',
-                                    'vaccine': 'Polio',
-                                    'weeks': '6'
-                                  })),
-                              actions: [
-                                TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text('home.later'.tr())),
-                                FilledButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      context.go('/appointments');
-                                    },
-                                    style: FilledButton.styleFrom(
-                                        backgroundColor: Colors.red),
-                                    child: Text('home.book_now'.tr())),
-                              ],
+                    // B. URGENT ALERTS (Real-time data)
+                    if (urgentAlertsAsync.hasValue &&
+                        urgentAlertsAsync.value!.isNotEmpty)
+                      ...urgentAlertsAsync.value!.map((alert) => Padding(
+                            padding: const EdgeInsets.only(bottom: 24.0),
+                            child: _UrgentActionAlert(
+                              title: alert.title,
+                              message: alert.message,
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('home.missed_vaccine'.tr()),
+                                    content: Text('home.missed_vaccine_detail'
+                                        .tr(namedArgs: {
+                                      'name': alert.childName,
+                                      'vaccine': alert.vaccineName,
+                                      'weeks':
+                                          '${alert.weeksOverdue > 0 ? alert.weeksOverdue : "several"}'
+                                    })),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('home.later'.tr())),
+                                      FilledButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            // Ideally navigate to specific child's immunization page
+                                            // For now, general appointments or children list
+                                            context.go('/children');
+                                          },
+                                          style: FilledButton.styleFrom(
+                                              backgroundColor: Colors.red),
+                                          child: Text('home.book_now'.tr())),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                    ],
+                          )),
 
                     // C. CHILDREN QUICK VIEW (Horizontal Scroll)
                     // Matches "Phase 1: Children List" requirement
@@ -456,56 +463,83 @@ class _ShaCard extends StatelessWidget {
 }
 
 /// Horizontal Carousel for Children (Phase 1 Requirement)
-class _ChildrenCarousel extends StatelessWidget {
+class _ChildrenCarousel extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'home.my_children'.tr(),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                  letterSpacing: 1.2,
-                ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final childrenAsync = ref.watch(patientChildrenProvider);
+
+    return childrenAsync.when(
+      data: (children) {
+        if (children.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'home.my_children'.tr(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go('/children'),
+                    child: Text('home.view_all'.tr(),
+                        style: const TextStyle(color: Color(0xFFE91E63))),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => context.go('/children'),
-                child: Text('home.view_all'.tr(),
-                    style: const TextStyle(color: Color(0xFFE91E63))),
+            ),
+            SizedBox(
+              height: 130,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: children.length,
+                itemBuilder: (context, index) {
+                  final child = children[index];
+                  // Determine random color for avatar based on name hash
+                  final colorIndex = (child.childName.length) % 3;
+                  final colors = [Colors.blue, Colors.orange, Colors.green];
+
+                  // Simple logic for status (can be expanded later with immunization checks)
+                  // For now, assume < 5 years means checking growth/vaccines
+                  final status = 'home.healthy'.tr(); // Default to healthy
+
+                  return _ChildSummaryCard(
+                    name: child.childName.split(' ').first,
+                    status: status,
+                    color: colors[colorIndex],
+                    icon: index.isEven
+                        ? Icons.face_6
+                        : Icons.face_3, // Alternating icons
+                  );
+                },
               ),
-            ],
+            ),
+            const SizedBox(height: 24),
+          ],
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: SizedBox(
+            height: 24,
+            width: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
           ),
         ),
-        SizedBox(
-          height: 130,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _ChildSummaryCard(
-                name: 'Grace',
-                status: 'home.healthy'.tr(),
-                color: Colors.blue,
-                icon: Icons.face_3,
-              ),
-              _ChildSummaryCard(
-                name: 'John',
-                status: 'home.vaccine_due'.tr(),
-                color: Colors.orange,
-                icon: Icons.face_6,
-                isAlert: true,
-              ),
-            ],
-          ),
-        ),
-      ],
+      ),
+      error: (err, stack) => const SizedBox.shrink(), // Hide on error too
     );
   }
 }
@@ -515,14 +549,12 @@ class _ChildSummaryCard extends StatelessWidget {
   final String status;
   final Color color;
   final IconData icon;
-  final bool isAlert;
 
   const _ChildSummaryCard({
     required this.name,
     required this.status,
     required this.color,
     required this.icon,
-    this.isAlert = false,
   });
 
   @override
@@ -537,9 +569,6 @@ class _ChildSummaryCard extends StatelessWidget {
         color: Theme.of(context).cardTheme.color ??
             (isDark ? const Color(0xFF1E1E1E) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        border: isAlert
-            ? Border.all(color: Colors.orange.withValues(alpha: 0.5), width: 2)
-            : null,
         boxShadow: isDark
             ? null
             : [
@@ -571,8 +600,8 @@ class _ChildSummaryCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 10,
-              color: isAlert ? Colors.orange[800] : Colors.grey[600],
-              fontWeight: isAlert ? FontWeight.bold : FontWeight.normal,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.normal,
             ),
           ),
         ],
@@ -617,16 +646,16 @@ class _QuickActionsGrid extends StatelessWidget {
           onTap: () => context.push('/handbook'),
         ),
         _QuickActionBtn(
-          icon: Icons.emergency,
-          label: 'home.emergency'.tr(),
-          color: Colors.red,
-          onTap: () => context.push('/help'),
+          icon: Icons.campaign_outlined,
+          label: 'home.must_know'.tr(),
+          color: Colors.purple,
+          onTap: () => context.push('/must-know'),
         ),
         _QuickActionBtn(
-          icon: Icons.settings,
-          label: 'home.settings'.tr(),
-          color: Colors.grey,
-          onTap: () => context.push('/settings'),
+          icon: Icons.favorite,
+          label: 'home.family_planning'.tr(),
+          color: Colors.pinkAccent,
+          onTap: () => context.push('/family-planning'),
         ),
       ],
     );
