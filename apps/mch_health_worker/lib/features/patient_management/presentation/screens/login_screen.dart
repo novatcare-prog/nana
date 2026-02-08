@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/auth_providers.dart';
 import '../../../../core/utils/error_helper.dart';
+import '../../../../main.dart' show RoleChecker;
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
+
+/// Simple router that redirects to RoleChecker after successful login
+class _AuthenticatedRouter extends StatelessWidget {
+  const _AuthenticatedRouter();
+
+  @override
+  Widget build(BuildContext context) {
+    return const RoleChecker();
+  }
+}
 
 /// Login Screen
 class LoginScreen extends ConsumerStatefulWidget {
@@ -40,11 +51,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✓ Login successful! Verifying credentials...'),
-            backgroundColor: Colors.green,
+        // Navigate to main app after successful login
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const _AuthenticatedRouter(),
           ),
+          (route) => false,
         );
       }
     } catch (e) {
@@ -57,6 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     }
   }
+
 
   void _navigateToRegister() {
     Navigator.of(context).push(
@@ -107,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Title
                     Text(
-                      'MCH Kenya',
+                      'Nana Health',
                       style:
                           Theme.of(context).textTheme.headlineLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -119,7 +132,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Subtitle
                     Text(
-                      'Health Worker Portal',
+                      'Maternal & Child Health Portal',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Colors.grey[600],
                           ),

@@ -231,7 +231,8 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 80),
-      child: Center(
+      child: Align(
+        alignment: Alignment.topRight,
         child: Wrap(
           spacing: spacing,
           runSpacing: spacing,

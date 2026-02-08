@@ -100,6 +100,18 @@ class _PatientDetailScreenState extends ConsumerState<PatientDetailScreen>
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
+          ),
           tabs: const [
             Tab(text: 'Profile'),
             Tab(text: 'Medical'),

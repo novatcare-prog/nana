@@ -263,7 +263,7 @@ class PdfExportService {
         pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
-            pw.Text('MCH Kenya Health System',
+            pw.Text('Nana Health',
                 style:
                     const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
             pw.Text('Page ${context.pageNumber} of ${context.pagesCount}',

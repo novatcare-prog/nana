@@ -43,10 +43,32 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
 
   // Counseling
   bool _counselingGiven = false;
-  final List<String> _counselingTopics = [];
+  final Map<String, bool> _counselingTopicsSelected = {};
+
+  // MCH Handbook 2020 - Section 7: Nutrition Counseling Topics
+  static const List<String> mchCounselingTopics = [
+    'Eat variety of foods daily',
+    'Iron-rich foods (vegetables, meat, beans)',
+    'Calcium-rich foods (milk, omena)',
+    'Eat 4-5 small meals per day',
+    'Drink 8-10 glasses of water daily',
+    'Take IFAS tablets daily with food',
+    'Importance of deworming',
+    'Avoid excessive salt, sugar, spicy foods',
+    'Recognize malnutrition signs (MUAC <23cm)',
+  ];
 
   final _notesController = TextEditingController();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize counseling topics selection
+    for (final topic in mchCounselingTopics) {
+      _counselingTopicsSelected[topic] = false;
+    }
+  }
 
   @override
   void dispose() {
@@ -58,7 +80,17 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
   }
 
   Future<void> _saveNutritionRecord() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      // Show user-friendly alert
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('⚠️ Please fix the errors in the form before saving'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -86,8 +118,12 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
         dewormingGiven: _dewormingGiven,
         dewormingDrug: _dewormingGiven ? _dewormingDrug : null,
         nutritionCounselingGiven: _counselingGiven,
-        counselingTopics:
-            _counselingGiven ? _counselingTopics.join(', ') : null,
+        counselingTopics: _counselingGiven
+            ? _counselingTopicsSelected.entries
+                .where((e) => e.value)
+                .map((e) => e.key)
+                .join('; ')
+            : null,
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
@@ -101,21 +137,30 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
       await createRecord(nutritionRecord);
 
       // If MUAC was recorded, also create MUAC measurement
-      if (_muacController.text.isNotEmpty) {
-        final muacValue = double.parse(_muacController.text);
-        final muacMeasurement = MuacMeasurement(
-          maternalProfileId: widget.patientId,
-          patientName: widget.patient.clientName,
-          measurementDate: _recordDate,
-          muacCm: muacValue,
-          isMalnourished: muacValue < 23,
-          facilityId: profile.facilityId!,
-          recordedBy: profile.id,
-          recordedByName: profile.fullName,
-        );
+      if (_muacController.text.trim().isNotEmpty) {
+        try {
+          final muacValue = double.parse(_muacController.text.trim());
+          
+          // Only create MUAC measurement if value is valid (within reasonable range)
+          if (muacValue > 0 && muacValue <= 100) {
+            final muacMeasurement = MuacMeasurement(
+              maternalProfileId: widget.patientId,
+              patientName: widget.patient.clientName,
+              measurementDate: _recordDate,
+              muacCm: muacValue,
+              isMalnourished: muacValue < 23,
+              facilityId: profile.facilityId!,
+              recordedBy: profile.id,
+              recordedByName: profile.fullName,
+            );
 
-        final createMuac = ref.read(createMuacMeasurementProvider);
-        await createMuac(muacMeasurement);
+            final createMuac = ref.read(createMuacMeasurementProvider);
+            await createMuac(muacMeasurement);
+          }
+        } catch (e) {
+          // If MUAC parsing fails, continue without creating MUAC measurement
+          print('⚠️ Failed to parse MUAC value: $e');
+        }
       }
 
       if (mounted) {
@@ -140,6 +185,11 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate gestation weeks
+    final gestationWeeks = widget.patient.lmp != null
+        ? DateTime.now().difference(widget.patient.lmp!).inDays ~/ 7
+        : null;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Record Nutrition')),
       body: Form(
@@ -147,6 +197,10 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Gestation-specific recommendation banner
+            if (gestationWeeks != null) _buildGestationBanner(context, gestationWeeks),
+            if (gestationWeeks != null) const SizedBox(height: 16),
+
             // Date
             ListTile(
               title: const Text('Record Date'),
@@ -182,7 +236,23 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                 helperText: 'Normal: ≥23 cm, Malnourished: <23 cm',
                 prefixIcon: Icon(Icons.straighten),
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return null; // Optional field
+                }
+                
+                final muac = double.tryParse(value);
+                if (muac == null) {
+                  return 'Please enter a valid number';
+                }
+                
+                if (muac < 15 || muac > 40) {
+                  return 'MUAC must be between 15-40 cm';
+                }
+                
+                return null;
+              },
             ),
 
             const SizedBox(height: 24),
@@ -208,8 +278,25 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                   labelText: 'Number of Tablets',
                   border: OutlineInputBorder(),
                   hintText: '30',
+                  suffixText: 'tablets',
                 ),
                 keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (!_ironFolateGiven) return null;
+                  
+                  if (value == null || value.isEmpty) {
+                    return 'Enter number of tablets given';
+                  }
+                  
+                  final tablets = int.tryParse(value);
+                  if (tablets == null || tablets < 1) {
+                    return 'Must be at least 1 tablet';
+                  }
+                  if (tablets > 180) {
+                    return 'Cannot exceed 180 tablets (6 months)';
+                  }
+                  return null;
+                },
               ),
             ],
 
@@ -232,8 +319,25 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                   labelText: 'Number of Tablets',
                   border: OutlineInputBorder(),
                   hintText: '30',
+                  suffixText: 'tablets',
                 ),
                 keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (!_calciumGiven) return null;
+                  
+                  if (value == null || value.isEmpty) {
+                    return 'Enter number of tablets given';
+                  }
+                  
+                  final tablets = int.tryParse(value);
+                  if (tablets == null || tablets < 1) {
+                    return 'Must be at least 1 tablet';
+                  }
+                  if (tablets > 180) {
+                    return 'Cannot exceed 180 tablets';
+                  }
+                  return null;
+                },
               ),
             ],
 
@@ -275,6 +379,37 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                   borderRadius: BorderRadius.circular(8),
                   side: BorderSide(color: Colors.grey.shade300)),
             ),
+            
+            if (_counselingGiven) ...[
+              const SizedBox(height: 12),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Topics Covered (MCH Handbook Section 7):',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...mchCounselingTopics.map((topic) => CheckboxListTile(
+                dense: true,
+                title: Text(topic, style: const TextStyle(fontSize: 14)),
+                value: _counselingTopicsSelected[topic],
+                onChanged: (val) => setState(() => _counselingTopicsSelected[topic] = val!),
+              )),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextFormField(
+                  controller: _notesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Additional Counseling Notes',
+                    border: OutlineInputBorder(),
+                    hintText: 'Custom topics or specific advice given...',
+                  ),
+                  maxLines: 3,
+                ),
+              ),
+            ],
 
             const SizedBox(height: 16),
 
@@ -304,5 +439,63 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildGestationBanner(BuildContext context, int weeks) {
+    final recommendation = _getNutritionRecommendation(weeks);
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.lightbulb_outline, color: Colors.blue.shade700, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  recommendation.$1,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue.shade900,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  recommendation.$2,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  (String, String) _getNutritionRecommendation(int weeks) {
+    if (weeks < 13) {
+      return (
+        '1st Trimester (Week $weeks)',
+        'Folic acid critical. Manage nausea with small frequent meals. Emphasize IFAS tablets.',
+      );
+    } else if (weeks < 28) {
+      return (
+        '2nd Trimester (Week $weeks)',
+        'Iron needs increase. Give deworming medication. Monitor MUAC for malnutrition.',
+      );
+    } else {
+      return (
+        '3rd Trimester (Week $weeks)',
+        'Increase calories (+300 kcal/day). Monitor weight gain closely. Continue supplements.',
+      );
+    }
   }
 }

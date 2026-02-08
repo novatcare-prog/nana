@@ -106,8 +106,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           ),
         );
 
-        // Navigate to login screen
-        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+        // Navigate back to login screen - pop all routes to return to first page
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
     } catch (e) {
       setState(() => _isLoading = false);
@@ -336,7 +336,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   // Back to Login Button
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     child: const Text('Back to Login'),
                   ),

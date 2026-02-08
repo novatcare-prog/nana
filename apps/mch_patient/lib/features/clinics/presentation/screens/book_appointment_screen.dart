@@ -258,7 +258,7 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  '${\'booking.error_booking\'.tr()}: ${e.toString().replaceAll("Exception: ", "")}')),
+                  '${'booking.error_booking'.tr()}: ${e.toString().replaceAll("Exception: ", "")}')),
         );
       }
     }

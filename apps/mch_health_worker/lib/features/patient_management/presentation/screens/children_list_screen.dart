@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/childbirth_providers.dart';
 import 'child_detail_screen.dart';
+import 'add_child_screen.dart';
 
 /// Children List Screen
 /// Shows all children of a mother
@@ -68,6 +69,21 @@ class ChildrenListScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddChildScreen(
+                maternalProfileId: maternalProfileId,
+                motherName: mother.clientName,
+              ),
+            ),
+          );
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('Add Child'),
       ),
     );
   }

@@ -110,7 +110,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       navigatorKey: navigatorKey,
-      title: 'MCH Kenya - Health Worker',
+      title: 'Nana Health',
       debugShowCheckedModeBanner: false,
 
       // Theme Configuration (Uses your updated AppTheme with darker blue)

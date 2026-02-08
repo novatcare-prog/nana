@@ -1,11 +1,11 @@
 {
-    "name": "mch_health_worker",
-    "short_name": "mch_health_worker",
+    "name": "Nana Health",
+    "short_name": "Nana Health",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Maternal and Child Health Care Platform for Health Workers",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

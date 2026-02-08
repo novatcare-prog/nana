@@ -147,7 +147,7 @@ class _MainNavigationScaffoldState
                 if (extended) ...[
                   const SizedBox(width: 12),
                   Text(
-                    'MCH Kenya',
+                    'Nana Health',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.primaryColor,
@@ -271,46 +271,11 @@ class _MainNavigationScaffoldState
           // User Profile Footer
           const Divider(height: 1),
           _UserProfileHeader(),
-
-          // Logout Button (for Desktop/Tablet)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.logout, color: Colors.red),
-              tooltip: 'Logout',
-              onPressed: () {
-                final authActions = ref.read(authActionsProvider);
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Logout'),
-                    content: const Text('Are you sure you want to logout?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          // Perform logout
-                          await authActions.signOut();
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Text('Logout',
-                            style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
         ],
       ),
     );
   }
+
 
   // Helper method to build a sidebar item
   Widget _buildSidebarItem({
@@ -496,7 +461,7 @@ class _MainNavigationScaffoldState
               Navigator.pop(context);
               showAboutDialog(
                 context: context,
-                applicationName: 'MCH Kenya',
+                applicationName: 'Nana Health',
                 applicationVersion: '1.0.0',
                 applicationIcon: const Icon(Icons.local_hospital,
                     size: 48, color: Color(0xFF0D9488)),
