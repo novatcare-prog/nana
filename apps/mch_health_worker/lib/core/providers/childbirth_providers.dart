@@ -172,6 +172,49 @@ final createDeliveryRecordProvider = Provider<
   };
 });
 
+/// Create child profile (with offline queue)
+final createChildProfileProvider =
+    Provider<Future<ChildProfile> Function(ChildProfile)>((ref) {
+  final connectivity = ref.watch(connectivityServiceProvider);
+
+  return (child) async {
+    if (connectivity.isOnline) {
+      final repository = ref.read(childProfileRepositoryProvider);
+      final result = await repository.createChild(child);
+
+      // Cache the new child profile
+      await HiveService.cacheChildProfile(result.id, result.toJson());
+
+      // Invalidate related providers
+      ref.invalidate(motherChildrenProvider(child.maternalProfileId));
+      ref.invalidate(allActiveChildrenProvider);
+
+      return result;
+    } else {
+      // Generate temporary ID for offline
+      final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
+      
+      // Manually create child with temp ID for offline
+      final childData = child.toJson();
+      childData['id'] = tempId;
+      final childWithId = ChildProfile.fromJson(childData);
+
+      await HiveService.addToSyncQueue(
+        operation: 'insert',
+        table: 'child_profiles',
+        data: childWithId.toJson(),
+      );
+
+      // Cache child profile locally
+      await HiveService.cacheChildProfile(tempId, childWithId.toJson());
+
+      ref.invalidate(motherChildrenProvider(child.maternalProfileId));
+
+      return childWithId;
+    }
+  };
+});
+
 /// Update child profile (with offline queue)
 final updateChildProfileProvider =
     Provider<Future<ChildProfile> Function(ChildProfile)>((ref) {

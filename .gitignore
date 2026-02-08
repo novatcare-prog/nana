@@ -31,3 +31,8 @@ coverage/
 # Hive
 *.hive
 *.lock
+
+# Logs and temporary files
+build_log.txt
+build_output.txt
+analysis_output.txt

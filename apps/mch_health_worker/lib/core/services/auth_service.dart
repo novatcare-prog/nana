@@ -25,15 +25,19 @@ class AuthService {
     required String password,
   }) async {
     try {
+      print('🔐 Attempting login for: $email');
       final response = await _supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
+      print('🔐 Login successful for: ${response.user?.email}');
       return response;
     } catch (e) {
+      print('🔐 LOGIN ERROR: $e');
       rethrow;
     }
   }
+
 
   /// Sign up with email and password
   Future<AuthResponse> signUp({

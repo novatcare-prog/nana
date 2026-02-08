@@ -202,16 +202,30 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
         actions: [
           TextButton.icon(
             onPressed: _isLoading ? null : _handleSave,
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+            ),
             icon: _isLoading
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.save),
             label: const Text('Save'),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _isLoading ? null : _handleSave,
+        icon: _isLoading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              )
+            : const Icon(Icons.save),
+        label: Text(_isLoading ? 'Saving...' : 'Save Changes'),
       ),
       body: Form(
         key: _formKey,
