@@ -8,6 +8,8 @@ import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/appointment_provider.dart';
 import '../../../../core/utils/error_helper.dart';
+import '../../../education/presentation/providers/daily_tip_provider.dart';
+import '../widgets/health_tip_card.dart';
 
 /// Pregnancy Dashboard Screen
 /// Shown when the logged-in user has an active pregnancy
@@ -41,6 +43,7 @@ class _PregnancyDashboardState extends ConsumerState<PregnancyDashboard>
     final maternalProfileAsync = ref.watch(currentMaternalProfileProvider);
     final pregnancyWeek = ref.watch(pregnancyWeekProvider);
     final daysUntilDue = ref.watch(daysUntilDueDateProvider);
+    final dailyTipAsync = ref.watch(dailyTipProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -122,6 +125,7 @@ class _PregnancyDashboardState extends ConsumerState<PregnancyDashboard>
                 maternalProfileAsync: maternalProfileAsync,
                 pregnancyWeek: pregnancyWeek,
                 daysUntilDue: daysUntilDue,
+                dailyTipAsync: dailyTipAsync,
               ),
               // Tab 2: Children View
               const _ChildrenView(),
@@ -145,11 +149,13 @@ class _PregnancyView extends ConsumerWidget {
   final AsyncValue maternalProfileAsync;
   final int? pregnancyWeek;
   final int? daysUntilDue;
+  final AsyncValue dailyTipAsync;
 
   const _PregnancyView({
     required this.maternalProfileAsync,
     required this.pregnancyWeek,
     required this.daysUntilDue,
+    required this.dailyTipAsync,
   });
 
   @override
@@ -203,7 +209,7 @@ class _PregnancyView extends ConsumerWidget {
             const SizedBox(height: 20),
 
             // Health Tips
-            _PregnancyHealthTip(week: pregnancyWeek ?? 1),
+            HealthTipCard(tip: dailyTipAsync.value),
 
             const SizedBox(height: 40),
           ],
@@ -777,73 +783,6 @@ class _QuickActionButton extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-/// Pregnancy Health Tip based on current week
-class _PregnancyHealthTip extends StatelessWidget {
-  final int week;
-
-  const _PregnancyHealthTip({required this.week});
-
-  @override
-  Widget build(BuildContext context) {
-    final tip = _getTipForWeek(week);
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFCE4EC), // Light pink
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.lightbulb_outline,
-              color: Color(0xFFE91E63), size: 24),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'WEEK TIP',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFE91E63),
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  tip,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[800],
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getTipForWeek(int week) {
-    if (week <= 12) {
-      return 'First trimester is crucial! Take your folic acid supplements daily and stay hydrated.';
-    } else if (week <= 20) {
-      return 'You may start feeling baby movements soon! Continue eating iron-rich foods like spinach and beans.';
-    } else if (week <= 28) {
-      return 'Your baby is growing rapidly. Rest when needed and keep attending your ANC appointments.';
-    } else if (week <= 36) {
-      return 'Start preparing for delivery. Pack your hospital bag and know the signs of labor.';
-    } else {
-      return 'Baby could arrive any day! Rest well and contact your health facility if you experience contractions.';
-    }
   }
 }
 

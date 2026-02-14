@@ -7,6 +7,9 @@ import '../../../../core/providers/maternal_profile_provider.dart';
 import '../../../../core/providers/child_provider.dart';
 import '../../../../core/providers/immunization_provider.dart';
 
+import '../../../education/presentation/providers/daily_tip_provider.dart';
+import '../widgets/health_tip_card.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -26,6 +29,9 @@ class HomeScreen extends ConsumerWidget {
 
     // 3. URGENT ALERTS - Real data from Immunization Records
     final urgentAlertsAsync = ref.watch(urgentAlertsProvider);
+
+    // 4. DAILY TIP
+    final dailyTipAsync = ref.watch(dailyTipProvider);
 
     // 4. Get ID for SHA card (use ID number from user metadata)
     final shaNumber =
@@ -211,7 +217,7 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
 
                     // E. HEALTH TIP (Education)
-                    _HealthTipOfTheDay(),
+                    HealthTipCard(tip: dailyTipAsync.value),
 
                     const SizedBox(height: 40),
                   ]),
@@ -783,51 +789,6 @@ class _UrgentActionAlert extends StatelessWidget {
             const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.red),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _HealthTipOfTheDay extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE3F2FD),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.lightbulb, color: Color(0xFF1976D2), size: 28),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'health_tip.did_you_know'.tr(),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1976D2),
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'health_tip.iron_tip'.tr(),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF0D47A1),
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
