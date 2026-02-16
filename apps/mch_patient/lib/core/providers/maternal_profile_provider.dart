@@ -9,7 +9,7 @@ final maternalProfileRepositoryProvider =
 });
 
 /// Provider to get the current patient's maternal profile
-/// This fetches the logged-in user's maternal profile using auth_id in maternal_profiles table
+/// This fetches the logged-in user's maternal profile using auth_id, phone, or ID number
 final currentMaternalProfileProvider =
     FutureProvider<MaternalProfile?>((ref) async {
   final supabase = Supabase.instance.client;
@@ -18,15 +18,57 @@ final currentMaternalProfileProvider =
   if (user == null) return null;
 
   try {
-    // Query maternal_profiles directly using auth_id
-    // Also fetch facility name via relation
-    final response = await supabase
+    // First try: Query by auth_id
+    var response = await supabase
         .from('maternal_profiles')
         .select('*, facilities(facility_name)')
         .eq('auth_id', user.id)
         .maybeSingle();
 
-    if (response == null) return null;
+    // If not found by auth_id, try phone and ID number from user metadata
+    if (response == null) {
+      final userPhone = user.userMetadata?['phone'] as String?;
+      final userIdNumber = user.userMetadata?['id_number'] as String?;
+
+      print('📋 Profile not found by auth_id, trying phone: $userPhone and ID: $userIdNumber');
+
+      if (userPhone != null || userIdNumber != null) {
+        // Build OR query for phone and/or ID number
+        final query = supabase
+            .from('maternal_profiles')
+            .select('*, facilities(facility_name)');
+
+        if (userPhone != null && userIdNumber != null) {
+          // Both available: match either phone OR id_number
+          response = await query
+              .or('telephone.eq.$userPhone,id_number.eq.$userIdNumber')
+              .maybeSingle();
+        } else if (userPhone != null) {
+          // Only phone available
+          response = await query.eq('telephone', userPhone).maybeSingle();
+        } else if (userIdNumber != null) {
+          // Only ID available
+          response = await query.eq('id_number', userIdNumber).maybeSingle();
+        }
+
+        // If we found a profile via phone/ID, update its auth_id
+        if (response != null && response['auth_id'] == null) {
+          print('✅ Found profile via phone/ID, updating auth_id');
+          await supabase
+              .from('maternal_profiles')
+              .update({'auth_id': user.id})
+              .eq('id', response['id']);
+          
+          // Update local response with new auth_id
+          response['auth_id'] = user.id;
+        }
+      }
+    }
+
+    if (response == null) {
+      print('📋 No maternal profile found for user ${user.id}');
+      return null;
+    }
 
     // Map facility name if it came from relation
     final data = Map<String, dynamic>.from(response);
@@ -35,9 +77,10 @@ final currentMaternalProfileProvider =
       data['facility_name'] = data['facilities']['facility_name'];
     }
 
+    print('✅ Maternal profile loaded: ${data['client_name']}');
     return MaternalProfile.fromJson(data);
   } catch (e) {
-    print('Error fetching maternal profile: $e');
+    print('❌ Error fetching maternal profile: $e');
     return null;
   }
 });

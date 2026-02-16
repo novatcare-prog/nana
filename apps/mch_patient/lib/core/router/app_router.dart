@@ -46,38 +46,19 @@ import '../../../../core/providers/auth_provider.dart';
 
 // Router provider
 final routerProvider = Provider<GoRouter>((ref) {
-  final isInitialized = ref.watch(appInitializedProvider);
-
-  if (!isInitialized) {
-    return GoRouter(
-      initialLocation: '/',
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const SplashScreen(),
-        ),
-      ],
-    );
-  }
-
   final authState = ref.watch(authStateProvider.stream);
 
   return GoRouter(
     refreshListenable: GoRouterRefreshStream(authState),
-    initialLocation: '/', // Start at splash screen
+    initialLocation: '/login', // Start at login screen
     redirect: (context, state) {
-      // Don't redirect if on splash - it handles initialization
-      if (state.matchedLocation == '/') {
-        return null;
-      }
-
       // Check auth state (with error handling for uninitialized state)
       bool isAuthenticated = false;
       try {
         isAuthenticated = Supabase.instance.client.auth.currentUser != null;
       } catch (e) {
-        // Supabase not initialized yet, redirect to splash
-        return '/';
+        // Supabase not initialized yet, allow login
+        isAuthenticated = false;
       }
 
       final isOnAuth = state.matchedLocation == '/login' ||
@@ -97,12 +78,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      // Splash Screen Route (OUTSIDE ShellRoute)
-      GoRoute(
-        path: '/',
-        name: 'splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
 
       // Auth Routes
       GoRoute(
@@ -127,10 +102,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           return MainShell(child: child);
         },
         routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const SplashScreen(),
-          ),
           GoRoute(
             path: '/home',
             name: 'home',

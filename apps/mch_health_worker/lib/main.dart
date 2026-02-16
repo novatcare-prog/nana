@@ -16,7 +16,6 @@ import 'core/services/connectivity_service.dart';
 import 'features/navigation/main_navigation_scaffold.dart';
 import 'features/patient_management/presentation/screens/login_screen.dart';
 import 'features/patient_management/presentation/screens/reset_password_screen.dart';
-import 'features/patient_management/presentation/screens/splash_screen.dart';
 import 'core/widgets/offline_indicator.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -50,36 +49,46 @@ void main() async {
   }
 
   // 2. Initialize Supabase
-  await Supabase.initialize(
-    url: url,
-    anonKey: key,
-    authOptions: const FlutterAuthClientOptions(
-      authFlowType: AuthFlowType.pkce,
-    ),
-  );
+  try {
+    await Supabase.initialize(
+      url: url,
+      anonKey: key,
+      authOptions: const FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
+      ),
+    );
+    print('✅ Supabase initialized successfully');
+  } catch (e) {
+    print('⚠️ Supabase initialization failed (likely offline): $e');
+    // Continue anyway - app handles offline state
+  }
 
   // 3. Listen for Auth State Changes (Password Recovery, Sign Out)
-  Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-    if (data.event == AuthChangeEvent.passwordRecovery) {
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const ResetPasswordScreen(),
-        ),
-        (route) => false,
-      );
-    } else if (data.event == AuthChangeEvent.signedOut) {
-      // Show logging out animation, then navigate to login
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const _LoggingOutScreen(),
-          transitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder: (_, animation, __, child) =>
-              FadeTransition(opacity: animation, child: child),
-        ),
-        (route) => false,
-      );
-    }
-  });
+  try {
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.passwordRecovery) {
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const ResetPasswordScreen(),
+          ),
+          (route) => false,
+        );
+      } else if (data.event == AuthChangeEvent.signedOut) {
+        // Show logging out animation, then navigate to login
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const _LoggingOutScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder: (_, animation, __, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+          (route) => false,
+        );
+      }
+    });
+  } catch (e) {
+    print('⚠️ Auth state listener setup failed: $e');
+  }
 
   // 4. Initialize Hive (Offline Storage)
   print('🔄 Initializing Hive...');
@@ -118,9 +127,9 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
 
-      // ✅ Start with the Splash Screen, wrapped with sync error listener
+      // ✅ Start directly with AuthGate (Splash Screen bypass)
       home: const SyncErrorListener(
-        child: SplashScreen(),
+        child: AuthGate(),
       ),
     );
   }
