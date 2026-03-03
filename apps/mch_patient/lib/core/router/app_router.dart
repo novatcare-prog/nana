@@ -17,7 +17,6 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/sharing/presentation/screens/share_records_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../features/home/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/children/presentation/screens/add_child_screen.dart';
 import '../../features/education/presentation/screens/handbook_screen.dart';
@@ -42,6 +41,9 @@ import '../../features/journal/domain/models/journal_entry.dart';
 import '../../features/family_planning/presentation/screens/family_planning_screen.dart';
 import '../../features/family_planning/presentation/screens/add_period_screen.dart';
 import '../../features/family_planning/presentation/screens/family_planning_resources_screen.dart';
+import '../../features/qa/presentation/screens/my_questions_screen.dart';
+import '../../features/qa/presentation/screens/ask_question_screen.dart';
+import '../../features/qa/presentation/screens/question_detail_screen.dart';
 import '../../../../core/providers/auth_provider.dart';
 
 // Router provider
@@ -78,7 +80,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-
       // Auth Routes
       GoRoute(
         path: '/login',
@@ -340,6 +341,28 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'resources',
             name: 'family-planning-resources',
             builder: (context, state) => const FamilyPlanningResourcesScreen(),
+          ),
+        ],
+      ),
+
+      // Q&A Routes
+      GoRoute(
+        path: '/qa',
+        name: 'qa',
+        builder: (context, state) => const MyQuestionsScreen(),
+        routes: [
+          GoRoute(
+            path: 'ask',
+            name: 'ask-question',
+            builder: (context, state) => const AskQuestionScreen(),
+          ),
+          GoRoute(
+            path: 'view/:id',
+            name: 'view-question',
+            builder: (context, state) {
+              final questionId = state.pathParameters['id']!;
+              return QuestionDetailScreen(questionId: questionId);
+            },
           ),
         ],
       ),

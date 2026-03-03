@@ -278,6 +278,14 @@ class ProfileScreen extends ConsumerWidget {
             _SettingsCard(
               children: [
                 _SettingsTile(
+                  icon: Icons.question_answer,
+                  color: const Color(0xFF0D9488),
+                  title: 'Ask a Health Worker',
+                  subtitle: 'Ask anonymous health questions',
+                  onTap: () => context.push('/qa'),
+                ),
+                const _Divider(),
+                _SettingsTile(
                   icon: Icons.help_outline,
                   color: Colors.green,
                   title: 'profile.help_faq'.tr(),

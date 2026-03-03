@@ -67,3 +67,8 @@ export 'src/data/repositories/postnatal_visit_repository.dart';
 
 // Sharing
 export 'src/models/sharing/shared_patient_data.dart';
+
+// Q&A Feature
+export 'src/models/qa/health_question.dart';
+export 'src/models/qa/question_answer.dart';
+export 'src/data/repositories/health_question_repository.dart';

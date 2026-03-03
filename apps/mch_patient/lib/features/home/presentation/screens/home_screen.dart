@@ -663,6 +663,12 @@ class _QuickActionsGrid extends StatelessWidget {
           color: Colors.pinkAccent,
           onTap: () => context.push('/family-planning'),
         ),
+        _QuickActionBtn(
+          icon: Icons.question_answer,
+          label: 'Ask a\nHealth Worker',
+          color: const Color(0xFF0D9488),
+          onTap: () => context.push('/qa'),
+        ),
       ],
     );
   }
@@ -721,7 +727,7 @@ class _QuickActionBtn extends StatelessWidget {
               label,
               style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
               textAlign: TextAlign.center,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ],

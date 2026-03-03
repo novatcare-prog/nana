@@ -22,10 +22,11 @@ class NutritionTrackingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nutritionAsync = ref.watch(patientNutritionRecordsProvider(patientId));
+    final nutritionAsync =
+        ref.watch(patientNutritionRecordsProvider(patientId));
     final muacAsync = ref.watch(patientMuacMeasurementsProvider(patientId));
     final latestMuacAsync = ref.watch(latestMuacMeasurementProvider(patientId));
-    
+
     // Get latest hemoglobin result for anemia detection
     final latestHbAsync = ref.watch(latestTestResultProvider(
       LabTestQuery(
@@ -33,7 +34,7 @@ class NutritionTrackingScreen extends ConsumerWidget {
         testType: LabTestType.hemoglobin,
       ),
     ));
-    
+
     // Get ANC visits for weight gain tracking
     final visitsAsync = ref.watch(patientVisitsProvider(patientId));
 
@@ -74,7 +75,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.straighten, color: Theme.of(context).colorScheme.primary),
+                  Icon(Icons.straighten,
+                      color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   const Text(
                     'MUAC Status',
@@ -110,7 +112,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
           // WEIGHT GAIN TRACKING SECTION
           visitsAsync.when(
             data: (visits) {
-              if (visits.isEmpty || visits.length < 2) return const SizedBox.shrink();
+              if (visits.isEmpty || visits.length < 2)
+                return const SizedBox.shrink();
               return Column(
                 children: [
                   _buildWeightGainSummary(context, visits, patient),
@@ -140,7 +143,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.medication, color: Theme.of(context).colorScheme.primary),
+                  Icon(Icons.medication,
+                      color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   const Text(
                     'Supplements & Interventions',
@@ -154,12 +158,14 @@ class NutritionTrackingScreen extends ConsumerWidget {
           const SizedBox(height: 12),
 
           nutritionAsync.when(
-             data: (records) {
+            data: (records) {
               if (records.isEmpty) {
                 return _buildEmptyState();
               }
               return Column(
-                children: records.map((record) => _buildNutritionCard(context, record, ref)).toList(),
+                children: records
+                    .map((record) => _buildNutritionCard(context, record, ref))
+                    .toList(),
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -275,7 +281,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMuacTrend(BuildContext context, List<MuacMeasurement> measurements) {
+  Widget _buildMuacTrend(
+      BuildContext context, List<MuacMeasurement> measurements) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -295,7 +302,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
                         width: 100,
                         child: Text(
                           DateFormat('MMM dd').format(m.measurementDate),
-                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[600]),
                         ),
                       ),
                       Expanded(
@@ -324,7 +332,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNutritionCard(BuildContext context, NutritionRecord record, WidgetRef ref) {
+  Widget _buildNutritionCard(
+      BuildContext context, NutritionRecord record, WidgetRef ref) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -347,7 +356,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
                   children: [
                     if (record.isMalnourished)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.red.shade100,
                           borderRadius: BorderRadius.circular(12),
@@ -361,7 +371,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
                       icon: const Icon(Icons.delete_outline, size: 20),
                       color: Colors.red,
                       tooltip: 'Delete Record',
-                      onPressed: () => _confirmDeleteRecord(context, record, ref),
+                      onPressed: () =>
+                          _confirmDeleteRecord(context, record, ref),
                     ),
                   ],
                 ),
@@ -373,16 +384,22 @@ class NutritionTrackingScreen extends ConsumerWidget {
               runSpacing: 8,
               children: [
                 if (record.ironFolateGiven)
-                  _buildBadge('Iron/Folate: ${record.ironFolateTablets ?? 0} tabs', Icons.medication, Colors.blue),
+                  _buildBadge(
+                      'Iron/Folate: ${record.ironFolateTablets ?? 0} tabs',
+                      Icons.medication,
+                      Colors.blue),
                 if (record.calciumGiven)
-                  _buildBadge('Calcium: ${record.calciumTablets ?? 0} tabs', Icons.medication, Colors.purple),
+                  _buildBadge('Calcium: ${record.calciumTablets ?? 0} tabs',
+                      Icons.medication, Colors.purple),
                 if (record.dewormingGiven)
-                  _buildBadge('Deworming: ${record.dewormingDrug ?? "Given"}', Icons.healing, Colors.orange),
+                  _buildBadge('Deworming: ${record.dewormingDrug ?? "Given"}',
+                      Icons.healing, Colors.orange),
                 if (record.muacCm != null)
-                  _buildBadge('MUAC: ${record.muacCm} cm', Icons.straighten, 
-                    record.isMalnourished ? Colors.red : Colors.green),
+                  _buildBadge('MUAC: ${record.muacCm} cm', Icons.straighten,
+                      record.isMalnourished ? Colors.red : Colors.green),
                 if (record.nutritionCounselingGiven)
-                  _buildBadge('Counseling Given', Icons.psychology, Colors.teal),
+                  _buildBadge(
+                      'Counseling Given', Icons.psychology, Colors.teal),
               ],
             ),
             if (record.notes != null && record.notes!.isNotEmpty) ...[
@@ -413,7 +430,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w500),
+            style: TextStyle(
+                fontSize: 12, color: color, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -452,10 +470,10 @@ class NutritionTrackingScreen extends ConsumerWidget {
   Widget _buildAnemiaStatus(BuildContext context, LabResult latestHb) {
     final hbValue = double.tryParse(latestHb.resultValue ?? '0') ?? 0;
     final isAnemic = hbValue < 11.0; // WHO threshold for pregnant women
-    
+
     final color = isAnemic ? Colors.red : Colors.green;
     final status = isAnemic ? 'Anemic' : 'Normal';
-    
+
     return Card(
       color: color.shade50,
       child: Padding(
@@ -537,22 +555,27 @@ class NutritionTrackingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWeightGainSummary(BuildContext context, List<ANCVisit> visits, MaternalProfile patient) {
+  Widget _buildWeightGainSummary(
+      BuildContext context, List<ANCVisit> visits, MaternalProfile patient) {
     // Sort by date (oldest first)
-    final sortedVisits = visits.toList()..sort((a, b) => a.visitDate.compareTo(b.visitDate));
-    
+    final sortedVisits = visits.toList()
+      ..sort((a, b) => a.visitDate.compareTo(b.visitDate));
+
     final firstWeight = sortedVisits.first.weightKg;
     final latestWeight = sortedVisits.last.weightKg;
-    
-    if (firstWeight == null || latestWeight == null) return const SizedBox.shrink();
-    
+
+    if (firstWeight == null || latestWeight == null)
+      return const SizedBox.shrink();
+
     final weightGain = latestWeight - firstWeight;
-    
+
     // Calculate BMI and expected gain
     final bmi = _calculateBMI(patient.heightCm, firstWeight);
-    final expectedGain = _calculateExpectedGain(bmi, sortedVisits.last.gestationWeeks);
-    final isOnTrack = weightGain >= (expectedGain * 0.8); // 80% of expected = on track
-    
+    final expectedGain =
+        _calculateExpectedGain(bmi, sortedVisits.last.gestationWeeks);
+    final isOnTrack =
+        weightGain >= (expectedGain * 0.8); // 80% of expected = on track
+
     return Card(
       color: isOnTrack ? Colors.green.shade50 : Colors.orange.shade50,
       child: Padding(
@@ -577,10 +600,11 @@ class NutritionTrackingScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _WeightStat('First Visit', '${firstWeight.toStringAsFixed(1)} kg'),
+                _WeightStat(
+                    'First Visit', '${firstWeight.toStringAsFixed(1)} kg'),
                 _WeightStat('Latest', '${latestWeight.toStringAsFixed(1)} kg'),
-                _WeightStat('Gain', '+${weightGain.toStringAsFixed(1)} kg', 
-                  color: isOnTrack ? Colors.green : Colors.orange),
+                _WeightStat('Gain', '+${weightGain.toStringAsFixed(1)} kg',
+                    color: isOnTrack ? Colors.green : Colors.orange),
               ],
             ),
             const SizedBox(height: 8),
@@ -623,12 +647,13 @@ class NutritionTrackingScreen extends ConsumerWidget {
     } else {
       totalExpected = 7; // Obese: 5-9 kg
     }
-    
+
     // Pro-rate for current gestation (assuming 40 weeks total)
     return (totalExpected / 40) * weeks;
   }
 
-  Future<void> _confirmDeleteRecord(BuildContext context, NutritionRecord record, WidgetRef ref) async {
+  Future<void> _confirmDeleteRecord(
+      BuildContext context, NutritionRecord record, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -664,7 +689,7 @@ class NutritionTrackingScreen extends ConsumerWidget {
       try {
         // Call the provider as a function that returns a Future
         await ref.read(deleteNutritionRecordProvider)(record.id!);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -717,7 +742,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
                   prefixIcon: Icon(Icons.straighten),
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter MUAC value';
@@ -761,7 +787,7 @@ class NutritionTrackingScreen extends ConsumerWidget {
         try {
           // Get current user profile for facilityId and recordedBy
           final userProfile = ref.read(currentUserProfileProvider).value;
-          if (userProfile == null || userProfile.facilityId == null || userProfile.id == null) {
+          if (userProfile == null || userProfile.facilityId == null) {
             throw Exception('User profile or facility information not found');
           }
 
@@ -772,7 +798,7 @@ class NutritionTrackingScreen extends ConsumerWidget {
             measurementDate: DateTime.now(),
             isMalnourished: muacValue < 23,
             facilityId: userProfile.facilityId!,
-            recordedBy: userProfile.id!,
+            recordedBy: userProfile.id,
             recordedByName: userProfile.fullName,
           );
 

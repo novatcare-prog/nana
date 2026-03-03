@@ -85,8 +85,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
         sex: _selectedSex,
         dateOfBirth: _dateOfBirth!,
         dateFirstSeen: _dateFirstSeen,
-        birthOrder: _birthOrderController.text.isNotEmpty 
-            ? int.tryParse(_birthOrderController.text) 
+        birthOrder: _birthOrderController.text.isNotEmpty
+            ? int.tryParse(_birthOrderController.text)
             : null,
         // Removed childbirth-specific fields
         gestationAtBirthWeeks: 0, // Not applicable for manual registration
@@ -94,51 +94,51 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
         birthLengthCm: 0, // Not applicable
         placeOfBirth: 'Unknown', // Not applicable
         // Family Details
-        fatherName: _fatherNameController.text.trim().isEmpty 
-            ? null 
+        fatherName: _fatherNameController.text.trim().isEmpty
+            ? null
             : _fatherNameController.text.trim(),
-        fatherPhone: _fatherPhoneController.text.trim().isEmpty 
-            ? null 
+        fatherPhone: _fatherPhoneController.text.trim().isEmpty
+            ? null
             : _fatherPhoneController.text.trim(),
         motherName: widget.motherName,
-        guardianName: _guardianNameController.text.trim().isEmpty 
-            ? null 
+        guardianName: _guardianNameController.text.trim().isEmpty
+            ? null
             : _guardianNameController.text.trim(),
-        guardianPhone: _guardianPhoneController.text.trim().isEmpty 
-            ? null 
+        guardianPhone: _guardianPhoneController.text.trim().isEmpty
+            ? null
             : _guardianPhoneController.text.trim(),
         // Address
-        county: _countyController.text.trim().isEmpty 
-            ? null 
+        county: _countyController.text.trim().isEmpty
+            ? null
             : _countyController.text.trim(),
-        subCounty: _subCountyController.text.trim().isEmpty 
-            ? null 
+        subCounty: _subCountyController.text.trim().isEmpty
+            ? null
             : _subCountyController.text.trim(),
-        ward: _wardController.text.trim().isEmpty 
-            ? null 
+        ward: _wardController.text.trim().isEmpty
+            ? null
             : _wardController.text.trim(),
-        village: _villageController.text.trim().isEmpty 
-            ? null 
+        village: _villageController.text.trim().isEmpty
+            ? null
             : _villageController.text.trim(),
         // Registration Numbers
-        immunizationRegNumber: _immunizationRegController.text.trim().isEmpty 
-            ? null 
+        immunizationRegNumber: _immunizationRegController.text.trim().isEmpty
+            ? null
             : _immunizationRegController.text.trim(),
-        cwcNumber: _cwcNumberController.text.trim().isEmpty 
-            ? null 
+        cwcNumber: _cwcNumberController.text.trim().isEmpty
+            ? null
             : _cwcNumberController.text.trim(),
-        birthCertificateNumber: _birthCertNumberController.text.trim().isEmpty 
-            ? null 
+        birthCertificateNumber: _birthCertNumberController.text.trim().isEmpty
+            ? null
             : _birthCertNumberController.text.trim(),
         // Current Health Status
-        weightAtFirstContact: _weightController.text.isNotEmpty 
-            ? double.tryParse(_weightController.text) 
+        weightAtFirstContact: _weightController.text.isNotEmpty
+            ? double.tryParse(_weightController.text)
             : null,
-        lengthAtFirstContact: _lengthController.text.isNotEmpty 
-            ? double.tryParse(_lengthController.text) 
+        lengthAtFirstContact: _lengthController.text.isNotEmpty
+            ? double.tryParse(_lengthController.text)
             : null,
-        headCircumferenceCm: _headCircumferenceController.text.isNotEmpty 
-            ? double.tryParse(_headCircumferenceController.text) 
+        headCircumferenceCm: _headCircumferenceController.text.isNotEmpty
+            ? double.tryParse(_headCircumferenceController.text)
             : null,
         hivExposed: _hivExposed,
         hivStatus: _hivStatus == 'Unknown' ? null : _hivStatus,
@@ -181,7 +181,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        
         TextFormField(
           controller: _childNameController,
           decoration: const InputDecoration(
@@ -198,9 +197,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         ),
         const SizedBox(height: 16),
-
         DropdownButtonFormField<String>(
-          value: _selectedSex,
+          initialValue: _selectedSex,
           decoration: const InputDecoration(
             labelText: 'Sex *',
             prefixIcon: Icon(Icons.person),
@@ -214,9 +212,9 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         ),
         const SizedBox(height: 16),
-
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           tileColor: Colors.grey[100],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
@@ -233,7 +231,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             final date = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
-              firstDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+              firstDate:
+                  DateTime.now().subtract(const Duration(days: 365 * 10)),
               lastDate: DateTime.now(),
             );
             if (date != null) {
@@ -242,9 +241,9 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         ),
         const SizedBox(height: 16),
-
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           tileColor: Colors.grey[100],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
@@ -259,7 +258,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             final date = await showDatePicker(
               context: context,
               initialDate: _dateFirstSeen,
-              firstDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+              firstDate:
+                  DateTime.now().subtract(const Duration(days: 365 * 10)),
               lastDate: DateTime.now(),
             );
             if (date != null) {
@@ -268,7 +268,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         ),
         const SizedBox(height: 16),
-
         TextFormField(
           controller: _birthOrderController,
           decoration: const InputDecoration(
@@ -297,10 +296,9 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           style: TextStyle(color: Colors.grey[600], fontSize: 14),
         ),
         const SizedBox(height: 16),
-
-        const Text('Family Details', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text('Family Details',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
-        
         TextFormField(
           controller: _fatherNameController,
           decoration: const InputDecoration(
@@ -310,7 +308,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _fatherPhoneController,
           decoration: const InputDecoration(
@@ -321,7 +318,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           keyboardType: TextInputType.phone,
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _guardianNameController,
           decoration: const InputDecoration(
@@ -331,7 +327,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _guardianPhoneController,
           decoration: const InputDecoration(
@@ -342,10 +337,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           keyboardType: TextInputType.phone,
         ),
         const SizedBox(height: 24),
-
         const Text('Address', style: TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
-        
         TextFormField(
           controller: _countyController,
           decoration: const InputDecoration(
@@ -355,7 +348,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _subCountyController,
           decoration: const InputDecoration(
@@ -365,7 +357,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _wardController,
           decoration: const InputDecoration(
@@ -375,7 +366,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _villageController,
           decoration: const InputDecoration(
@@ -385,10 +375,9 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 24),
-
-        const Text('Registration Numbers', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text('Registration Numbers',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
-        
         TextFormField(
           controller: _immunizationRegController,
           decoration: const InputDecoration(
@@ -398,7 +387,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _cwcNumberController,
           decoration: const InputDecoration(
@@ -408,7 +396,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _birthCertNumberController,
           decoration: const InputDecoration(
@@ -435,10 +422,9 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           style: TextStyle(color: Colors.grey[600], fontSize: 14),
         ),
         const SizedBox(height: 16),
-
-        const Text('Current Measurements', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text('Current Measurements',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
-        
         TextFormField(
           controller: _weightController,
           decoration: const InputDecoration(
@@ -451,7 +437,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _lengthController,
           decoration: const InputDecoration(
@@ -464,7 +449,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
-
         TextFormField(
           controller: _headCircumferenceController,
           decoration: const InputDecoration(
@@ -477,12 +461,11 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 24),
-
-        const Text('Health Screening', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text('Health Screening',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
-
         DropdownButtonFormField<bool?>(
-          value: _hivExposed,
+          initialValue: _hivExposed,
           decoration: const InputDecoration(
             labelText: 'HIV Exposed',
             prefixIcon: Icon(Icons.health_and_safety),
@@ -498,15 +481,15 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         ),
         const SizedBox(height: 12),
-
         DropdownButtonFormField<String>(
-          value: _hivStatus,
+          initialValue: _hivStatus,
           decoration: const InputDecoration(
             labelText: 'HIV Status',
             prefixIcon: Icon(Icons.medical_information),
             border: OutlineInputBorder(),
           ),
-          items: ['Unknown', 'Negative', 'Positive', 'Not Tested'].map((status) {
+          items:
+              ['Unknown', 'Negative', 'Positive', 'Not Tested'].map((status) {
             return DropdownMenuItem(value: status, child: Text(status));
           }).toList(),
           onChanged: (value) {
@@ -514,7 +497,6 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         ),
         const SizedBox(height: 12),
-
         SwitchListTile(
           title: const Text('TB Screened'),
           subtitle: const Text('Has the child been screened for TB?'),

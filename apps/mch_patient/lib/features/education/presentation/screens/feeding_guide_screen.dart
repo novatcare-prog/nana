@@ -81,10 +81,10 @@ class _BreastfeedingPositioningTab extends StatelessWidget {
           const Text('Is the infant correctly positioned?',
               style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Row(
+          const Row(
             children: [
               _CheckboxLabel('Yes'),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               _CheckboxLabel('No'),
             ],
           ),
@@ -117,10 +117,10 @@ class _BreastfeedingPositioningTab extends StatelessWidget {
           const Text('Is the infant well attached?',
               style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Row(
+          const Row(
             children: [
               _CheckboxLabel('Yes'),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               _CheckboxLabel('No'),
             ],
           ),

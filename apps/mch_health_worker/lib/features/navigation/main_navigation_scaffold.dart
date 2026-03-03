@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../core/providers/auth_providers.dart';
 import '../../core/providers/facility_providers.dart';
+import '../../core/providers/qa_provider.dart';
 import '../patient_management/presentation/screens/patient_list_screen.dart';
 import '../patient_management/presentation/screens/dashboard_screen.dart';
 import '../patient_management/presentation/screens/schedule_screen.dart';
@@ -10,6 +11,7 @@ import '../patient_management/presentation/screens/settings_screen.dart';
 import '../patient_management/presentation/screens/edit_profile_screen.dart';
 import '../reports/presentation/screens/reports_screen.dart';
 import '../patient_management/presentation/screens/notifications_screen.dart';
+import '../qa/presentation/screens/questions_feed_screen.dart';
 import '../../core/widgets/offline_indicator.dart';
 import '../../core/providers/notification_providers.dart';
 
@@ -45,6 +47,11 @@ class _MainNavigationScaffoldState
       selectedIcon: Icon(Icons.calendar_today),
       label: 'Schedule',
     ),
+    NavigationDestination(
+      icon: Icon(Icons.question_answer_outlined),
+      selectedIcon: Icon(Icons.question_answer),
+      label: 'Q&A',
+    ),
   ];
 
   void _onDestinationSelected(int index) {
@@ -62,6 +69,8 @@ class _MainNavigationScaffoldState
         return PatientListScreen(drawer: _buildDrawer());
       case 2:
         return ScheduleScreen(drawer: _buildDrawer());
+      case 3:
+        return QuestionsFeedScreen(drawer: _buildDrawer());
       default:
         return DashboardScreen(drawer: _buildDrawer());
     }
@@ -195,6 +204,28 @@ class _MainNavigationScaffoldState
                   extended: extended,
                   onTap: () => _onDestinationSelected(2),
                 ),
+                // Q&A
+                Consumer(
+                  builder: (context, ref, _) {
+                    final countAsync =
+                        ref.watch(unansweredQuestionsCountProvider);
+                    final count = countAsync.when(
+                      data: (c) => c,
+                      loading: () => 0,
+                      error: (_, __) => 0,
+                    );
+                    return _buildSidebarItem(
+                      context: context,
+                      icon: Icons.question_answer_outlined,
+                      selectedIcon: Icons.question_answer,
+                      label: 'Q&A',
+                      isSelected: _selectedIndex == 3,
+                      extended: extended,
+                      badge: count > 0 ? count : null,
+                      onTap: () => _onDestinationSelected(3),
+                    );
+                  },
+                ),
 
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -275,7 +306,6 @@ class _MainNavigationScaffoldState
       ),
     );
   }
-
 
   // Helper method to build a sidebar item
   Widget _buildSidebarItem({
@@ -386,6 +416,16 @@ class _MainNavigationScaffoldState
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('MOH Guidelines - Coming soon')),
               );
+            },
+          ),
+
+          // Patient Q&A
+          ListTile(
+            leading: const Icon(Icons.question_answer),
+            title: const Text('Patient Q&A'),
+            onTap: () {
+              Navigator.pop(context);
+              _onDestinationSelected(3);
             },
           ),
 
