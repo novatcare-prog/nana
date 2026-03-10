@@ -138,7 +138,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = e.toString();
+        _error =
+            'Could not load statistics. Please check your connection and try again.';
         _isLoading = false;
       });
     }

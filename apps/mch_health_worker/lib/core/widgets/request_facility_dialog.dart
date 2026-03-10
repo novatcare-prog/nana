@@ -7,7 +7,8 @@ class RequestFacilityDialog extends ConsumerStatefulWidget {
   const RequestFacilityDialog({super.key});
 
   @override
-  ConsumerState<RequestFacilityDialog> createState() => _RequestFacilityDialogState();
+  ConsumerState<RequestFacilityDialog> createState() =>
+      _RequestFacilityDialogState();
 }
 
 class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
@@ -16,21 +17,58 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
   final _kmhflCodeController = TextEditingController();
   final _countyController = TextEditingController();
   final _subCountyController = TextEditingController();
-  
+
   bool _isLoading = false;
 
   // Kenya counties for dropdown
   final List<String> _counties = [
-    'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo-Marakwet',
-    'Embu', 'Garissa', 'Homa Bay', 'Isiolo', 'Kajiado',
-    'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga',
-    'Kisii', 'Kisumu', 'Kitui', 'Kwale', 'Laikipia',
-    'Lamu', 'Machakos', 'Makueni', 'Mandera', 'Marsabit',
-    'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi',
-    'Nakuru', 'Nandi', 'Narok', 'Nyamira', 'Nyandarua',
-    'Nyeri', 'Samburu', 'Siaya', 'Taita-Taveta', 'Tana River',
-    'Tharaka-Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu',
-    'Vihiga', 'Wajir', 'West Pokot',
+    'Baringo',
+    'Bomet',
+    'Bungoma',
+    'Busia',
+    'Elgeyo-Marakwet',
+    'Embu',
+    'Garissa',
+    'Homa Bay',
+    'Isiolo',
+    'Kajiado',
+    'Kakamega',
+    'Kericho',
+    'Kiambu',
+    'Kilifi',
+    'Kirinyaga',
+    'Kisii',
+    'Kisumu',
+    'Kitui',
+    'Kwale',
+    'Laikipia',
+    'Lamu',
+    'Machakos',
+    'Makueni',
+    'Mandera',
+    'Marsabit',
+    'Meru',
+    'Migori',
+    'Mombasa',
+    'Murang\'a',
+    'Nairobi',
+    'Nakuru',
+    'Nandi',
+    'Narok',
+    'Nyamira',
+    'Nyandarua',
+    'Nyeri',
+    'Samburu',
+    'Siaya',
+    'Taita-Taveta',
+    'Tana River',
+    'Tharaka-Nithi',
+    'Trans Nzoia',
+    'Turkana',
+    'Uasin Gishu',
+    'Vihiga',
+    'Wajir',
+    'West Pokot',
   ];
 
   @override
@@ -50,15 +88,15 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
     try {
       final supabase = Supabase.instance.client;
       final user = supabase.auth.currentUser;
-      
+
       await supabase.from('facility_requests').insert({
         'facility_name': _facilityNameController.text.trim(),
-        'kmhfl_code': _kmhflCodeController.text.trim().isEmpty 
-            ? null 
+        'kmhfl_code': _kmhflCodeController.text.trim().isEmpty
+            ? null
             : _kmhflCodeController.text.trim(),
         'county': _countyController.text.trim(),
-        'sub_county': _subCountyController.text.trim().isEmpty 
-            ? null 
+        'sub_county': _subCountyController.text.trim().isEmpty
+            ? null
             : _subCountyController.text.trim(),
         'requested_by': user?.id,
         'status': 'pending',
@@ -68,7 +106,8 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✓ Facility request submitted! Admin will review it.'),
+            content:
+                Text('✓ Facility request submitted! Admin will review it.'),
             backgroundColor: Colors.green,
           ),
         );
@@ -76,8 +115,8 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
+          const SnackBar(
+            content: Text('Could not submit request. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -92,7 +131,7 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Dialog(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),
@@ -171,10 +210,12 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
                     prefixIcon: Icon(Icons.location_city),
                     border: OutlineInputBorder(),
                   ),
-                  items: _counties.map((county) => DropdownMenuItem(
-                    value: county,
-                    child: Text(county),
-                  )).toList(),
+                  items: _counties
+                      .map((county) => DropdownMenuItem(
+                            value: county,
+                            child: Text(county),
+                          ))
+                      .toList(),
                   onChanged: (value) {
                     _countyController.text = value ?? '';
                   },
@@ -233,7 +274,8 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: _isLoading ? null : () => Navigator.pop(context),
+                      onPressed:
+                          _isLoading ? null : () => Navigator.pop(context),
                       child: const Text('Cancel'),
                     ),
                     const SizedBox(width: 12),
@@ -249,7 +291,8 @@ class _RequestFacilityDialogState extends ConsumerState<RequestFacilityDialog> {
                               ),
                             )
                           : const Icon(Icons.send),
-                      label: Text(_isLoading ? 'Submitting...' : 'Submit Request'),
+                      label:
+                          Text(_isLoading ? 'Submitting...' : 'Submit Request'),
                     ),
                   ],
                 ),

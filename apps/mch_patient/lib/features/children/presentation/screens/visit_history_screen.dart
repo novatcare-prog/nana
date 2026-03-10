@@ -52,7 +52,7 @@ class VisitHistoryScreen extends ConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFFFF9800)),
         ),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => ErrorHelper.buildErrorWidget(e),
       ),
     );
   }

@@ -93,7 +93,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
           immunizationsAsync.when(
             data: (immunizations) => _buildTTSection(context, immunizations),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Text('Error: $error'),
+            error: (error, stack) =>
+                const Text('Could not load records. Please try again.'),
           ),
 
           const SizedBox(height: 32),
@@ -136,7 +137,8 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
           malariaAsync.when(
             data: (records) => _buildMalariaSection(context, records),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Text('Error: $error'),
+            error: (error, stack) =>
+                const Text('Could not load records. Please try again.'),
           ),
         ],
       ),

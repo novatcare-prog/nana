@@ -45,6 +45,7 @@ import '../../features/qa/presentation/screens/my_questions_screen.dart';
 import '../../features/qa/presentation/screens/ask_question_screen.dart';
 import '../../features/qa/presentation/screens/question_detail_screen.dart';
 import '../../../../core/providers/auth_provider.dart';
+import '../../features/home/presentation/screens/splash_screen.dart';
 
 // Router provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -52,7 +53,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     refreshListenable: GoRouterRefreshStream(authState),
-    initialLocation: '/login', // Start at login screen
+    initialLocation: '/splash', // Start at splash screen
     redirect: (context, state) {
       // Check auth state (with error handling for uninitialized state)
       bool isAuthenticated = false;
@@ -65,11 +66,17 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final isOnAuth = state.matchedLocation == '/login' ||
           state.matchedLocation == '/signup' ||
-          state.matchedLocation == '/forgot-password';
+          state.matchedLocation == '/forgot-password' ||
+          state.matchedLocation == '/splash';
 
       // If not authenticated and trying to access protected route, redirect to login
       if (!isAuthenticated && !isOnAuth) {
         return '/login';
+      }
+
+      // Never redirect away from splash — it handles its own navigation after init
+      if (state.matchedLocation == '/splash') {
+        return null;
       }
 
       // If authenticated and trying to access auth screens, redirect to home
@@ -80,6 +87,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      // Splash Screen Route
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+
       // Auth Routes
       GoRoute(
         path: '/login',

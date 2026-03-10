@@ -14,7 +14,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visitsAsync = ref.watch(postnatalVisitsByMaternalIdProvider(maternalProfile.id!));
+    final visitsAsync =
+        ref.watch(postnatalVisitsByMaternalIdProvider(maternalProfile.id!));
 
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +29,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.medical_information, size: 64, color: Colors.grey[400]),
+                  Icon(Icons.medical_information,
+                      size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
                     'No postnatal visits recorded yet',
@@ -52,8 +54,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
+        error: (error, stack) => const Center(
+          child: Text('Could not load visit history. Please try again.'),
         ),
       ),
     );
@@ -61,7 +63,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
 
   Widget _buildVisitCard(BuildContext context, PostnatalVisit visit) {
     final hasDangerSigns = visit.excessiveBleeding ||
-        (visit.maternalDangerSigns != null && visit.maternalDangerSigns!.isNotEmpty) ||
+        (visit.maternalDangerSigns != null &&
+            visit.maternalDangerSigns!.isNotEmpty) ||
         (visit.babyDangerSigns != null && visit.babyDangerSigns!.isNotEmpty);
 
     return Card(
@@ -84,7 +87,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                    Icon(Icons.calendar_today,
+                        size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 4),
                     Text(
                       DateFormat('dd/MM/yyyy').format(visit.visitDate),
@@ -96,7 +100,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.teal[100],
                     borderRadius: BorderRadius.circular(20),
@@ -113,7 +118,7 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 8),
-            
+
             // Days Postpartum Badge
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -160,21 +165,19 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
               const SizedBox(height: 4),
               if (visit.excessiveBleeding)
                 _buildWarningChip('Excessive bleeding'),
-              if (visit.foulDischarge)
-                _buildWarningChip('Foul discharge'),
-              if (visit.breastProblems)
-                _buildWarningChip('Breast problems'),
+              if (visit.foulDischarge) _buildWarningChip('Foul discharge'),
+              if (visit.breastProblems) _buildWarningChip('Breast problems'),
               if (visit.perinealWoundInfection)
                 _buildWarningChip('Perineal infection'),
               if (visit.cSectionWoundInfection)
                 _buildWarningChip('C-section infection'),
-              if (visit.urinaryProblems)
-                _buildWarningChip('Urinary problems'),
+              if (visit.urinaryProblems) _buildWarningChip('Urinary problems'),
               const SizedBox(height: 12),
             ],
 
             // Maternal Danger Signs
-            if (visit.maternalDangerSigns != null && visit.maternalDangerSigns!.isNotEmpty) ...[
+            if (visit.maternalDangerSigns != null &&
+                visit.maternalDangerSigns!.isNotEmpty) ...[
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -212,7 +215,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
             // Mental Health
             if (visit.moodAssessment != null) ...[
               _buildInfoRow('Mood', visit.moodAssessment!),
-              if (visit.mentalHealthNotes != null && visit.mentalHealthNotes!.isNotEmpty)
+              if (visit.mentalHealthNotes != null &&
+                  visit.mentalHealthNotes!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
@@ -233,7 +237,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
                 _buildInfoRow('Weight', '${visit.babyWeight} kg'),
               if (visit.babyTemperature != null)
                 _buildInfoRow('Temperature', '${visit.babyTemperature}°C'),
-              _buildInfoRow('Feeding', visit.babyFeedingWell ? 'Well' : 'Poorly'),
+              _buildInfoRow(
+                  'Feeding', visit.babyFeedingWell ? 'Well' : 'Poorly'),
               if (visit.cordStatus != null)
                 _buildInfoRow('Cord Status', visit.cordStatus!),
               const SizedBox(height: 12),
@@ -265,7 +270,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
             ],
 
             // Baby Danger Signs
-            if (visit.babyDangerSigns != null && visit.babyDangerSigns!.isNotEmpty) ...[
+            if (visit.babyDangerSigns != null &&
+                visit.babyDangerSigns!.isNotEmpty) ...[
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -327,23 +333,28 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
                 _buildInfoRow('Method', visit.familyPlanningMethodChosen!),
               if (visit.familyPlanningMethodProvided)
                 Chip(
-                  label: const Text('Method provided', style: TextStyle(fontSize: 11)),
+                  label: const Text('Method provided',
+                      style: TextStyle(fontSize: 11)),
                   backgroundColor: Colors.green[100],
-                  avatar: Icon(Icons.check_circle, size: 16, color: Colors.green[700]),
+                  avatar: Icon(Icons.check_circle,
+                      size: 16, color: Colors.green[700]),
                 ),
               const SizedBox(height: 12),
             ],
 
             // Immunizations
-            if (visit.immunizationsGiven != null && visit.immunizationsGiven!.isNotEmpty) ...[
+            if (visit.immunizationsGiven != null &&
+                visit.immunizationsGiven!.isNotEmpty) ...[
               _buildSubsectionTitle('Immunizations Given'),
               const SizedBox(height: 4),
               Wrap(
                 spacing: 4,
                 runSpacing: 4,
-                children: visit.immunizationsGiven!.split(', ').map((immunization) {
+                children:
+                    visit.immunizationsGiven!.split(', ').map((immunization) {
                   return Chip(
-                    label: Text(immunization, style: const TextStyle(fontSize: 11)),
+                    label: Text(immunization,
+                        style: const TextStyle(fontSize: 11)),
                     backgroundColor: Colors.blue[50],
                   );
                 }).toList(),
@@ -364,7 +375,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.local_hospital, color: Colors.orange[700], size: 20),
+                        Icon(Icons.local_hospital,
+                            color: Colors.orange[700], size: 20),
                         const SizedBox(width: 8),
                         Text(
                           'Referral Made',
@@ -415,7 +427,8 @@ class PostnatalVisitHistoryScreen extends ConsumerWidget {
             ],
 
             // General Notes
-            if (visit.generalNotes != null && visit.generalNotes!.isNotEmpty) ...[
+            if (visit.generalNotes != null &&
+                visit.generalNotes!.isNotEmpty) ...[
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(

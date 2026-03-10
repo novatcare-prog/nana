@@ -181,8 +181,9 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update: ${e.toString()}'),
+          const SnackBar(
+            content:
+                Text('Could not update patient information. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -209,7 +210,8 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.save),
             label: const Text('Save'),
@@ -222,7 +224,8 @@ class _PatientEditScreenState extends ConsumerState<PatientEditScreen> {
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
               )
             : const Icon(Icons.save),
         label: Text(_isLoading ? 'Saving...' : 'Save Changes'),

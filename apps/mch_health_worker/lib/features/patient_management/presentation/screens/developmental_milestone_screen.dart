@@ -57,7 +57,8 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
                 latestMilestone,
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Text('Error: $error'),
+              error: (error, stack) =>
+                  const Text('Could not load data. Please try again.'),
             ),
             const SizedBox(height: 16),
 
@@ -65,7 +66,8 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
             milestonesAsync.when(
               data: (milestones) => _buildSummaryCard(context, milestones),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Text('Error: $error'),
+              error: (error, stack) =>
+                  const Text('Could not load data. Please try again.'),
             ),
             const SizedBox(height: 16),
 
@@ -91,7 +93,8 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
   }
 
   Widget _buildChildInfoCard(BuildContext context) {
-    final ageInMonths = DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
+    final ageInMonths =
+        DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
     final ageInYears = ageInMonths ~/ 12;
     final remainingMonths = ageInMonths % 12;
 
@@ -102,11 +105,13 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: child.sex == 'Male' ? Colors.blue[100] : Colors.pink[100],
+              backgroundColor:
+                  child.sex == 'Male' ? Colors.blue[100] : Colors.pink[100],
               child: Icon(
                 child.sex == 'Male' ? Icons.boy : Icons.girl,
                 size: 35,
-                color: child.sex == 'Male' ? Colors.blue[700] : Colors.pink[700],
+                color:
+                    child.sex == 'Male' ? Colors.blue[700] : Colors.pink[700],
               ),
             ),
             const SizedBox(width: 16),
@@ -205,7 +210,8 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -233,7 +239,7 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
                 style: TextStyle(color: Colors.grey[700]),
               ),
             const SizedBox(height: 16),
-            
+
             // Development Areas
             _buildDevelopmentArea(
               'Gross Motor',
@@ -336,10 +342,13 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context, List<DevelopmentalMilestone> milestones) {
+  Widget _buildSummaryCard(
+      BuildContext context, List<DevelopmentalMilestone> milestones) {
     final totalAssessments = milestones.length;
-    final onTrack = milestones.where((m) => m.overallStatus == 'On Track').length;
-    final needsMonitoring = milestones.where((m) => m.overallStatus == 'Needs Monitoring').length;
+    final onTrack =
+        milestones.where((m) => m.overallStatus == 'On Track').length;
+    final needsMonitoring =
+        milestones.where((m) => m.overallStatus == 'Needs Monitoring').length;
     final withRedFlags = milestones.where((m) => m.redFlagsPresent).length;
 
     return Card(
@@ -405,7 +414,8 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryTile(String label, String value, IconData icon, Color color) {
+  Widget _buildSummaryTile(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -437,8 +447,9 @@ class DevelopmentalMilestonesScreen extends ConsumerWidget {
   }
 
   Widget _buildExpectedMilestonesCard(BuildContext context) {
-    final ageInMonths = DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
-    
+    final ageInMonths =
+        DateTime.now().difference(child.dateOfBirth).inDays ~/ 30;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),

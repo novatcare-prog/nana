@@ -198,7 +198,8 @@ class QuestionDetailScreen extends ConsumerWidget {
                     ),
                     error: (error, _) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text('Error loading answers: $error'),
+                      child: Text('Could not load responses. Please try again.',
+                          style: TextStyle(color: Colors.grey.shade600)),
                     ),
                     data: (answers) {
                       if (answers.isEmpty) {
@@ -363,8 +364,9 @@ class QuestionDetailScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
+                    const SnackBar(
+                      content:
+                          Text('Could not resolve question. Please try again.'),
                       backgroundColor: Colors.red,
                     ),
                   );

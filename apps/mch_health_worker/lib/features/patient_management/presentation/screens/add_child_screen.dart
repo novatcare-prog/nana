@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import '../../../../core/providers/childbirth_providers.dart';
-import '../../../../core/providers/auth_providers.dart';
 
 /// Add Child Screen - Multi-step child registration
 /// Excludes childbirth-specific fields

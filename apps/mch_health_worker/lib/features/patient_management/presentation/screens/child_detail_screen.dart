@@ -213,9 +213,9 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen>
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Card(
               color: Colors.red.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text('Error: $error'),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('Could not load child details. Please try again.'),
               ),
             ),
             data: (latestGrowth) {
