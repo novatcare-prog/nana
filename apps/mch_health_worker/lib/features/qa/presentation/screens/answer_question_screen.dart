@@ -124,7 +124,9 @@ class _AnswerQuestionScreenState extends ConsumerState<AnswerQuestionScreen> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            const SnackBar(
+                content: Text('Could not submit answer. Please try again.'),
+                backgroundColor: Colors.red),
           );
         }
       }
@@ -166,7 +168,9 @@ class _AnswerQuestionScreenState extends ConsumerState<AnswerQuestionScreen> {
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
+                      const SnackBar(
+                          content: Text(
+                              'Could not flag question. Please try again.')),
                     );
                   }
                 }

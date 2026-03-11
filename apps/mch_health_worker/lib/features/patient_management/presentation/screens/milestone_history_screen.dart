@@ -52,14 +52,15 @@ class MilestoneHistoryScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
+        error: (error, stack) => const Center(
+          child: Text('Could not load milestone history. Please try again.'),
         ),
       ),
     );
   }
 
-  Widget _buildMilestoneCard(BuildContext context, DevelopmentalMilestone milestone) {
+  Widget _buildMilestoneCard(
+      BuildContext context, DevelopmentalMilestone milestone) {
     final statusColor = milestone.overallStatus == 'On Track'
         ? Colors.green
         : milestone.overallStatus == 'Needs Monitoring'
@@ -87,7 +88,8 @@ class MilestoneHistoryScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                    Icon(Icons.calendar_today,
+                        size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 4),
                     Text(
                       DateFormat('dd/MM/yyyy').format(milestone.assessmentDate),
@@ -99,7 +101,8 @@ class MilestoneHistoryScreen extends ConsumerWidget {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -117,7 +120,7 @@ class MilestoneHistoryScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 8),
-            
+
             // Age Badge
             if (milestone.ageAtAssessmentMonths != null)
               Container(
@@ -197,13 +200,16 @@ class MilestoneHistoryScreen extends ConsumerWidget {
                 children: [
                   if (milestone.interventionNeeded)
                     Chip(
-                      avatar: Icon(Icons.medical_services, size: 16, color: Colors.blue[700]),
-                      label: const Text('Intervention', style: TextStyle(fontSize: 11)),
+                      avatar: Icon(Icons.medical_services,
+                          size: 16, color: Colors.blue[700]),
+                      label: const Text('Intervention',
+                          style: TextStyle(fontSize: 11)),
                       backgroundColor: Colors.blue[50],
                     ),
                   if (milestone.referralMade)
                     Chip(
-                      avatar: Icon(Icons.person_search, size: 16, color: Colors.orange[700]),
+                      avatar: Icon(Icons.person_search,
+                          size: 16, color: Colors.orange[700]),
                       label: Text(
                         milestone.referralTo ?? 'Referral',
                         style: const TextStyle(fontSize: 11),
@@ -215,7 +221,8 @@ class MilestoneHistoryScreen extends ConsumerWidget {
             ],
 
             // General Notes
-            if (milestone.generalNotes != null && milestone.generalNotes!.isNotEmpty) ...[
+            if (milestone.generalNotes != null &&
+                milestone.generalNotes!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(8),

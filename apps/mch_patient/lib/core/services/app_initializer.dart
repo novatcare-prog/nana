@@ -92,7 +92,8 @@ class AppInitializer {
       debugPrint('✅ App initialization complete');
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error =
+          'Could not start the app. Please check your internet connection and try again.';
       debugPrint('❌ App initialization failed: $e');
       return false;
     }

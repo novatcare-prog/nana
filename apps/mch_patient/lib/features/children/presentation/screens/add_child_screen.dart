@@ -69,7 +69,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
     if (maternalProfile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Error: Profile not loaded. Please try again.')),
+            content:
+                Text('Your profile could not be loaded. Please try again.')),
       );
       return;
     }
@@ -122,7 +123,10 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        const SnackBar(
+          content: Text('Could not add child. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       if (mounted) {

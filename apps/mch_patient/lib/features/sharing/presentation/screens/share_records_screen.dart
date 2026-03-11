@@ -52,7 +52,7 @@ class _ShareRecordsScreenState extends ConsumerState<ShareRecordsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = 'Could not generate access code. Please try again.';
           _isLoading = false;
         });
       }

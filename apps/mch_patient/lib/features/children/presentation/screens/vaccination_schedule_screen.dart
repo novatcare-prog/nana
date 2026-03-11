@@ -55,13 +55,13 @@ class VaccinationScheduleScreen extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text(e.toString())),
+            error: (e, _) => ErrorHelper.buildErrorWidget(e),
           );
         },
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
         ),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) => ErrorHelper.buildErrorWidget(e),
       ),
     );
   }

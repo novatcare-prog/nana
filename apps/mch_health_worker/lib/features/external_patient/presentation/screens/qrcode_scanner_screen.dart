@@ -36,9 +36,8 @@ class _QrCodeScannerScreenState extends ConsumerState<QrCodeScannerScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Error: ${e.toString().replaceAll("Exception:", "")}'),
+          const SnackBar(
+              content: Text('Could not scan code. Please try again.'),
               backgroundColor: Colors.red),
         );
         setState(() => _isLoading = false);

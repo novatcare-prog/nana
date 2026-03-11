@@ -92,7 +92,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
           latestMuacAsync.when(
             data: (latestMuac) => _buildMuacStatus(context, latestMuac),
             loading: () => const CircularProgressIndicator(),
-            error: (error, stack) => Text('Error: $error'),
+            error: (error, stack) =>
+                const Text('Could not load nutrition data. Please try again.'),
           ),
 
           const SizedBox(height: 16),
@@ -112,8 +113,9 @@ class NutritionTrackingScreen extends ConsumerWidget {
           // WEIGHT GAIN TRACKING SECTION
           visitsAsync.when(
             data: (visits) {
-              if (visits.isEmpty || visits.length < 2)
+              if (visits.isEmpty || visits.length < 2) {
                 return const SizedBox.shrink();
+              }
               return Column(
                 children: [
                   _buildWeightGainSummary(context, visits, patient),
@@ -169,7 +171,8 @@ class NutritionTrackingScreen extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Text('Error: $error'),
+            error: (error, stack) =>
+                const Text('Could not load nutrition data. Please try again.'),
           ),
         ],
       ),
@@ -564,8 +567,9 @@ class NutritionTrackingScreen extends ConsumerWidget {
     final firstWeight = sortedVisits.first.weightKg;
     final latestWeight = sortedVisits.last.weightKg;
 
-    if (firstWeight == null || latestWeight == null)
+    if (firstWeight == null || latestWeight == null) {
       return const SizedBox.shrink();
+    }
 
     final weightGain = latestWeight - firstWeight;
 

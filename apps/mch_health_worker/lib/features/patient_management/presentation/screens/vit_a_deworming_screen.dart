@@ -285,10 +285,10 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
       ),
-      error: (error, stack) => Card(
+      error: (error, stack) => const Card(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text('Error: $error'),
+          padding: EdgeInsets.all(16),
+          child: Text('Could not load records. Please try again.'),
         ),
       ),
     );
@@ -445,10 +445,10 @@ class VitaminADewormingCardScreen extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
       ),
-      error: (error, stack) => Card(
+      error: (error, stack) => const Card(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text('Error: $error'),
+          padding: EdgeInsets.all(16),
+          child: Text('Could not load records. Please try again.'),
         ),
       ),
     );

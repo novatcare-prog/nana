@@ -254,7 +254,8 @@ class AuthGate extends ConsumerWidget {
               children: [
                 const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
-                Text('Authentication Error: $error',
+                const Text(
+                    'Something went wrong while checking your account. Please try again.',
                     textAlign: TextAlign.center),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -331,7 +332,7 @@ class RoleChecker extends ConsumerWidget {
         context,
         ref,
         'Error Loading Profile',
-        error.toString(),
+        'Could not load your profile. Please check your connection and try again.',
       ),
     );
   }

@@ -562,8 +562,8 @@ class _RequestFacilityDialogState extends State<_RequestFacilityDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
+          const SnackBar(
+            content: Text('Could not load facilities. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );

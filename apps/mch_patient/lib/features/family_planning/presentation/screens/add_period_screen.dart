@@ -75,7 +75,8 @@ class _AddPeriodScreenState extends ConsumerState<AddPeriodScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          const SnackBar(
+              content: Text('Could not save your entry. Please try again.')),
         );
       }
     } finally {

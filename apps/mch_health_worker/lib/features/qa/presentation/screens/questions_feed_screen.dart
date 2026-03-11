@@ -69,7 +69,8 @@ class _QuestionsFeedScreenState extends ConsumerState<QuestionsFeedScreen> {
                       Icon(Icons.error_outline,
                           size: 48, color: Colors.red.shade300),
                       const SizedBox(height: 16),
-                      Text('Error: $error', textAlign: TextAlign.center),
+                      const Text('Could not load questions. Please try again.',
+                          textAlign: TextAlign.center),
                       const SizedBox(height: 16),
                       OutlinedButton(
                         onPressed: () {

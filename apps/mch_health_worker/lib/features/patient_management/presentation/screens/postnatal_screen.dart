@@ -16,14 +16,18 @@ class PostnatalCareScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visitsAsync = ref.watch(postnatalVisitsByMaternalIdProvider(maternalProfile.id!));
-    final latestVisitAsync = ref.watch(latestPostnatalVisitProvider(maternalProfile.id!));
-    final totalVisitsAsync = ref.watch(totalPostnatalVisitsCountProvider(maternalProfile.id!));
+    final visitsAsync =
+        ref.watch(postnatalVisitsByMaternalIdProvider(maternalProfile.id!));
+    final latestVisitAsync =
+        ref.watch(latestPostnatalVisitProvider(maternalProfile.id!));
+    final totalVisitsAsync =
+        ref.watch(totalPostnatalVisitsCountProvider(maternalProfile.id!));
 
     // Calculate days postpartum
-    final deliveryDate = maternalProfile.edd; // Assuming delivery on EDD for now
-    final daysPostpartum = deliveryDate != null 
-        ? DateTime.now().difference(deliveryDate).inDays 
+    final deliveryDate =
+        maternalProfile.edd; // Assuming delivery on EDD for now
+    final daysPostpartum = deliveryDate != null
+        ? DateTime.now().difference(deliveryDate).inDays
         : null;
 
     return Scaffold(
@@ -61,21 +65,26 @@ class PostnatalCareScreen extends ConsumerWidget {
 
             // Latest Visit Card
             latestVisitAsync.when(
-              data: (latestVisit) => _buildLatestVisitCard(context, latestVisit),
+              data: (latestVisit) =>
+                  _buildLatestVisitCard(context, latestVisit),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Text('Error: $error'),
+              error: (error, stack) =>
+                  const Text('Could not load data. Please try again.'),
             ),
             const SizedBox(height: 16),
 
             // Summary Card
             totalVisitsAsync.when(
               data: (totalVisits) => visitsAsync.when(
-                data: (visits) => _buildSummaryCard(context, totalVisits, visits),
+                data: (visits) =>
+                    _buildSummaryCard(context, totalVisits, visits),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Text('Error: $error'),
+                error: (error, stack) =>
+                    const Text('Could not load data. Please try again.'),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Text('Error: $error'),
+              error: (error, stack) =>
+                  const Text('Could not load data. Please try again.'),
             ),
             const SizedBox(height: 16),
 
@@ -142,7 +151,8 @@ class PostnatalCareScreen extends ConsumerWidget {
                     if (daysPostpartum <= 42)
                       Container(
                         margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.orange[100],
                           borderRadius: BorderRadius.circular(12),
@@ -173,7 +183,8 @@ class PostnatalCareScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLatestVisitCard(BuildContext context, PostnatalVisit? latestVisit) {
+  Widget _buildLatestVisitCard(
+      BuildContext context, PostnatalVisit? latestVisit) {
     if (latestVisit == null) {
       return Card(
         child: Padding(
@@ -181,7 +192,8 @@ class PostnatalCareScreen extends ConsumerWidget {
           child: Center(
             child: Column(
               children: [
-                Icon(Icons.medical_information, size: 48, color: Colors.grey[400]),
+                Icon(Icons.medical_information,
+                    size: 48, color: Colors.grey[400]),
                 const SizedBox(height: 8),
                 Text(
                   'No postnatal visits recorded yet',
@@ -207,8 +219,10 @@ class PostnatalCareScreen extends ConsumerWidget {
     }
 
     final hasDangerSigns = latestVisit.excessiveBleeding ||
-        (latestVisit.maternalDangerSigns != null && latestVisit.maternalDangerSigns!.isNotEmpty) ||
-        (latestVisit.babyDangerSigns != null && latestVisit.babyDangerSigns!.isNotEmpty);
+        (latestVisit.maternalDangerSigns != null &&
+            latestVisit.maternalDangerSigns!.isNotEmpty) ||
+        (latestVisit.babyDangerSigns != null &&
+            latestVisit.babyDangerSigns!.isNotEmpty);
 
     return Card(
       elevation: 2,
@@ -234,7 +248,8 @@ class PostnatalCareScreen extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.teal[100],
                     borderRadius: BorderRadius.circular(20),
@@ -298,7 +313,8 @@ class PostnatalCareScreen extends ConsumerWidget {
                     ),
                     if (latestVisit.excessiveBleeding) ...[
                       const SizedBox(height: 8),
-                      Text('• Excessive bleeding', style: TextStyle(color: Colors.red[900])),
+                      Text('• Excessive bleeding',
+                          style: TextStyle(color: Colors.red[900])),
                     ],
                     if (latestVisit.maternalDangerSigns != null &&
                         latestVisit.maternalDangerSigns!.isNotEmpty) ...[
@@ -314,11 +330,13 @@ class PostnatalCareScreen extends ConsumerWidget {
             // Baby's Health
             const SizedBox(height: 16),
             _buildInfoSection('Baby\'s Health', [
-              if (latestVisit.babyWeight != null) 'Weight: ${latestVisit.babyWeight} kg',
+              if (latestVisit.babyWeight != null)
+                'Weight: ${latestVisit.babyWeight} kg',
               if (latestVisit.babyTemperature != null)
                 'Temperature: ${latestVisit.babyTemperature}°C',
               'Feeding: ${latestVisit.babyFeedingWell ? "Well" : "Poorly"}',
-              if (latestVisit.cordStatus != null) 'Cord: ${latestVisit.cordStatus}',
+              if (latestVisit.cordStatus != null)
+                'Cord: ${latestVisit.cordStatus}',
             ]),
 
             // Breastfeeding
@@ -326,7 +344,8 @@ class PostnatalCareScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               _buildInfoSection('Breastfeeding', [
                 'Status: ${latestVisit.breastfeedingStatus}',
-                if (latestVisit.latchQuality != null) 'Latch: ${latestVisit.latchQuality}',
+                if (latestVisit.latchQuality != null)
+                  'Latch: ${latestVisit.latchQuality}',
               ]),
             ],
 
@@ -385,13 +404,18 @@ class PostnatalCareScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context, int totalVisits, List<PostnatalVisit> visits) {
-    final visitsWithDangerSigns = visits.where((v) =>
-        v.excessiveBleeding ||
-        (v.maternalDangerSigns != null && v.maternalDangerSigns!.isNotEmpty) ||
-        (v.babyDangerSigns != null && v.babyDangerSigns!.isNotEmpty)).length;
-    
-    final familyPlanningProvided = visits.where((v) => v.familyPlanningMethodProvided).length;
+  Widget _buildSummaryCard(
+      BuildContext context, int totalVisits, List<PostnatalVisit> visits) {
+    final visitsWithDangerSigns = visits
+        .where((v) =>
+            v.excessiveBleeding ||
+            (v.maternalDangerSigns != null &&
+                v.maternalDangerSigns!.isNotEmpty) ||
+            (v.babyDangerSigns != null && v.babyDangerSigns!.isNotEmpty))
+        .length;
+
+    final familyPlanningProvided =
+        visits.where((v) => v.familyPlanningMethodProvided).length;
 
     return Card(
       child: Padding(
@@ -449,7 +473,8 @@ class PostnatalCareScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryTile(String label, String value, IconData icon, Color color) {
+  Widget _buildSummaryTile(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -501,10 +526,14 @@ class PostnatalCareScreen extends ConsumerWidget {
               style: TextStyle(color: Colors.grey[700]),
             ),
             const SizedBox(height: 12),
-            _buildScheduleItem('48 hours (2 days)', daysPostpartum != null && daysPostpartum >= 2),
-            _buildScheduleItem('6 days', daysPostpartum != null && daysPostpartum >= 6),
-            _buildScheduleItem('6 weeks (42 days)', daysPostpartum != null && daysPostpartum >= 42),
-            _buildScheduleItem('6 months (180 days)', daysPostpartum != null && daysPostpartum >= 180),
+            _buildScheduleItem('48 hours (2 days)',
+                daysPostpartum != null && daysPostpartum >= 2),
+            _buildScheduleItem(
+                '6 days', daysPostpartum != null && daysPostpartum >= 6),
+            _buildScheduleItem('6 weeks (42 days)',
+                daysPostpartum != null && daysPostpartum >= 42),
+            _buildScheduleItem('6 months (180 days)',
+                daysPostpartum != null && daysPostpartum >= 180),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),

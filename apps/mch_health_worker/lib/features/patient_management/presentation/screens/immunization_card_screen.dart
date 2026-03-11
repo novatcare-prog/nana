@@ -50,9 +50,9 @@ class ImmunizationCardScreen extends ConsumerWidget {
       ),
       body: immunizationsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child:
-              Text('Error: $error', style: const TextStyle(color: Colors.red)),
+        error: (error, stack) => const Center(
+          child: Text('Could not load immunization records. Please try again.',
+              style: TextStyle(color: Colors.red)),
         ),
         data: (immunizations) {
           return SingleChildScrollView(

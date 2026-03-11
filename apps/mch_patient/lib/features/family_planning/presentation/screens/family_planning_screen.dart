@@ -105,7 +105,13 @@ class _FamilyPlanningScreenState extends ConsumerState<FamilyPlanningScreen> {
 
             periodicEntries.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Text('Error: $err'),
+              error: (err, _) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('Could not load cycle history. Please try again.',
+                      style: TextStyle(color: Colors.grey[600])),
+                ),
+              ),
               data: (entries) {
                 if (entries.isEmpty) {
                   return Center(

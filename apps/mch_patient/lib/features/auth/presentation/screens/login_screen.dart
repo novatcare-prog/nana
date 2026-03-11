@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/providers/auth_provider.dart';
+import '../../../../core/utils/error_helper.dart';
 
 /// Flexible login screen - supports both email and phone number
 class FlexibleLoginScreen extends ConsumerStatefulWidget {
@@ -58,96 +59,13 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(child: Text(_getErrorMessage(e.toString()))),
-              ],
-            ),
-            backgroundColor: const Color(0xFFF44336),
-            behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            margin: const EdgeInsets.all(16),
-          ),
-        );
+        ErrorHelper.showErrorSnackbar(context, e);
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  /// Convert technical error messages to user-friendly ones
-  String _getErrorMessage(String error) {
-    final errorLower = error.toLowerCase();
-
-    // Invalid credentials
-    if (errorLower.contains('invalid_credentials') ||
-        errorLower.contains('invalid login credentials')) {
-      return 'auth.invalid_credentials'.tr();
-    }
-
-    // User not found
-    if (errorLower.contains('user not found') ||
-        errorLower.contains('no user found')) {
-      return 'auth.user_not_found'.tr();
-    }
-
-    // Email not confirmed
-    if (errorLower.contains('email not confirmed')) {
-      return 'auth.email_not_confirmed'.tr();
-    }
-
-    // Too many attempts
-    if (errorLower.contains('too many requests') ||
-        errorLower.contains('rate limit')) {
-      return 'auth.too_many_requests'.tr();
-    }
-
-    // Network error
-    if (errorLower.contains('network') ||
-        errorLower.contains('connection') ||
-        errorLower.contains('socket') ||
-        errorLower.contains('timeout')) {
-      return 'auth.network_error'.tr();
-    }
-
-    // Invalid email format
-    if (errorLower.contains('invalid email')) {
-      return 'auth.invalid_email'.tr();
-    }
-
-    // Password too weak
-    if (errorLower.contains('password') && errorLower.contains('weak')) {
-      return 'auth.weak_password'.tr();
-    }
-
-    // Account disabled
-    if (errorLower.contains('disabled') || errorLower.contains('banned')) {
-      return 'auth.account_disabled'.tr();
-    }
-
-    // Role mismatch (Patient App vs Health Worker App)
-    if (errorLower.contains('app is for patients only')) {
-      return 'auth.not_patient_account'.tr();
-    }
-
-    // Default fallback - show the actual error message if possible
-    // This allows custom exceptions from AuthController to be seen
-    String cleanError = error
-        .replaceAll('Exception:', '')
-        .replaceAll('AuthException:', '')
-        .trim();
-    if (cleanError.isNotEmpty) {
-      return cleanError;
-    }
-
-    return 'auth.something_wrong'.tr();
   }
 
   String _formatPhoneNumber(String phone) {
@@ -217,7 +135,9 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                 // Toggle between Phone and Email
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[800]
+                        : Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -324,11 +244,21 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                         ? 'auth.phone_number'.tr()
                         : 'auth.email'.tr(),
                     hintText: _isPhoneMode ? '0712345678' : 'you@example.com',
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[500]
+                          : Colors.grey[400],
+                    ),
+                    labelStyle: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[400]
+                          : Colors.grey[700],
+                    ),
                     prefixIcon: Icon(
                       _isPhoneMode ? Icons.phone : Icons.email_outlined,
-                      color: Colors.grey[600],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[400]
+                          : Colors.grey[600],
                     ),
                     prefixText: _isPhoneMode ? '+254 ' : null,
                     border: OutlineInputBorder(
@@ -336,7 +266,11 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[600]!
+                            : Colors.grey[300]!,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -388,18 +322,30 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'auth.password'.tr(),
                     hintText: 'auth.enter_password'.tr(),
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[500]
+                          : Colors.grey[400],
+                    ),
+                    labelStyle: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[400]
+                          : Colors.grey[700],
+                    ),
                     prefixIcon: Icon(
                       Icons.lock_outlined,
-                      color: Colors.grey[600],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[400]
+                          : Colors.grey[600],
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: Colors.grey[600],
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[400]
+                            : Colors.grey[600],
                       ),
                       onPressed: () {
                         setState(() => _obscurePassword = !_obscurePassword);
@@ -410,7 +356,11 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[600]!
+                            : Colors.grey[300]!,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -420,7 +370,9 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                       ),
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        Theme.of(context).inputDecorationTheme.fillColor ??
+                            Theme.of(context).cardColor,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -547,10 +499,14 @@ class _FlexibleLoginScreenState extends ConsumerState<FlexibleLoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.blue[900]!.withOpacity(0.3)
+                        : Colors.blue[50],
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Colors.blue[200]!,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.blue[700]!
+                          : Colors.blue[200]!,
                       width: 1,
                     ),
                   ),

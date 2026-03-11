@@ -253,6 +253,12 @@ class AppTheme {
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        // Ensure text, icons, and hints are clearly visible in dark mode
+        hintStyle: const TextStyle(color: AppColors.grey500),
+        labelStyle: const TextStyle(color: AppColors.grey400),
+        prefixIconColor: AppColors.grey400,
+        suffixIconColor: AppColors.grey300,
+        iconColor: AppColors.grey400,
       ),
 
       // Elevated Button Theme

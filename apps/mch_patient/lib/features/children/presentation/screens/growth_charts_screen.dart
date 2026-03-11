@@ -51,7 +51,7 @@ class GrowthChartsScreen extends ConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFF2196F3)),
         ),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => ErrorHelper.buildErrorWidget(e),
       ),
     );
   }
