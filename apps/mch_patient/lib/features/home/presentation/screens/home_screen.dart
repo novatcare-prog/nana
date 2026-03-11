@@ -669,6 +669,12 @@ class _QuickActionsGrid extends StatelessWidget {
           color: const Color(0xFF0D9488),
           onTap: () => context.push('/qa'),
         ),
+        _QuickActionBtn(
+          icon: Icons.auto_awesome,
+          label: 'Ask\nMama AI',
+          color: const Color(0xFF9C27B0),
+          onTap: () => context.push('/ai-chat'),
+        ),
       ],
     );
   }

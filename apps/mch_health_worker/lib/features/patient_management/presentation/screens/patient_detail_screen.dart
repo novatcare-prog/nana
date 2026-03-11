@@ -12,6 +12,7 @@ import '../../presentation/screens/record_delivery_screen.dart';
 import '../../presentation/screens/children_list_screen.dart';
 import 'postnatal_screen.dart';
 import 'anc_visit_recording_screen.dart';
+import '../../../ai/presentation/widgets/ai_risk_banner.dart';
 
 /// Clean Patient Detail Screen
 class PatientDetailScreen extends ConsumerStatefulWidget {
@@ -464,6 +465,10 @@ class _MedicalTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        // AI Risk Assessment — always shown first
+        AiRiskBanner(patientId: patientId),
+        const SizedBox(height: 8),
+
         // Conditions
         if (!_hasConditions)
           Card(

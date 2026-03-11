@@ -44,6 +44,7 @@ import '../../features/family_planning/presentation/screens/family_planning_reso
 import '../../features/qa/presentation/screens/my_questions_screen.dart';
 import '../../features/qa/presentation/screens/ask_question_screen.dart';
 import '../../features/qa/presentation/screens/question_detail_screen.dart';
+import '../../features/ai/presentation/screens/ai_chat_screen.dart';
 import '../../../../core/providers/auth_provider.dart';
 
 // Router provider
@@ -365,6 +366,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
         ],
+      ),
+
+      // AI Chat Route
+      GoRoute(
+        path: '/ai-chat',
+        name: 'ai-chat',
+        builder: (context, state) => const AiChatScreen(),
       ),
     ],
   );

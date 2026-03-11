@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HealthyFoodsScreen extends StatelessWidget {
   const HealthyFoodsScreen({super.key});
@@ -8,6 +9,14 @@ class HealthyFoodsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Healthy Foods'),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/ai-chat'),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.auto_awesome, size: 18),
+        label: const Text('Ask AI about nutrition',
+            style: TextStyle(fontSize: 13)),
       ),
       body: CustomScrollView(
         slivers: [

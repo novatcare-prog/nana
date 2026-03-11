@@ -49,6 +49,9 @@ dependencies:
   path: ^1.9.1
   mobile_scanner: ^7.1.4
 
+  # Gemini AI
+  google_generative_ai: ^0.4.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,31 +77,3 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/images/BLUE_app_launcher_ICON-01.png"
   remove_alpha_ios: true  
 
-flutter_native_splash:
-  # Light mode splash
-  color: "#FFFFFF"
-  image: "assets/images/blue_login_icon-01.png"
-  
-  # Dark mode splash
-  color_dark: "#121212"
-  image_dark: "assets/images/blue_login_icon-01.png"
-  
-  # Platforms
-  android: true
-  ios: true
-  web: false
-  
-  # Android 12+
-  android_12:
-    image: "assets/images/blue_login_icon-01.png"
-    color: "#FFFFFF"
-    icon_background_color: "#FFFFFF"
-    
-    # Android 12 dark mode
-    image_dark: "assets/images/blue_login_icon-01.png"
-    color_dark: "#121212"
-    icon_background_color_dark: "#121212"
-  
-  # iOS specific
-  ios_content_mode: "center"
-  fullscreen: true

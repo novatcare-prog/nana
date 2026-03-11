@@ -4,8 +4,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mch_core/mch_core.dart';
 import 'app.dart';
 import 'core/services/notification_service.dart';
+import 'features/ai/providers/chatbot_provider.dart';
+
+final _geminiService = GeminiService();
 
 /// Main entry point
 /// Initialize all services before showing UI
@@ -21,8 +25,11 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('sw')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: const ProviderScope(
-        child: MCHPatientApp(),
+      child: ProviderScope(
+        overrides: [
+          patientGeminiServiceProvider.overrideWithValue(_geminiService),
+        ],
+        child: const MCHPatientApp(),
       ),
     ),
   );
@@ -43,6 +50,15 @@ Future<void> _initializeServices() async {
       } catch (e) {
         debugPrint('Failed to load .env: $e');
       }
+    }
+
+    // Initialize Gemini AI (non-fatal)
+    final geminiKey = dotenv.maybeGet('GEMINI_API_KEY') ?? '';
+    if (geminiKey.isNotEmpty) {
+      _geminiService.initialize(geminiKey);
+      debugPrint('✅ Gemini AI initialized');
+    } else {
+      debugPrint('ℹ️ GEMINI_API_KEY not set — AI chat will show offline state');
     }
 
     // Initialize Hive for offline storage

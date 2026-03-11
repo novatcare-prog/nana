@@ -10,6 +10,13 @@ class MustKnowScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Must Know'),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/ai-chat'),
+        backgroundColor: const Color(0xFF9C27B0),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.auto_awesome, size: 18),
+        label: const Text('Ask Mama AI', style: TextStyle(fontSize: 13)),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

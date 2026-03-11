@@ -17,6 +17,8 @@ import 'features/navigation/main_navigation_scaffold.dart';
 import 'features/patient_management/presentation/screens/login_screen.dart';
 import 'features/patient_management/presentation/screens/reset_password_screen.dart';
 import 'core/widgets/offline_indicator.dart';
+import 'core/screens/splash_screen.dart';
+import 'features/ai/providers/ai_providers.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -25,86 +27,170 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 const String _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 const String _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const AppBootstrapper());
+}
 
-  // 1. Validate and Load Configuration
-  String url = _supabaseUrl;
-  String key = _supabaseAnonKey;
+/// Bootstraps all async services (dotenv, Supabase, Hive) while showing
+/// the branded SplashScreen.  Once everything is ready it swaps in the
+/// real app wrapped in ProviderScope.
+class AppBootstrapper extends StatefulWidget {
+  const AppBootstrapper({super.key});
 
-  if (url.isEmpty || key.isEmpty) {
+  @override
+  State<AppBootstrapper> createState() => _AppBootstrapperState();
+}
+
+class _AppBootstrapperState extends State<AppBootstrapper> {
+  bool _initialized = false;
+  String? _error;
+  late final GeminiService _geminiService = GeminiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _bootstrap();
+  }
+
+  Future<void> _bootstrap() async {
     try {
-      await dotenv.load(fileName: ".env");
-      url = dotenv.env['SUPABASE_URL'] ?? '';
-      key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+      // 1. Validate and Load Configuration
+      String url = _supabaseUrl;
+      String key = _supabaseAnonKey;
+
+      if (url.isEmpty || key.isEmpty) {
+        try {
+          await dotenv.load(fileName: ".env");
+          url = dotenv.env['SUPABASE_URL'] ?? '';
+          key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+        } catch (e) {
+          print('⚠️ Failed to load .env: $e');
+        }
+      }
+
+      // 1b. Initialize Gemini AI (non-fatal — app works offline without it)
+      final geminiKey = dotenv.maybeGet('GEMINI_API_KEY') ?? '';
+      if (geminiKey.isNotEmpty) {
+        _geminiService.initialize(geminiKey);
+        print('✅ Gemini AI initialized');
+      } else {
+        print('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
+      }
+
+      if (url.isEmpty || key.isEmpty) {
+        throw Exception('Missing Supabase configuration. '
+            'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx '
+            'OR ensure .env file exists with SUPABASE_URL and SUPABASE_ANON_KEY');
+      }
+
+      // 2. Initialize Supabase
+      try {
+        await Supabase.initialize(
+          url: url,
+          anonKey: key,
+          authOptions: const FlutterAuthClientOptions(
+            authFlowType: AuthFlowType.pkce,
+          ),
+        );
+        print('✅ Supabase initialized successfully');
+      } catch (e) {
+        print('⚠️ Supabase initialization failed (likely offline): $e');
+        // Continue anyway - app handles offline state
+      }
+
+      // 3. Listen for Auth State Changes (Password Recovery, Sign Out)
+      try {
+        Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+          if (data.event == AuthChangeEvent.passwordRecovery) {
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => const ResetPasswordScreen(),
+              ),
+              (route) => false,
+            );
+          } else if (data.event == AuthChangeEvent.signedOut) {
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const _LoggingOutScreen(),
+                transitionDuration: const Duration(milliseconds: 300),
+                transitionsBuilder: (_, animation, __, child) =>
+                    FadeTransition(opacity: animation, child: child),
+              ),
+              (route) => false,
+            );
+          }
+        });
+      } catch (e) {
+        print('⚠️ Auth state listener setup failed: $e');
+      }
+
+      // 4. Initialize Hive (Offline Storage)
+      print('🔄 Initializing Hive...');
+      await HiveService.initAll();
+      print('✅ Hive initialized successfully');
+
+      // Debug: Show storage stats
+      final stats = HiveService.getStorageStats();
+      print(
+          '📊 Storage stats: ${stats.length} boxes, ${HiveService.getTotalCachedItems()} total items');
+
+      if (mounted) setState(() => _initialized = true);
     } catch (e) {
-      print('⚠️ Failed to load .env: $e');
+      print('❌ Bootstrap failed: $e');
+      if (mounted) setState(() => _error = e.toString());
     }
   }
 
-  if (url.isEmpty || key.isEmpty) {
-    throw Exception('Missing Supabase configuration. '
-        'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx '
-        'OR ensure .env file exists with SUPABASE_URL and SUPABASE_ANON_KEY');
-  }
+  @override
+  Widget build(BuildContext context) {
+    // Fatal error — show a basic error screen
+    if (_error != null) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text('Startup Error:\n$_error',
+                      textAlign: TextAlign.center),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => setState(() {
+                      _error = null;
+                      _bootstrap();
+                    }),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
-  // 2. Initialize Supabase
-  try {
-    await Supabase.initialize(
-      url: url,
-      anonKey: key,
-      authOptions: const FlutterAuthClientOptions(
-        authFlowType: AuthFlowType.pkce,
-      ),
+    // Still loading — show the branded SplashScreen
+    if (!_initialized) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
+      );
+    }
+
+    // Ready — hand off to the real app
+    return ProviderScope(
+      overrides: [
+        geminiServiceProvider.overrideWithValue(_geminiService),
+      ],
+      child: const MyApp(),
     );
-    print('✅ Supabase initialized successfully');
-  } catch (e) {
-    print('⚠️ Supabase initialization failed (likely offline): $e');
-    // Continue anyway - app handles offline state
   }
-
-  // 3. Listen for Auth State Changes (Password Recovery, Sign Out)
-  try {
-    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (data.event == AuthChangeEvent.passwordRecovery) {
-        navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const ResetPasswordScreen(),
-          ),
-          (route) => false,
-        );
-      } else if (data.event == AuthChangeEvent.signedOut) {
-        // Show logging out animation, then navigate to login
-        navigatorKey.currentState?.pushAndRemoveUntil(
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const _LoggingOutScreen(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (_, animation, __, child) =>
-                FadeTransition(opacity: animation, child: child),
-          ),
-          (route) => false,
-        );
-      }
-    });
-  } catch (e) {
-    print('⚠️ Auth state listener setup failed: $e');
-  }
-
-  // 4. Initialize Hive (Offline Storage)
-  print('🔄 Initializing Hive...');
-  await HiveService.initAll();
-  print('✅ Hive initialized successfully');
-
-  // Debug: Show storage stats
-  final stats = HiveService.getStorageStats();
-  print(
-      '📊 Storage stats: ${stats.length} boxes, ${HiveService.getTotalCachedItems()} total items');
-
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
 }
 
 class MyApp extends ConsumerWidget {
@@ -127,7 +213,7 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
 
-      // ✅ Start directly with AuthGate (Splash Screen bypass)
+      // ✅ Start directly with AuthGate (no splash screen delay)
       home: const SyncErrorListener(
         child: AuthGate(),
       ),

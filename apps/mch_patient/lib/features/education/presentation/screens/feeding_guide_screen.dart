@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FeedingGuideScreen extends StatelessWidget {
   const FeedingGuideScreen({super.key});
@@ -22,6 +23,14 @@ class FeedingGuideScreen extends StatelessWidget {
               Tab(text: 'Tips'),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => context.push('/ai-chat'),
+          backgroundColor: const Color(0xFF9C27B0),
+          foregroundColor: Colors.white,
+          icon: const Icon(Icons.auto_awesome, size: 18),
+          label: const Text('Ask AI about feeding',
+              style: TextStyle(fontSize: 13)),
         ),
         body: const TabBarView(
           children: [

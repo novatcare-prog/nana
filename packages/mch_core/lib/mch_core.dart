@@ -72,3 +72,7 @@ export 'src/models/sharing/shared_patient_data.dart';
 export 'src/models/qa/health_question.dart';
 export 'src/models/qa/question_answer.dart';
 export 'src/data/repositories/health_question_repository.dart';
+
+// AI Services
+export 'src/services/ai/gemini_service.dart';
+export 'src/services/ai/patient_context_builder.dart';

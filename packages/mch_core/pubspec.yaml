@@ -27,6 +27,9 @@ dependencies:
   # --- ADDED: ID Generation ---
   uuid: ^4.2.1
 
+  # --- ADDED: Gemini AI ---
+  google_generative_ai: ^0.4.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

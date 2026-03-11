@@ -4,6 +4,7 @@ import 'package:mch_core/mch_core.dart';
 // Import the central provider file
 import '../../../../core/providers/supabase_providers.dart';
 import '../../../../core/utils/error_helper.dart';
+import '../widgets/visit_ai_assistant.dart';
 
 /// ANC Visit Recording Screen - Based on MOH MCH Handbook Page 8
 class ANCVisitRecordingScreen extends ConsumerStatefulWidget {
@@ -248,8 +249,15 @@ class _ANCVisitRecordingScreenState
       ),
       body: Form(
         key: _formKey,
-        child: Stepper(
-          currentStep: _currentStep,
+        child: ListView(
+          children: [
+            // AI Pre-Visit Briefing Panel
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: VisitAiAssistant(patientId: widget.patientId),
+            ),
+            Stepper(
+              currentStep: _currentStep,
           onStepContinue: () {
             if (_currentStep < 4) {
               setState(() {
@@ -731,6 +739,8 @@ class _ANCVisitRecordingScreenState
               ),
               isActive: _currentStep >= 4,
             ),
+          ],
+        ),
           ],
         ),
       ),

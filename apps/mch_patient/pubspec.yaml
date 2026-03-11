@@ -59,6 +59,9 @@ dependencies:
   share_plus: ^12.0.1
   open_filex: ^4.7.0
 
+  # Gemini AI
+  google_generative_ai: ^0.4.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

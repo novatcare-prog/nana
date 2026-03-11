@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DevelopmentalMilestonesScreen extends StatelessWidget {
   const DevelopmentalMilestonesScreen({super.key});
@@ -8,6 +9,14 @@ class DevelopmentalMilestonesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Developmental Milestones'),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/ai-chat'),
+        backgroundColor: const Color(0xFF9C27B0),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.auto_awesome, size: 18),
+        label: const Text('Ask AI about milestones',
+            style: TextStyle(fontSize: 13)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
