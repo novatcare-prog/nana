@@ -52,20 +52,22 @@ class AuthController {
     required String email,
     required String password,
   }) async {
-    final response = await _supabase.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-
-    // Verify user is a patient
-    final role = response.user?.userMetadata?['role'] as String?;
-    if (role != 'patient') {
-      await _supabase.auth.signOut();
-      throw Exception(
-          'This app is for patients only. Please use the Health Worker app.');
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      // Verify user is a patient
+      final role = response.user?.userMetadata?['role'] as String?;
+      if (role != 'patient') {
+        await _supabase.auth.signOut();
+        throw Exception(
+            'This app is for patients only. Please use the Health Worker app.');
+      }
+      return response;
+    } catch (e) {
+      rethrow;
     }
-
-    return response;
   }
 
   // Sign in with phone number and password
@@ -73,24 +75,23 @@ class AuthController {
     required String phone,
     required String password,
   }) async {
-    // For phone login, we use email as phone@mchkenya.app
-    // This allows us to use password auth while supporting phone numbers
     final emailFromPhone = '${phone.replaceAll('+', '')}@mchkenya.app';
-
-    final response = await _supabase.auth.signInWithPassword(
-      email: emailFromPhone,
-      password: password,
-    );
-
-    // Verify user is a patient
-    final role = response.user?.userMetadata?['role'] as String?;
-    if (role != 'patient') {
-      await _supabase.auth.signOut();
-      throw Exception(
-          'This app is for patients only. Please use the Health Worker app.');
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: emailFromPhone,
+        password: password,
+      );
+      // Verify user is a patient
+      final role = response.user?.userMetadata?['role'] as String?;
+      if (role != 'patient') {
+        await _supabase.auth.signOut();
+        throw Exception(
+            'This app is for patients only. Please use the Health Worker app.');
+      }
+      return response;
+    } catch (e) {
+      rethrow;
     }
-
-    return response;
   }
 
   // Sign up with email and password (patients only)

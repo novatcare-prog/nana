@@ -4,19 +4,30 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mch_core/mch_core.dart';
 import 'app.dart';
+import 'core/services/app_initializer.dart';
 import 'features/ai/providers/chatbot_provider.dart';
 
 final _geminiService = GeminiService();
 
 /// Main entry point
-/// Show UI immediately — initialization happens in the SplashScreen
+/// Initializes ALL services (Supabase, Hive, Notifications) BEFORE runApp()
+/// so that Riverpod providers can access Supabase.instance.client safely.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  // Initialize Gemini AI from .env (non-fatal if key missing)
+  // ── Step 1: Initialize Supabase, Hive & Notifications ──────────────────
+  // CRITICAL: Must happen before runApp() because the router's authStateProvider
+  // calls Supabase.instance.client at startup.
+  final initializer = AppInitializer();
+  await initializer.initialize();
+  if (initializer.hasError) {
+    debugPrint('⚠️ App initializer failed: ${initializer.error}');
+  }
+
+  // ── Step 2: Initialize Gemini AI (non-fatal if key missing) ────────────
   try {
-    await dotenv.load(fileName: '.env');
+    // dotenv is already loaded by AppInitializer, just read the key
     final geminiKey = dotenv.maybeGet('GEMINI_API_KEY') ?? '';
     if (geminiKey.isNotEmpty && geminiKey != 'YOUR_GEMINI_API_KEY_HERE') {
       _geminiService.initialize(geminiKey);
@@ -25,7 +36,7 @@ void main() async {
       debugPrint('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
     }
   } catch (e) {
-    debugPrint('ℹ️ Could not load .env for Gemini: $e');
+    debugPrint('ℹ️ Could not initialize Gemini: $e');
   }
 
   runApp(
