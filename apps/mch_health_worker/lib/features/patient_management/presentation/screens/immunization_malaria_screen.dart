@@ -103,16 +103,21 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.health_and_safety,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Malaria Prevention (IPTp)',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              Flexible(
+                child: Row(
+                  children: [
+                    Icon(Icons.health_and_safety,
+                        color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 8),
+                    const Flexible(
+                      child: Text(
+                        'Malaria Prevention (IPTp)',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               TextButton.icon(
                 onPressed: () {
@@ -349,6 +354,7 @@ class ImmunizationMalariaScreen extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
+        isThreeLine: record.gestationWeeks != null,
         leading: CircleAvatar(
           backgroundColor: Colors.orange.shade100,
           child: Text('SP${record.spDose}'),

@@ -44,6 +44,8 @@ class ErrorHelper {
     }
     if (errorStr.contains('too many requests') ||
         errorStr.contains('rate limit') ||
+        errorStr.contains('quota') ||
+        errorStr.contains('exceeded') ||
         errorStr.contains('429')) {
       return 'Too many attempts. Please wait a moment and try again.';
     }

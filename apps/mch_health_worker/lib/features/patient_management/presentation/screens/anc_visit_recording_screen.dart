@@ -257,6 +257,7 @@ class _ANCVisitRecordingScreenState
               child: VisitAiAssistant(patientId: widget.patientId),
             ),
             Stepper(
+              physics: const NeverScrollableScrollPhysics(),
               currentStep: _currentStep,
           onStepContinue: () {
             if (_currentStep < 4) {
