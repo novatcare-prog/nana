@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -14,7 +15,7 @@ final childGrowthRecordsProvider = FutureProvider.family<List<GrowthRecord>, Str
   try {
     return await repository.getRecordsByChildId(childId);
   } catch (e) {
-    print('Error fetching growth records: $e');
+    debugPrint('Error fetching growth records: $e');
     return <GrowthRecord>[];
   }
 });
@@ -26,7 +27,7 @@ final latestGrowthRecordProvider = FutureProvider.family<GrowthRecord?, String>(
   try {
     return await repository.getLatestRecord(childId);
   } catch (e) {
-    print('Error fetching latest growth record: $e');
+    debugPrint('Error fetching latest growth record: $e');
     return null;
   }
 });

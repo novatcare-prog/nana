@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -50,7 +51,7 @@ final currentUserProfileProvider = FutureProvider<UserProfile?>((ref) async {
 
     return UserProfile.fromJson(profileData);
   } catch (e) {
-    print('Error loading user profile: $e');
+    if (kDebugMode) debugPrint('Error loading user profile: ${e.runtimeType}');
     return null;
   }
 });
@@ -158,7 +159,7 @@ class AuthActions {
     try {
       await _authService.signOut();
     } catch (e) {
-      print('Logout error: $e');
+      if (kDebugMode) debugPrint('Logout error: ${e.runtimeType}');
     } finally {
       // Always clear local state
       _ref.invalidate(authStateProvider);

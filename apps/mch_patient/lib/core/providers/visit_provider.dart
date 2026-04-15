@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -14,7 +15,7 @@ final childVisitsProvider = FutureProvider.family<List<PostnatalVisit>, String>(
   try {
     return await repository.getVisitsByChildId(childId);
   } catch (e) {
-    print('Error fetching child visits: $e');
+    debugPrint('Error fetching child visits: $e');
     return <PostnatalVisit>[];
   }
 });

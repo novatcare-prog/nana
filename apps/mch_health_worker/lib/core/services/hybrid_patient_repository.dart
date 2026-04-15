@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 import '../services/hive_service.dart';
@@ -47,7 +48,7 @@ class HybridPatientRepository {
       }
     } catch (e) {
       // On error, return cached patients (filtered if possible)
-      print('Error fetching patients, using cache: $e');
+      debugPrint('Error fetching patients, using cache: $e');
       if (_facilityId != null) {
         return HiveService.getCachedPatientsByFacility(_facilityId!);
       }
@@ -175,7 +176,7 @@ class HybridPatientRepository {
       final isOnline = await _connectivity.isConnected();
       
       if (!isOnline) {
-        print('Cannot sync: No internet connection');
+        debugPrint('Cannot sync: No internet connection');
         return;
       }
 
@@ -208,7 +209,7 @@ class HybridPatientRepository {
           // Remove from sync queue after successful sync
           await HiveService.removeFromSyncQueue(syncId);
         } catch (e) {
-          print('Error syncing item: $e');
+          debugPrint('Error syncing item: $e');
           // Keep in queue to retry later
         }
       }
@@ -216,7 +217,7 @@ class HybridPatientRepository {
       // Refresh cache after sync
       await getAllPatients();
     } catch (e) {
-      print('Error during sync: $e');
+      debugPrint('Error during sync: $e');
     }
   }
 

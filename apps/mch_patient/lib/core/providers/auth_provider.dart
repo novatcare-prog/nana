@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // Import from shared mch_core package
@@ -133,9 +134,7 @@ class AuthController {
     required String newPassword,
   }) async {
     try {
-      // First, verify the OTP token
-      print(
-          '🔐 Attempting OTP verification for: $email with token: ${token.substring(0, 2)}...');
+      if (kDebugMode) debugPrint('🔐 Attempting OTP verification');
 
       final response = await _supabase.auth.verifyOTP(
         email: email,
@@ -143,21 +142,21 @@ class AuthController {
         type: OtpType.recovery,
       );
 
-      print(
-          '🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
+      if (kDebugMode) {
+        debugPrint('🔐 OTP verification — session: ${response.session != null}');
+      }
 
       if (response.user == null) {
         throw Exception('Invalid or expired code. Please request a new one.');
       }
 
       // Then update the password
-      print('🔐 Updating password...');
       await _supabase.auth.updateUser(
         UserAttributes(password: newPassword),
       );
-      print('🔐 Password updated successfully!');
+      if (kDebugMode) debugPrint('🔐 Password updated successfully');
     } catch (e) {
-      print('🔐 Password reset error: $e');
+      if (kDebugMode) debugPrint('🔐 Password reset error: ${e.runtimeType}');
 
       // Re-throw with more specific messages
       final errorStr = e.toString().toLowerCase();

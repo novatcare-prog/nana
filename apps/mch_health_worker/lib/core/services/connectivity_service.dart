@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,7 +40,7 @@ class ConnectivityService {
     } on TimeoutException catch (_) {
       return false;
     } catch (e) {
-      print('⚠️ Internet check error: $e');
+      debugPrint('⚠️ Internet check error: $e');
       return false;
     }
   }
@@ -48,12 +49,12 @@ class ConnectivityService {
   void _startMonitoring() async {
     // Check initial status
     _isOnline = await _checkInternetAccess();
-    print(_isOnline ? '🟢 Initial: Online' : '🔴 Initial: Offline');
+    debugPrint(_isOnline ? '🟢 Initial: Online' : '🔴 Initial: Offline');
     
     // Start polling every 5 seconds
     _startPolling();
     
-    print('🟢 Connectivity service initialized (HTTP check mode)');
+    debugPrint('🟢 Connectivity service initialized (HTTP check mode)');
   }
 
   /// Start polling for connectivity
@@ -66,7 +67,7 @@ class ConnectivityService {
       
       if (wasOnline != _isOnline) {
         _connectionStatusController?.add(_isOnline);
-        print(_isOnline ? '🟢 Now Online' : '🔴 Now Offline');
+        debugPrint(_isOnline ? '🟢 Now Online' : '🔴 Now Offline');
       }
     });
   }
@@ -75,7 +76,7 @@ class ConnectivityService {
   void dispose() {
     _pollingTimer?.cancel();
     _connectionStatusController?.close();
-    print('✅ Connectivity service disposed');
+    debugPrint('✅ Connectivity service disposed');
   }
 }
 

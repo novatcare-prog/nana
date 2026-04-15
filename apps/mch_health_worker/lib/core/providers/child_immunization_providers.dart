@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -27,7 +28,7 @@ final childImmunizationsProvider = FutureProvider.family<List<ImmunizationRecord
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch child immunizations online: $e');
+    debugPrint('⚠️ Failed to fetch child immunizations online: $e');
   }
   
   // Fallback to cache

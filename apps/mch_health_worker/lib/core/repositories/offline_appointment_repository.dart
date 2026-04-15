@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -35,7 +36,7 @@ class OfflineAppointmentRepository {
         return appointments;
       }
     } catch (e) {
-      print('⚠️ Failed to fetch from Supabase: $e');
+      debugPrint('⚠️ Failed to fetch from Supabase: $e');
     }
     
     // Fallback to Hive cache
@@ -66,7 +67,7 @@ class OfflineAppointmentRepository {
         return appointments;
       }
     } catch (e) {
-      print('⚠️ Failed to fetch month appointments: $e');
+      debugPrint('⚠️ Failed to fetch month appointments: $e');
     }
     
     // Fallback to filtered cache
@@ -103,12 +104,12 @@ class OfflineAppointmentRepository {
           data.remove('id');
         }
         await _supabase.from('appointments').insert(data);
-        print('✅ Appointment created online: ${apt.id}');
+        debugPrint('✅ Appointment created online: ${apt.id}');
       } catch (e) {
-        print('⚠️ Will sync later: $e');
+        debugPrint('⚠️ Will sync later: $e');
       }
     } else {
-      print('📴 Offline: appointment queued for sync');
+      debugPrint('📴 Offline: appointment queued for sync');
     }
     
     return apt;
@@ -133,12 +134,12 @@ class OfflineAppointmentRepository {
             .from('appointments')
             .update(appointment.toJson())
             .eq('id', appointment.id!);
-        print('✅ Appointment updated online: ${appointment.id}');
+        debugPrint('✅ Appointment updated online: ${appointment.id}');
       } catch (e) {
-        print('⚠️ Will sync later: $e');
+        debugPrint('⚠️ Will sync later: $e');
       }
     } else {
-      print('📴 Offline: update queued for sync');
+      debugPrint('📴 Offline: update queued for sync');
     }
     
     return appointment;
@@ -168,12 +169,12 @@ class OfflineAppointmentRepository {
     if (_connectivity.isOnline) {
       try {
         await _supabase.from('appointments').delete().eq('id', id);
-        print('✅ Appointment deleted online: $id');
+        debugPrint('✅ Appointment deleted online: $id');
       } catch (e) {
-        print('⚠️ Will sync later: $e');
+        debugPrint('⚠️ Will sync later: $e');
       }
     } else {
-      print('📴 Offline: delete queued for sync');
+      debugPrint('📴 Offline: delete queued for sync');
     }
   }
 
@@ -184,7 +185,7 @@ class OfflineAppointmentRepository {
     await HiveService.cacheAppointments(
       appointments.map((a) => a.toJson()).toList(),
     );
-    print('💾 Cached ${appointments.length} appointments');
+    debugPrint('💾 Cached ${appointments.length} appointments');
   }
 
   /// Update cache partially (merge with existing)
@@ -225,7 +226,7 @@ class OfflineAppointmentRepository {
   /// Clear cache (use with caution!)
   Future<void> clearCache() async {
     await HiveService.clearAppointmentCache();
-    print('⚠️ Appointments cache cleared');
+    debugPrint('⚠️ Appointments cache cleared');
   }
 }
 

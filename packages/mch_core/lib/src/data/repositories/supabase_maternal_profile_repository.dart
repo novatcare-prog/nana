@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 
@@ -14,7 +15,7 @@ class SupabaseMaternalProfileRepository {
           .from('maternal_profiles') // Correct table
           .update({'hypertension': true}).eq('id', profileId);
     } catch (e) {
-      print('Failed to flag patient as high risk: $e');
+      debugPrint('Failed to flag patient as high risk: $e');
     }
   }
 

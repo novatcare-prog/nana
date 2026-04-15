@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'notification_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// App Initializer Service
 /// Handles all app initialization in one place with progress tracking
@@ -42,24 +41,16 @@ class AppInitializer {
       // Step 1: Validate configuration (20%)
       _updateProgress('Loading configuration...', 0.0, onProgress);
 
-      String url = _supabaseUrl;
-      String key = _supabaseAnonKey;
-
-      // specific logic to load from .env if dart-define is missing
-      if (url.isEmpty || key.isEmpty) {
-        try {
-          await dotenv.load(fileName: ".env");
-          url = dotenv.env['SUPABASE_URL'] ?? '';
-          key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-        } catch (e) {
-          debugPrint('Failed to load .env: $e');
-        }
-      }
+      // Credentials come exclusively from --dart-define at build time
+      final url = _supabaseUrl;
+      final key = _supabaseAnonKey;
 
       if (url.isEmpty || key.isEmpty) {
         throw Exception('Missing Supabase configuration. '
-            'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx '
-            'OR ensure .env file exists with SUPABASE_URL and SUPABASE_ANON_KEY');
+            'Build with: flutter run '
+            '--dart-define=SUPABASE_URL=xxx '
+            '--dart-define=SUPABASE_ANON_KEY=xxx '
+            '--dart-define=GEMINI_API_KEY=xxx');
       }
       _updateProgress('Configuration loaded', 0.2, onProgress);
 
@@ -74,6 +65,9 @@ class AppInitializer {
       await Supabase.initialize(
         url: url,
         anonKey: key,
+        authOptions: const FlutterAuthClientOptions(
+          authFlowType: AuthFlowType.pkce,
+        ),
       );
       _updateProgress('Connected to server', 0.7, onProgress);
 

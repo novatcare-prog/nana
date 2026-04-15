@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -35,7 +36,7 @@ final patientNutritionRecordsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch nutrition records online: $e');
+    debugPrint('⚠️ Failed to fetch nutrition records online: $e');
   }
   
   return HiveService.getCachedNutritionRecords(patientId);
@@ -77,7 +78,7 @@ final patientMuacMeasurementsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch MUAC measurements online: $e');
+    debugPrint('⚠️ Failed to fetch MUAC measurements online: $e');
   }
   
   return [];

@@ -9,6 +9,25 @@ import '../../enums/hiv_test_result.dart';
 /// Builds structured text context strings from patient data
 /// to inject into Gemini prompts.
 class PatientContextBuilder {
+  /// Strips characters and patterns that could be used for prompt injection.
+  /// Applied to all free-text patient fields before they enter any AI prompt.
+  static String _sanitize(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Unknown';
+    return value
+        // Remove instruction-override phrases
+        .replaceAll(
+          RegExp(
+            r'(?i)(ignore|disregard|forget|override).{0,30}(above|previous|instruction|prompt|system)',
+          ),
+          '[removed]',
+        )
+        // Strip characters used in prompt template injection
+        .replaceAll(RegExp(r'[<>{}\[\]\\|`]'), '')
+        // Collapse excessive whitespace
+        .replaceAll(RegExp(r'\s{3,}'), '  ')
+        .trim();
+  }
+
   /// Full maternal context for risk assessment and clinical decision support.
   static String buildMaternalContext({
     required MaternalProfile profile,
@@ -20,7 +39,7 @@ class PatientContextBuilder {
     final buffer = StringBuffer();
 
     buffer.writeln('=== PATIENT CONTEXT ===');
-    buffer.writeln('Name: ${profile.clientName}');
+    buffer.writeln('Name: ${_sanitize(profile.clientName)}');
     buffer.writeln('Age: ${profile.age} years');
     buffer.writeln('Gravida: ${profile.gravida}  |  Parity: ${profile.parity}');
 
@@ -78,7 +97,7 @@ class PatientContextBuilder {
         if (visit.pallor == true) buffer.writeln('  PALLOR detected');
         if (visit.isHighRisk == true) buffer.writeln('  [FLAGGED HIGH RISK]');
         if (visit.complaints != null && visit.complaints!.isNotEmpty) {
-          buffer.writeln('  Complaints: ${visit.complaints}');
+          buffer.writeln('  Complaints: ${_sanitize(visit.complaints)}');
         }
       }
     }

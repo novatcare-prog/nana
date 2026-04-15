@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -5,6 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/providers/settings_provider.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/session_timeout_service.dart';
 
 /// Main App Widget
 /// Simplified - just handles theme and routing
@@ -39,17 +41,22 @@ class MCHPatientApp extends ConsumerWidget {
       }
     };
 
-    return MaterialApp.router(
-      title: 'app_name'.tr(),
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-      // Localization
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => ref.read(sessionTimeoutProvider).resetTimer(),
+      onPanDown: (_) => ref.read(sessionTimeoutProvider).resetTimer(),
+      child: MaterialApp.router(
+        title: 'app_name'.tr(),
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        // Localization
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+      ),
     );
   }
 }

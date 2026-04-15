@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
@@ -96,10 +97,10 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
   }
 
   Future<void> _handleSubmit() async {
-    print('🔥 STEP 1: Submit button clicked');
+    debugPrint('🔥 STEP 1: Submit button clicked');
 
     if (!_formKey.currentState!.validate()) {
-      print('❌ STEP 2: Form validation FAILED');
+      debugPrint('❌ STEP 2: Form validation FAILED');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill all required fields'),
@@ -109,13 +110,13 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
       return;
     }
 
-    print('✅ STEP 2: Form validation PASSED');
+    debugPrint('✅ STEP 2: Form validation PASSED');
 
     setState(() => _isSubmitting = true);
-    print('🔄 STEP 3: isSubmitting set to true');
+    debugPrint('🔄 STEP 3: isSubmitting set to true');
 
     try {
-      print('📝 STEP 4: Creating childbirth record...');
+      debugPrint('📝 STEP 4: Creating childbirth record...');
 
       // Create Childbirth Record
       final childbirthRecord = ChildbirthRecord(
@@ -176,8 +177,8 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         updatedAt: null,
       );
 
-      print('✅ STEP 5: Childbirth record created successfully');
-      print('👶 STEP 6: Creating child profile...');
+      debugPrint('✅ STEP 5: Childbirth record created successfully');
+      debugPrint('👶 STEP 6: Creating child profile...');
 
       // Create Child Profile
       final childProfile = ChildProfile(
@@ -268,20 +269,20 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         updatedAt: DateTime.now(),
       );
 
-      print('✅ STEP 7: Child profile created successfully');
-      print('💾 STEP 8: Getting createDelivery provider...');
+      debugPrint('✅ STEP 7: Child profile created successfully');
+      debugPrint('💾 STEP 8: Getting createDelivery provider...');
 
       // Save to database
       final createDelivery = ref.read(createDeliveryRecordProvider);
 
-      print('📤 STEP 9: Calling createDelivery function...');
+      debugPrint('📤 STEP 9: Calling createDelivery function...');
 
       await createDelivery(
         childbirthRecord: childbirthRecord,
         childProfile: childProfile,
       );
 
-      print('🎉 STEP 10: Database save successful!');
+      debugPrint('🎉 STEP 10: Database save successful!');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -294,9 +295,9 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         Navigator.pop(context);
       }
     } catch (e, stackTrace) {
-      print('❌❌❌ ERROR OCCURRED!');
-      print('Error: $e');
-      print('StackTrace: $stackTrace');
+      debugPrint('❌❌❌ ERROR OCCURRED!');
+      debugPrint('Error: $e');
+      debugPrint('StackTrace: $stackTrace');
 
       if (mounted) {
         ErrorHelper.showErrorSnackbar(context, e);
@@ -304,7 +305,7 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
-        print('🔄 isSubmitting set back to false');
+        debugPrint('🔄 isSubmitting set back to false');
       }
     }
   }
@@ -320,12 +321,12 @@ class _RecordDeliveryScreenState extends ConsumerState<RecordDeliveryScreen> {
         child: Stepper(
           currentStep: _currentStep,
           onStepContinue: () {
-            print('📍 Continue button pressed on step $_currentStep');
+            debugPrint('📍 Continue button pressed on step $_currentStep');
             if (_currentStep < 2) {
               setState(() => _currentStep++);
-              print('📍 Moved to step $_currentStep');
+              debugPrint('📍 Moved to step $_currentStep');
             } else {
-              print('📍 On final step - calling _handleSubmit');
+              debugPrint('📍 On final step - calling _handleSubmit');
               _handleSubmit();
             }
           },

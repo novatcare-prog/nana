@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mch_core/mch_core.dart';
+import '../storage/secure_hive_service.dart';
 
 /// Enhanced HiveService with offline-first support
 /// Maintains all existing functionality + adds new offline features
@@ -24,32 +26,32 @@ class HiveService {
   static const String _cacheBox = 'cache';
   static const String _lastSyncBox = 'last_sync';
 
-  /// Initialize all boxes (UPDATED - includes new boxes)
+  /// Initialize all boxes — each opened with AES-256 encryption
   static Future<void> initAll() async {
     // Initialize Hive for Flutter
     await Hive.initFlutter();
 
-    // Open existing boxes
-    await Hive.openBox(_patientsBox);
-    await Hive.openBox(_labResultsBox);
-    await Hive.openBox(_immunizationsBox);
-    await Hive.openBox(_malariaBox);
-    await Hive.openBox(_nutritionBox);
-    await Hive.openBox(_ancVisitsBox);
-    await Hive.openBox(_draftsBox);
-    await Hive.openBox(_syncQueueBox);
-    await Hive.openBox(_settingsBox);
-    
-    // Open new boxes for offline system
-    await Hive.openBox(_appointmentsBox);
-    await Hive.openBox(_facilitiesBox);
-    await Hive.openBox(_childProfilesBox);
-    await Hive.openBox(_growthRecordsBox);
-    await Hive.openBox(_metadataBox);
-    await Hive.openBox(_cacheBox);
-    await Hive.openBox(_lastSyncBox);
-    
-    print('✅ All Hive boxes initialized (${_getAllBoxNames().length} boxes)');
+    // Open existing boxes (all encrypted)
+    await SecureHiveService.openBox(_patientsBox);
+    await SecureHiveService.openBox(_labResultsBox);
+    await SecureHiveService.openBox(_immunizationsBox);
+    await SecureHiveService.openBox(_malariaBox);
+    await SecureHiveService.openBox(_nutritionBox);
+    await SecureHiveService.openBox(_ancVisitsBox);
+    await SecureHiveService.openBox(_draftsBox);
+    await SecureHiveService.openBox(_syncQueueBox);
+    await SecureHiveService.openBox(_settingsBox);
+
+    // Open new boxes for offline system (all encrypted)
+    await SecureHiveService.openBox(_appointmentsBox);
+    await SecureHiveService.openBox(_facilitiesBox);
+    await SecureHiveService.openBox(_childProfilesBox);
+    await SecureHiveService.openBox(_growthRecordsBox);
+    await SecureHiveService.openBox(_metadataBox);
+    await SecureHiveService.openBox(_cacheBox);
+    await SecureHiveService.openBox(_lastSyncBox);
+
+    debugPrint('✅ All Hive boxes initialized with encryption (${_getAllBoxNames().length} boxes)');
   }
 
   /// Get all box names
@@ -143,7 +145,7 @@ class HiveService {
         final json = box.get(key) as Map<dynamic, dynamic>;
         items.add(Map<String, dynamic>.from(json));
       } catch (e) {
-        print('Error loading sync item: $e');
+        debugPrint('Error loading sync item: $e');
       }
     }
     return items;
@@ -167,7 +169,7 @@ class HiveService {
     if (retryCount >= maxRetries) {
       // Max retries exceeded - move to dead letter queue or remove
       await box.delete(syncId);
-      print('⚠️ Max retries exceeded for $syncId - removed from queue');
+      debugPrint('⚠️ Max retries exceeded for $syncId - removed from queue');
       return true;
     }
     
@@ -392,7 +394,7 @@ class HiveService {
         final json = box.get(key) as Map<dynamic, dynamic>;
         drafts.add(Map<String, dynamic>.from(json));
       } catch (e) {
-        print('Error loading draft: $e');
+        debugPrint('Error loading draft: $e');
       }
     }
     
@@ -442,7 +444,8 @@ class HiveService {
 
   // ==================== CLEAR ALL ====================
   
-  static Future<void> clearAllCache() async {
+  static Future<void> clearAllCache({bool adminConfirmed = false}) async {
+    if (!adminConfirmed) throw StateError('clearAllCache requires adminConfirmed: true');
     // Clear existing boxes
     await Hive.box(_patientsBox).clear();
     await Hive.box(_labResultsBox).clear();
@@ -463,13 +466,13 @@ class HiveService {
     await Hive.box(_cacheBox).clear();
     await Hive.box(_lastSyncBox).clear();
     
-    print('⚠️ All cache cleared');
+    debugPrint('⚠️ All cache cleared');
   }
   
   /// Clear only appointment cache (useful for testing)
   static Future<void> clearAppointmentCache() async {
     await Hive.box(_appointmentsBox).clear();
-    print('⚠️ Appointment cache cleared');
+    debugPrint('⚠️ Appointment cache cleared');
   }
 
   // ==================== CLOSE ALL (NEW) ====================
@@ -477,6 +480,6 @@ class HiveService {
   /// Close all Hive boxes (call on app termination)
   static Future<void> closeAll() async {
     await Hive.close();
-    print('✅ All Hive boxes closed');
+    debugPrint('✅ All Hive boxes closed');
   }
 }

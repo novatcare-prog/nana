@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -39,7 +40,7 @@ final patientImmunizationsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch immunizations online: $e');
+    debugPrint('⚠️ Failed to fetch immunizations online: $e');
   }
   
   // Fallback to cache
@@ -83,7 +84,7 @@ final patientMalariaRecordsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch malaria records online: $e');
+    debugPrint('⚠️ Failed to fetch malaria records online: $e');
   }
   
   // Fallback to cache
@@ -154,7 +155,7 @@ final createImmunizationProvider =
         ref.invalidate(patientImmunizationsProvider(immunization.maternalProfileId));
         ref.invalidate(latestTTDoseProvider(immunization.maternalProfileId));
         
-        print('📴 Immunization queued for sync');
+        debugPrint('📴 Immunization queued for sync');
         return tempResult;
       }
     } catch (e) {
@@ -206,7 +207,7 @@ final createMalariaRecordProvider = Provider<
         ref.invalidate(patientMalariaRecordsProvider(record.maternalProfileId));
         ref.invalidate(latestSPDoseProvider(record.maternalProfileId));
         
-        print('📴 Malaria record queued for sync');
+        debugPrint('📴 Malaria record queued for sync');
         return tempResult;
       }
     } catch (e) {
@@ -245,7 +246,7 @@ final updateImmunizationProvider =
         }
         
         ref.invalidate(patientImmunizationsProvider(immunization.maternalProfileId));
-        print('📴 Immunization update queued for sync');
+        debugPrint('📴 Immunization update queued for sync');
         return immunization;
       }
     } catch (e) {
@@ -283,7 +284,7 @@ final updateMalariaRecordProvider = Provider<
         }
         
         ref.invalidate(patientMalariaRecordsProvider(record.maternalProfileId));
-        print('📴 Malaria record update queued for sync');
+        debugPrint('📴 Malaria record update queued for sync');
         return record;
       }
     } catch (e) {

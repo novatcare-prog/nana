@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 // File: apps/mch_health_worker/lib/core/storage/hive_initialization.dart
 
 import 'package:hive_flutter/hive_flutter.dart';
@@ -22,7 +23,7 @@ class HiveInitialization {
     await _openBoxes();
 
     _initialized = true;
-    print('✅ Hive initialized successfully');
+    debugPrint('✅ Hive initialized successfully');
   }
 
   /// Register all Hive type adapters
@@ -41,7 +42,7 @@ class HiveInitialization {
     //   Hive.registerAdapter(MaternalProfileAdapter());
     // }
 
-    print('✅ Hive adapters registered');
+    debugPrint('✅ Hive adapters registered');
   }
 
   /// Open all required Hive boxes
@@ -65,9 +66,9 @@ class HiveInitialization {
       await Hive.openBox(HiveBoxNames.cache);
       await Hive.openBox(HiveBoxNames.lastSync);
 
-      print('✅ Hive boxes opened');
+      debugPrint('✅ Hive boxes opened');
     } catch (e) {
-      print('❌ Error opening Hive boxes: $e');
+      debugPrint('❌ Error opening Hive boxes: $e');
       rethrow;
     }
   }
@@ -76,14 +77,16 @@ class HiveInitialization {
   static Future<void> close() async {
     await Hive.close();
     _initialized = false;
-    print('✅ Hive closed');
+    debugPrint('✅ Hive closed');
   }
 
   /// Clear all data (use with caution!)
-  static Future<void> clearAll() async {
+  static Future<void> clearAll({required bool confirmedByAdmin}) async {
+    assert(confirmedByAdmin, 'clearAll() must be explicitly confirmed');
+    if (!confirmedByAdmin) return;
     await Hive.deleteFromDisk();
     _initialized = false;
-    print('⚠️ All Hive data cleared');
+    debugPrint('⚠️ All Hive data cleared');
   }
 
   /// Get metadata box

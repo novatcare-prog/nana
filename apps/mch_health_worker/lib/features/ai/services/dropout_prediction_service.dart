@@ -73,10 +73,11 @@ class DropoutPrediction {
       return DropoutPrediction(
         patientId: patientId,
         dropoutRisk: data['dropoutRisk']?.toString() ?? 'LOW',
-        dropoutScore: (data['dropoutScore'] as num?)?.toInt() ?? 0,
+        // Clamp to valid range — prevents manipulated AI responses
+        dropoutScore: ((data['dropoutScore'] as num?)?.toInt() ?? 0).clamp(0, 100),
         keyRiskFactors: list('keyRiskFactors'),
         recommendedFollowUpDays:
-            (data['recommendedFollowUpDays'] as num?)?.toInt() ?? 30,
+            ((data['recommendedFollowUpDays'] as num?)?.toInt() ?? 30).clamp(1, 365),
         suggestedOutreachMessage: personalizedMessage,
         generatedAt: DateTime.now(),
       );

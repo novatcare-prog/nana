@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +41,7 @@ class SyncManager {
       },
     );
 
-    print('✅ Sync manager initialized with auto-sync');
+    debugPrint('✅ Sync manager initialized with auto-sync');
   }
 
   /// Stream of sync results
@@ -87,25 +88,25 @@ class SyncManager {
     _isSyncing = true;
     HiveService.setMetadata('sync_in_progress', true);
 
-    print('🔄 Starting sync...');
+    debugPrint('🔄 Starting sync...');
 
     int synced = 0;
     int failed = 0;
     final errors = <String>[];
 
     final syncQueue = HiveService.getSyncQueue();
-    print('📝 Found ${syncQueue.length} items to sync');
+    debugPrint('📝 Found ${syncQueue.length} items to sync');
 
     for (final item in syncQueue) {
       try {
         await _syncItem(item);
         await HiveService.removeFromSyncQueue(item['id']);
         synced++;
-        print('✅ Synced: ${item['table']} (${item['operation']})');
+        debugPrint('✅ Synced: ${item['table']} (${item['operation']})');
       } catch (e) {
         failed++;
         errors.add('${item['table']}: $e');
-        print('❌ Sync failed: ${item['table']} - $e');
+        debugPrint('❌ Sync failed: ${item['table']} - $e');
 
         // Increment retry count - item will be removed if max retries exceeded
         final maxRetriesExceeded =
@@ -136,7 +137,7 @@ class SyncManager {
       errors: errors,
     );
 
-    print('✅ Sync complete: ${result.message}');
+    debugPrint('✅ Sync complete: ${result.message}');
 
     // Broadcast result
     _syncResultController?.add(result);
@@ -208,7 +209,7 @@ class SyncManager {
         await _syncGenericTable('childbirth_records', operation, data);
         break;
       default:
-        print('⚠️ Unknown table: $table');
+        debugPrint('⚠️ Unknown table: $table');
     }
   }
 
@@ -243,7 +244,7 @@ class SyncManager {
         // Only update if local version is newer than server
         if (localUpdatedAt.isAfter(serverUpdatedAt)) {
           await _supabase.from(tableName).update(data).eq('id', recordId);
-          print('✅ Updated $tableName: $recordId (local was newer)');
+          debugPrint('✅ Updated $tableName: $recordId (local was newer)');
         } else if (serverUpdatedAt.isAfter(localUpdatedAt)) {
           // Server is newer - record conflict and skip update
           _conflicts.add(ConflictRecord(
@@ -254,7 +255,7 @@ class SyncManager {
             localUpdatedAt: localUpdatedAt,
             serverUpdatedAt: serverUpdatedAt,
           ));
-          print(
+          debugPrint(
               '⚠️ Conflict detected in $tableName: $recordId - server is newer, skipping update');
         } else {
           // Same timestamp - update anyway (no conflict)
@@ -396,12 +397,12 @@ class SyncManager {
   Future<void> clearQueue() async {
     final box = HiveService.getBox('sync_queue');
     await box.clear();
-    print('⚠️ Sync queue cleared');
+    debugPrint('⚠️ Sync queue cleared');
   }
 
   /// Force immediate sync (manual trigger)
   Future<SyncResult> forceSyncNow() async {
-    print('🔄 Force sync triggered');
+    debugPrint('🔄 Force sync triggered');
     return await syncAll();
   }
 
@@ -409,7 +410,7 @@ class SyncManager {
   void dispose() {
     _periodicSyncTimer?.cancel();
     _syncResultController?.close();
-    print('✅ Sync manager disposed');
+    debugPrint('✅ Sync manager disposed');
   }
 }
 

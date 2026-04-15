@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -36,7 +37,7 @@ final patientChildbirthRecordsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch childbirth records online: $e');
+    debugPrint('⚠️ Failed to fetch childbirth records online: $e');
   }
 
   return [];
@@ -59,7 +60,7 @@ final motherChildrenProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch children online: $e');
+    debugPrint('⚠️ Failed to fetch children online: $e');
   }
 
   // Fallback to cache
@@ -82,7 +83,7 @@ final childProfileByIdProvider =
       return result;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch child profile online: $e');
+    debugPrint('⚠️ Failed to fetch child profile online: $e');
   }
 
   // Fallback to cache
