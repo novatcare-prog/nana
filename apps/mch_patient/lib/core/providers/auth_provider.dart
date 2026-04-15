@@ -96,6 +96,7 @@ class AuthController {
   }
 
   // Sign up with email and password (patients only)
+  // Requires a matching maternal_profiles record created by a health worker.
   Future<AuthResponse> signUp({
     required String email,
     required String password,
@@ -103,6 +104,39 @@ class AuthController {
     required String phone,
     required String idNumber,
   }) async {
+    // Normalise phone: strip leading zero and prefix with +254 for DB match
+    String normalizedPhone = phone.trim();
+    if (normalizedPhone.startsWith('0')) {
+      normalizedPhone = '+254${normalizedPhone.substring(1)}';
+    } else if (!normalizedPhone.startsWith('+')) {
+      normalizedPhone = '+254$normalizedPhone';
+    }
+
+    // --- PRE-CHECK: Patient must already be registered by a health worker ---
+    final existing = await _supabase
+        .from('maternal_profiles')
+        .select('id, client_name, auth_id')
+        .or(
+          'telephone.eq.$normalizedPhone,telephone.eq.$phone,id_number.eq.$idNumber',
+        )
+        .maybeSingle();
+
+    if (existing == null) {
+      throw Exception(
+        'No record found for this phone number or ID. '
+        'Please contact your health facility to be registered first.',
+      );
+    }
+
+    if (existing['auth_id'] != null &&
+        (existing['auth_id'] as String).isNotEmpty) {
+      throw Exception(
+        'An account has already been created for this record. '
+        'If this is you, please sign in instead.',
+      );
+    }
+    // --- END PRE-CHECK ---
+
     return await _supabase.auth.signUp(
       email: email,
       password: password,
