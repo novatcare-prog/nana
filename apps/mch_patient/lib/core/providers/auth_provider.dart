@@ -113,23 +113,27 @@ class AuthController {
     }
 
     // --- PRE-CHECK: Patient must already be registered by a health worker ---
-    final existing = await _supabase
-        .from('maternal_profiles')
-        .select('id, client_name, auth_id')
-        .or(
-          'telephone.eq.$normalizedPhone,telephone.eq.$phone,id_number.eq.$idNumber',
-        )
-        .maybeSingle();
+    // Uses an RPC (SECURITY DEFINER) to bypass RLS — safe for anon callers.
+    final result = await _supabase.rpc(
+      'verify_patient_registration',
+      params: {
+        'p_phone': phone.trim(),
+        'p_phone_normalized': normalizedPhone,
+        'p_id_number': idNumber.trim(),
+      },
+    );
 
-    if (existing == null) {
+    final found = result['found'] as bool? ?? false;
+    final claimed = result['claimed'] as bool? ?? false;
+
+    if (!found) {
       throw Exception(
         'No record found for this phone number or ID. '
         'Please contact your health facility to be registered first.',
       );
     }
 
-    if (existing['auth_id'] != null &&
-        (existing['auth_id'] as String).isNotEmpty) {
+    if (claimed) {
       throw Exception(
         'An account has already been created for this record. '
         'If this is you, please sign in instead.',
