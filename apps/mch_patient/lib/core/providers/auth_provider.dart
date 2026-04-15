@@ -114,29 +114,50 @@ class AuthController {
 
     // --- PRE-CHECK: Patient must already be registered by a health worker ---
     // Uses an RPC (SECURITY DEFINER) to bypass RLS — safe for anon callers.
-    final result = await _supabase.rpc(
-      'verify_patient_registration',
-      params: {
-        'p_phone': phone.trim(),
-        'p_phone_normalized': normalizedPhone,
-        'p_id_number': idNumber.trim(),
-      },
-    );
-
-    final found = result['found'] as bool? ?? false;
-    final claimed = result['claimed'] as bool? ?? false;
-
-    if (!found) {
-      throw Exception(
-        'No record found for this phone number or ID. '
-        'Please contact your health facility to be registered first.',
+    try {
+      final result = await _supabase.rpc(
+        'verify_patient_registration',
+        params: {
+          'p_phone': phone.trim(),
+          'p_phone_normalized': normalizedPhone,
+          'p_id_number': idNumber.trim(),
+        },
       );
-    }
 
-    if (claimed) {
+      if (kDebugMode) {
+        debugPrint('🔐 verify_patient_registration result: $result');
+      }
+
+      final found = result['found'] as bool? ?? false;
+      final claimed = result['claimed'] as bool? ?? false;
+
+      if (!found) {
+        throw Exception(
+          'No record found for this phone number or ID. '
+          'Please contact your health facility to be registered first.',
+        );
+      }
+
+      if (claimed) {
+        throw Exception(
+          'An account has already been created for this record. '
+          'If this is you, please sign in instead.',
+        );
+      }
+    } catch (e) {
+      // Re-throw our own custom exceptions directly
+      if (e is Exception &&
+          (e.toString().contains('No record found') ||
+              e.toString().contains('An account has already'))) {
+        rethrow;
+      }
+      // RPC doesn't exist or DB error — log it and surface a clear message
+      if (kDebugMode) {
+        debugPrint('🔐 verify_patient_registration error: $e');
+      }
       throw Exception(
-        'An account has already been created for this record. '
-        'If this is you, please sign in instead.',
+        'Unable to verify registration status. '
+        'Please check your connection and try again. (${e.runtimeType})',
       );
     }
     // --- END PRE-CHECK ---
