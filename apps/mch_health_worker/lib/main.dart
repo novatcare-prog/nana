@@ -57,8 +57,8 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
   Future<void> _bootstrap() async {
     try {
       // 1. Read compile-time configuration (provided via --dart-define at build)
-      final String url = _supabaseUrl;
-      final String key = _supabaseAnonKey;
+      const String url = _supabaseUrl;
+      const String key = _supabaseAnonKey;
 
       // 1b. Initialize Gemini AI (non-fatal — app works offline without it)
       const geminiKey = String.fromEnvironment('GEMINI_API_KEY');
@@ -66,7 +66,8 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
         _geminiService.initialize(geminiKey);
         debugPrint('✅ Gemini AI initialized');
       } else {
-        debugPrint('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
+        debugPrint(
+            'ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
       }
 
       if (url.isEmpty || key.isEmpty) {
@@ -150,8 +151,7 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
                 children: [
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('Startup Error:\n$_error',
-                      textAlign: TextAlign.center),
+                  Text('Startup Error:\n$_error', textAlign: TextAlign.center),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () => setState(() {
@@ -170,7 +170,7 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
 
     // Still loading — show the branded SplashScreen
     if (!_initialized) {
-      return MaterialApp(
+      return const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: SplashScreen(),
       );

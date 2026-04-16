@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,7 +30,8 @@ void main() async {
     _geminiService.initialize(geminiKey);
     debugPrint('✅ Gemini AI initialized');
   } else {
-    debugPrint('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
+    debugPrint(
+        'ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
   }
 
   runApp(

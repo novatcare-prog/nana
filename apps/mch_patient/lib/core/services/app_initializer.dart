@@ -42,8 +42,8 @@ class AppInitializer {
       _updateProgress('Loading configuration...', 0.0, onProgress);
 
       // Credentials come exclusively from --dart-define at build time
-      final url = _supabaseUrl;
-      final key = _supabaseAnonKey;
+      const url = _supabaseUrl;
+      const key = _supabaseAnonKey;
 
       if (url.isEmpty || key.isEmpty) {
         throw Exception('Missing Supabase configuration. '

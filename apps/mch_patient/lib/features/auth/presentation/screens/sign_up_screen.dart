@@ -54,13 +54,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
+          const SnackBar(
+            content: Text(
               '✓ Account created! Please check your email to verify '
               'your account, then sign in.',
             ),
             backgroundColor: AppColors.success,
-            duration: const Duration(seconds: 6),
+            duration: Duration(seconds: 6),
           ),
         );
         context.go('/login');

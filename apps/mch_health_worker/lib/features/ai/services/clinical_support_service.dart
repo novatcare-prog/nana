@@ -64,7 +64,8 @@ class ClinicalBriefing {
           jsonDecode(clean) as Map<String, dynamic>;
 
       List<String> list(String key) =>
-          (data[key] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+          (data[key] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          [];
 
       return ClinicalBriefing(
         patientId: patientId,
@@ -111,8 +112,7 @@ class ClinicalSupportService {
     );
 
     final prompt =
-        _clinicalSupportPrompt.replaceAll('{visitNumber}', '$expectedVisitNumber') +
-            '\n\n$context\n\nGenerate the pre-visit briefing JSON now.';
+        '${_clinicalSupportPrompt.replaceAll('{visitNumber}', '$expectedVisitNumber')}\n\n$context\n\nGenerate the pre-visit briefing JSON now.';
 
     final responseText = await _gemini.generateText(prompt);
     return ClinicalBriefing.fromGeminiResponse(profile.id ?? '', responseText);

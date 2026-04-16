@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
@@ -141,7 +140,7 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
       if (_muacController.text.trim().isNotEmpty) {
         try {
           final muacValue = double.parse(_muacController.text.trim());
-          
+
           // Only create MUAC measurement if value is valid (within reasonable range)
           if (muacValue > 0 && muacValue <= 100) {
             final muacMeasurement = MuacMeasurement(
@@ -199,7 +198,8 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             // Gestation-specific recommendation banner
-            if (gestationWeeks != null) _buildGestationBanner(context, gestationWeeks),
+            if (gestationWeeks != null)
+              _buildGestationBanner(context, gestationWeeks),
             if (gestationWeeks != null) const SizedBox(height: 16),
 
             // Date
@@ -237,21 +237,22 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                 helperText: 'Normal: ≥23 cm, Malnourished: <23 cm',
                 prefixIcon: Icon(Icons.straighten),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return null; // Optional field
                 }
-                
+
                 final muac = double.tryParse(value);
                 if (muac == null) {
                   return 'Please enter a valid number';
                 }
-                
+
                 if (muac < 15 || muac > 40) {
                   return 'MUAC must be between 15-40 cm';
                 }
-                
+
                 return null;
               },
             ),
@@ -284,11 +285,11 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (!_ironFolateGiven) return null;
-                  
+
                   if (value == null || value.isEmpty) {
                     return 'Enter number of tablets given';
                   }
-                  
+
                   final tablets = int.tryParse(value);
                   if (tablets == null || tablets < 1) {
                     return 'Must be at least 1 tablet';
@@ -325,11 +326,11 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (!_calciumGiven) return null;
-                  
+
                   if (value == null || value.isEmpty) {
                     return 'Enter number of tablets given';
                   }
-                  
+
                   final tablets = int.tryParse(value);
                   if (tablets == null || tablets < 1) {
                     return 'Must be at least 1 tablet';
@@ -380,7 +381,7 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
                   borderRadius: BorderRadius.circular(8),
                   side: BorderSide(color: Colors.grey.shade300)),
             ),
-            
+
             if (_counselingGiven) ...[
               const SizedBox(height: 12),
               const Padding(
@@ -392,11 +393,12 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
               ),
               const SizedBox(height: 8),
               ...mchCounselingTopics.map((topic) => CheckboxListTile(
-                dense: true,
-                title: Text(topic, style: const TextStyle(fontSize: 14)),
-                value: _counselingTopicsSelected[topic],
-                onChanged: (val) => setState(() => _counselingTopicsSelected[topic] = val!),
-              )),
+                    dense: true,
+                    title: Text(topic, style: const TextStyle(fontSize: 14)),
+                    value: _counselingTopicsSelected[topic],
+                    onChanged: (val) =>
+                        setState(() => _counselingTopicsSelected[topic] = val!),
+                  )),
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -444,7 +446,7 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
 
   Widget _buildGestationBanner(BuildContext context, int weeks) {
     final recommendation = _getNutritionRecommendation(weeks);
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(

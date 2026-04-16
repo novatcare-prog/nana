@@ -107,14 +107,14 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             color: const Color(0xFFFFF3E0),
-            child: Row(
+            child: const Row(
               children: [
-                const Icon(Icons.info_outline, size: 14, color: Color(0xFFE65100)),
-                const SizedBox(width: 6),
+                Icon(Icons.info_outline, size: 14, color: Color(0xFFE65100)),
+                SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     'AI responses are for education only. Always consult your health worker for medical decisions.',
-                    style: const TextStyle(fontSize: 11, color: Color(0xFFE65100)),
+                    style: TextStyle(fontSize: 11, color: Color(0xFFE65100)),
                   ),
                 ),
               ],
@@ -125,7 +125,8 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
           Expanded(
             child: messagesAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const Center(child: Text('Could not load chat')),
+              error: (_, __) =>
+                  const Center(child: Text('Could not load chat')),
               data: (messages) {
                 if (messages.isEmpty) return const SizedBox.shrink();
                 return ListView.builder(
