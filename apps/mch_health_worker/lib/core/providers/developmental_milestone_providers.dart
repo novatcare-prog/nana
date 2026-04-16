@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -25,7 +26,7 @@ final milestonesByChildProvider = FutureProvider.family<List<DevelopmentalMilest
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch milestones online: $e');
+    debugPrint('⚠️ Failed to fetch milestones online: $e');
   }
   
   return [];

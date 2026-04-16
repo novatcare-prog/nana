@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -17,7 +18,7 @@ final childImmunizationsProvider =
   try {
     return await repository.getImmunizationsByChildId(childId);
   } catch (e) {
-    print('Error fetching immunizations: $e');
+    debugPrint('Error fetching immunizations: $e');
     return <ImmunizationRecord>[];
   }
 });
@@ -31,7 +32,7 @@ final immunizationCoverageProvider =
   try {
     return await repository.getImmunizationCoverage(childId);
   } catch (e) {
-    print('Error fetching immunization coverage: $e');
+    debugPrint('Error fetching immunization coverage: $e');
     return <ImmunizationType, int>{};
   }
 });

@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mch_core/mch_core.dart';
 import 'app.dart';
 import 'core/services/app_initializer.dart';
@@ -25,18 +25,13 @@ void main() async {
     debugPrint('⚠️ App initializer failed: ${initializer.error}');
   }
 
-  // ── Step 2: Initialize Gemini AI (non-fatal if key missing) ────────────
-  try {
-    // dotenv is already loaded by AppInitializer, just read the key
-    final geminiKey = dotenv.maybeGet('GEMINI_API_KEY') ?? '';
-    if (geminiKey.isNotEmpty && geminiKey != 'YOUR_GEMINI_API_KEY_HERE') {
-      _geminiService.initialize(geminiKey);
-      debugPrint('✅ Gemini AI initialized');
-    } else {
-      debugPrint('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
-    }
-  } catch (e) {
-    debugPrint('ℹ️ Could not initialize Gemini: $e');
+  // ── Step 2: Initialize Gemini AI (non-fatal if key missing) ────────────────────
+  const geminiKey = String.fromEnvironment('GEMINI_API_KEY');
+  if (geminiKey.isNotEmpty) {
+    _geminiService.initialize(geminiKey);
+    debugPrint('✅ Gemini AI initialized');
+  } else {
+    debugPrint('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
   }
 
   runApp(

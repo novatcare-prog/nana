@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // Import from shared mch_core package
@@ -95,6 +96,7 @@ class AuthController {
   }
 
   // Sign up with email and password (patients only)
+  // Requires a matching maternal_profiles record created by a health worker.
   Future<AuthResponse> signUp({
     required String email,
     required String password,
@@ -102,6 +104,64 @@ class AuthController {
     required String phone,
     required String idNumber,
   }) async {
+    // Normalise phone: strip leading zero and prefix with +254 for DB match
+    String normalizedPhone = phone.trim();
+    if (normalizedPhone.startsWith('0')) {
+      normalizedPhone = '+254${normalizedPhone.substring(1)}';
+    } else if (!normalizedPhone.startsWith('+')) {
+      normalizedPhone = '+254$normalizedPhone';
+    }
+
+    // --- PRE-CHECK: Patient must already be registered by a health worker ---
+    // Uses an RPC (SECURITY DEFINER) to bypass RLS — safe for anon callers.
+    try {
+      final result = await _supabase.rpc(
+        'verify_patient_registration',
+        params: {
+          'p_phone': phone.trim(),
+          'p_phone_normalized': normalizedPhone,
+          'p_id_number': idNumber.trim(),
+        },
+      );
+
+      if (kDebugMode) {
+        debugPrint('🔐 verify_patient_registration result: $result');
+      }
+
+      final found = result['found'] as bool? ?? false;
+      final claimed = result['claimed'] as bool? ?? false;
+
+      if (!found) {
+        throw Exception(
+          'No record found for this phone number or ID. '
+          'Please contact your health facility to be registered first.',
+        );
+      }
+
+      if (claimed) {
+        throw Exception(
+          'An account has already been created for this record. '
+          'If this is you, please sign in instead.',
+        );
+      }
+    } catch (e) {
+      // Re-throw our own custom exceptions directly
+      if (e is Exception &&
+          (e.toString().contains('No record found') ||
+              e.toString().contains('An account has already'))) {
+        rethrow;
+      }
+      // RPC doesn't exist or DB error — log it and surface a clear message
+      if (kDebugMode) {
+        debugPrint('🔐 verify_patient_registration error: $e');
+      }
+      throw Exception(
+        'Unable to verify registration status. '
+        'Please check your connection and try again. (${e.runtimeType})',
+      );
+    }
+    // --- END PRE-CHECK ---
+
     return await _supabase.auth.signUp(
       email: email,
       password: password,
@@ -133,9 +193,7 @@ class AuthController {
     required String newPassword,
   }) async {
     try {
-      // First, verify the OTP token
-      print(
-          '🔐 Attempting OTP verification for: $email with token: ${token.substring(0, 2)}...');
+      if (kDebugMode) debugPrint('🔐 Attempting OTP verification');
 
       final response = await _supabase.auth.verifyOTP(
         email: email,
@@ -143,21 +201,21 @@ class AuthController {
         type: OtpType.recovery,
       );
 
-      print(
-          '🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
+      if (kDebugMode) {
+        debugPrint('🔐 OTP verification — session: ${response.session != null}');
+      }
 
       if (response.user == null) {
         throw Exception('Invalid or expired code. Please request a new one.');
       }
 
       // Then update the password
-      print('🔐 Updating password...');
       await _supabase.auth.updateUser(
         UserAttributes(password: newPassword),
       );
-      print('🔐 Password updated successfully!');
+      if (kDebugMode) debugPrint('🔐 Password updated successfully');
     } catch (e) {
-      print('🔐 Password reset error: $e');
+      if (kDebugMode) debugPrint('🔐 Password reset error: ${e.runtimeType}');
 
       // Re-throw with more specific messages
       final errorStr = e.toString().toLowerCase();

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/repositories/period_repository.dart';
 import '../domain/models/period_entry.dart';
@@ -38,7 +39,7 @@ class PeriodEntriesNotifier
       await loadEntries(); // Refresh list
     } catch (e) {
       // Handle error (maybe show snackbar via UI/listener)
-      print('Error saving period entry: $e');
+      debugPrint('Error saving period entry: $e');
     }
   }
 
@@ -47,7 +48,7 @@ class PeriodEntriesNotifier
       await _repository.deleteEntry(id);
       await loadEntries();
     } catch (e) {
-      print('Error deleting period entry: $e');
+      debugPrint('Error deleting period entry: $e');
     }
   }
 }

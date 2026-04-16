@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -30,7 +31,9 @@ final currentMaternalProfileProvider =
       final userPhone = user.userMetadata?['phone'] as String?;
       final userIdNumber = user.userMetadata?['id_number'] as String?;
 
-      print('📋 Profile not found by auth_id, trying phone: $userPhone and ID: $userIdNumber');
+      if (kDebugMode) {
+        debugPrint('📋 Profile not found by auth_id, trying phone/ID fallback');
+      }
 
       if (userPhone != null || userIdNumber != null) {
         // Build OR query for phone and/or ID number
@@ -53,7 +56,7 @@ final currentMaternalProfileProvider =
 
         // If we found a profile via phone/ID, update its auth_id
         if (response != null && response['auth_id'] == null) {
-          print('✅ Found profile via phone/ID, updating auth_id');
+        if (kDebugMode) debugPrint('✅ Found profile via phone/ID, updating auth_id');
           await supabase
               .from('maternal_profiles')
               .update({'auth_id': user.id})
@@ -66,7 +69,7 @@ final currentMaternalProfileProvider =
     }
 
     if (response == null) {
-      print('📋 No maternal profile found for user ${user.id}');
+      if (kDebugMode) debugPrint('📋 No maternal profile found for current user');
       return null;
     }
 
@@ -77,10 +80,10 @@ final currentMaternalProfileProvider =
       data['facility_name'] = data['facilities']['facility_name'];
     }
 
-    print('✅ Maternal profile loaded: ${data['client_name']}');
+    if (kDebugMode) debugPrint('✅ Maternal profile loaded successfully');
     return MaternalProfile.fromJson(data);
   } catch (e) {
-    print('❌ Error fetching maternal profile: $e');
+    if (kDebugMode) debugPrint('❌ Error fetching maternal profile: ${e.runtimeType}');
     return null;
   }
 });

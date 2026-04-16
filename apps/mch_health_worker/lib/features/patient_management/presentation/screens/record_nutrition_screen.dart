@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
@@ -159,7 +160,7 @@ class _RecordNutritionScreenState extends ConsumerState<RecordNutritionScreen> {
           }
         } catch (e) {
           // If MUAC parsing fails, continue without creating MUAC measurement
-          print('⚠️ Failed to parse MUAC value: $e');
+          debugPrint('⚠️ Failed to parse MUAC value: $e');
         }
       }
 

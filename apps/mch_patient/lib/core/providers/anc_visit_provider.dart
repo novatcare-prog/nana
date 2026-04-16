@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -14,7 +15,7 @@ final ancVisitsProvider = FutureProvider.family<List<ANCVisit>, String>((ref, ma
   try {
     return await repository.getVisitsByPatientId(maternalProfileId);
   } catch (e) {
-    print('Error fetching ANC visits: $e');
+    debugPrint('Error fetching ANC visits: $e');
     return <ANCVisit>[];
   }
 });
@@ -26,7 +27,7 @@ final latestAncVisitProvider = FutureProvider.family<ANCVisit?, String>((ref, ma
   try {
     return await repository.getLatestVisit(maternalProfileId);
   } catch (e) {
-    print('Error fetching latest ANC visit: $e');
+    debugPrint('Error fetching latest ANC visit: $e');
     return null;
   }
 });
@@ -38,7 +39,7 @@ final ancVisitCountProvider = FutureProvider.family<int, String>((ref, maternalP
   try {
     return await repository.getVisitCount(maternalProfileId);
   } catch (e) {
-    print('Error fetching ANC visit count: $e');
+    debugPrint('Error fetching ANC visit count: $e');
     return 0;
   }
 });

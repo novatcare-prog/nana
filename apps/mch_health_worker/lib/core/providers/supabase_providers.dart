@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -100,7 +101,7 @@ final statisticsProvider = FutureProvider<Map<String, int>>((ref) async {
       'dueSoon': dueSoon,
     };
   } catch (e) {
-    print('Error getting statistics: $e');
+    debugPrint('Error getting statistics: $e');
     // Return empty stats on error
     return {
       'total': 0,
@@ -126,7 +127,7 @@ final patientVisitsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch ANC visits online: $e');
+    debugPrint('⚠️ Failed to fetch ANC visits online: $e');
   }
 
   return HiveService.getCachedANCVisits(profileId);
@@ -179,7 +180,7 @@ final createMaternalProfileProvider =
       ref.invalidate(maternalProfilesProvider);
       ref.invalidate(statisticsProvider);
 
-      print('📝 Maternal profile queued for sync (offline mode)');
+      debugPrint('📝 Maternal profile queued for sync (offline mode)');
       return profile;
     }
   };
@@ -215,7 +216,7 @@ final updateMaternalProfileProvider =
       ref.invalidate(maternalProfileByIdProvider(profile.id!));
       ref.invalidate(statisticsProvider);
 
-      print('📝 Maternal profile update queued for sync (offline mode)');
+      debugPrint('📝 Maternal profile update queued for sync (offline mode)');
       return profile;
     }
   };
@@ -235,7 +236,7 @@ final deleteMaternalProfileProvider =
         table: 'maternal_profiles',
         data: {'id': id},
       );
-      print('📝 Maternal profile deletion queued for sync (offline mode)');
+      debugPrint('📝 Maternal profile deletion queued for sync (offline mode)');
     }
 
     ref.invalidate(maternalProfilesProvider);
@@ -286,7 +287,7 @@ final createVisitProvider =
         );
       }
 
-      print('📝 ANC visit queued for sync (offline mode)');
+      debugPrint('📝 ANC visit queued for sync (offline mode)');
     }
 
     // Invalidate visit-specific providers

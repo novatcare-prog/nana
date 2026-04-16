@@ -249,16 +249,23 @@ class _ANCVisitRecordingScreenState
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
+        child: Column(
           children: [
             // AI Pre-Visit Briefing Panel
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: VisitAiAssistant(patientId: widget.patientId),
             ),
-            Stepper(
+            Expanded(
+              child: SingleChildScrollView(
+                child: Stepper(
               physics: const NeverScrollableScrollPhysics(),
               currentStep: _currentStep,
+              onStepTapped: (step) {
+                setState(() {
+                  _currentStep = step;
+                });
+              },
           onStepContinue: () {
             if (_currentStep < 4) {
               setState(() {
@@ -739,12 +746,14 @@ class _ANCVisitRecordingScreenState
                 ],
               ),
               isActive: _currentStep >= 4,
-            ),
-          ],
-        ),
-          ],
-        ),
-      ),
-    );
+            ), // end last Step
+          ], // end steps list
+        ), // end Stepper
+              ), // end SingleChildScrollView
+            ), // end Expanded
+          ], // end Column children
+        ), // end Column
+      ), // end Form
+    ); // end Scaffold
   }
 }

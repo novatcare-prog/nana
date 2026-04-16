@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -17,26 +18,26 @@ final patientChildrenProvider = FutureProvider<List<ChildProfile>>((ref) async {
   return maternalProfileAsync.when(
     data: (maternalProfile) async {
       if (maternalProfile == null || maternalProfile.id == null || maternalProfile.id!.isEmpty) {
-        print('📋 No maternal profile found, returning empty children list');
+        debugPrint('📋 No maternal profile found, returning empty children list');
         return <ChildProfile>[];
       }
       
-      print('📋 Fetching children for maternal profile: ${maternalProfile.id}');
+      debugPrint('📋 Fetching children for maternal profile: ${maternalProfile.id}');
       try {
         final children = await repository.getChildrenByMotherId(maternalProfile.id!);
-        print('📋 Found ${children.length} children');
+        debugPrint('📋 Found ${children.length} children');
         return children;
       } catch (e) {
-        print('📋 Error fetching children: $e');
+        debugPrint('📋 Error fetching children: $e');
         return <ChildProfile>[];
       }
     },
     loading: () async {
-      print('📋 Waiting for maternal profile...');
+      debugPrint('📋 Waiting for maternal profile...');
       return <ChildProfile>[];
     },
     error: (error, stack) async {
-      print('📋 Maternal profile error: $error');
+      debugPrint('📋 Maternal profile error: $error');
       return <ChildProfile>[];
     },
   );
@@ -49,7 +50,7 @@ final childByIdProvider = FutureProvider.family<ChildProfile?, String>((ref, chi
   try {
     return await repository.getChildById(childId);
   } catch (e) {
-    print('Error fetching child by ID: $e');
+    debugPrint('Error fetching child by ID: $e');
     return null;
   }
 });

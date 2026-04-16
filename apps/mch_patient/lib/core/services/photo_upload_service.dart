@@ -59,7 +59,11 @@ class PhotoUploadService {
     try {
       // Generate unique filename
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final extension = imageFile.path.split('.').last;
+      final extension = imageFile.path.split('.').last.toLowerCase();
+      const allowed = {'jpg', 'jpeg', 'png', 'webp'};
+      if (!allowed.contains(extension)) {
+        throw Exception('Unsupported file type. Please use JPG, PNG, or WebP.');
+      }
       final fileName = '$maternalProfileId-$timestamp.$extension';
       final filePath = 'maternal/$fileName';
       

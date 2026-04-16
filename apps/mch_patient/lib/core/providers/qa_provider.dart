@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -18,7 +19,7 @@ final myQuestionsProvider = FutureProvider<List<HealthQuestion>>((ref) async {
     final questions = await repository.getMyQuestions(user.id);
     return questions;
   } catch (e) {
-    print('❓ Error fetching my questions: $e');
+    debugPrint('❓ Error fetching my questions: $e');
     return <HealthQuestion>[];
   }
 });
@@ -32,7 +33,7 @@ final questionAnswersProvider =
   try {
     return await repository.getAnswersForQuestion(questionId);
   } catch (e) {
-    print('❓ Error fetching answers: $e');
+    debugPrint('❓ Error fetching answers: $e');
     return <QuestionAnswer>[];
   }
 });

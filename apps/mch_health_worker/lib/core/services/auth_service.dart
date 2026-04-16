@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Authentication Service
@@ -25,15 +26,15 @@ class AuthService {
     required String password,
   }) async {
     try {
-      print('🔐 Attempting login for: $email');
+      if (kDebugMode) debugPrint('🔐 Attempting login for: $email');
       final response = await _supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
-      print('🔐 Login successful for: ${response.user?.email}');
+      if (kDebugMode) debugPrint('🔐 Login successful');
       return response;
     } catch (e) {
-      print('🔐 LOGIN ERROR: $e');
+      if (kDebugMode) debugPrint('🔐 LOGIN ERROR: $e');
       rethrow;
     }
   }
@@ -101,38 +102,44 @@ class AuthService {
     required String newPassword,
   }) async {
     try {
-      print('🔐 Attempting OTP verification for: $email');
-      
+      if (kDebugMode) debugPrint('🔐 Attempting OTP verification');
+
       // First, verify the OTP token to establish a session
       final response = await _supabase.auth.verifyOTP(
         email: email,
         token: token,
         type: OtpType.recovery,
       );
-      
-      print('🔐 OTP verification response - user: ${response.user?.id}, session: ${response.session != null}');
-      
+
+      if (kDebugMode) {
+        debugPrint('🔐 OTP verification — session: ${response.session != null}');
+      }
+
       if (response.user == null) {
         throw Exception('Invalid or expired code. Please request a new one.');
       }
-      
+
       // Then update the password
-      print('🔐 Updating password...');
       await _supabase.auth.updateUser(
         UserAttributes(password: newPassword),
       );
-      print('🔐 Password updated successfully!');
-      
+      if (kDebugMode) debugPrint('🔐 Password updated successfully');
+
     } catch (e) {
-      print('🔐 ==========================================');
-      print('🔐 PASSWORD RESET ERROR:');
-      print('🔐 Error type: ${e.runtimeType}');
-      print('🔐 Full error: $e');
-      print('🔐 ==========================================');
-      
-      // Show the ACTUAL error message instead of generic ones
-      final errorMessage = e.toString();
-      throw Exception('Reset failed: $errorMessage');
+      if (kDebugMode) debugPrint('🔐 Password reset error: ${e.runtimeType}');
+
+      // Map Supabase errors to safe user-facing messages
+      final raw = e.toString().toLowerCase();
+      if (raw.contains('expired')) {
+        throw Exception('Code has expired. Please request a new one.');
+      } else if (raw.contains('invalid') || raw.contains('otp')) {
+        throw Exception('Invalid code. Please check and try again.');
+      } else if (raw.contains('same_password')) {
+        throw Exception('New password must be different from your current one.');
+      } else if (raw.contains('weak')) {
+        throw Exception('Password is too weak. Please use a stronger password.');
+      }
+      rethrow;
     }
   }
 

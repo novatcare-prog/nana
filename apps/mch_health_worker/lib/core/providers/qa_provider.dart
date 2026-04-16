@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -14,7 +15,7 @@ final openQuestionsProvider = FutureProvider<List<HealthQuestion>>((ref) async {
   try {
     return await repository.getAllOpenQuestions();
   } catch (e) {
-    print('❓ Error fetching open questions: $e');
+    debugPrint('❓ Error fetching open questions: $e');
     return <HealthQuestion>[];
   }
 });
@@ -26,7 +27,7 @@ final allQuestionsProvider = FutureProvider<List<HealthQuestion>>((ref) async {
   try {
     return await repository.getAllQuestions();
   } catch (e) {
-    print('❓ Error fetching all questions: $e');
+    debugPrint('❓ Error fetching all questions: $e');
     return <HealthQuestion>[];
   }
 });
@@ -40,7 +41,7 @@ final questionAnswersProvider =
   try {
     return await repository.getAnswersForQuestion(questionId);
   } catch (e) {
-    print('❓ Error fetching answers: $e');
+    debugPrint('❓ Error fetching answers: $e');
     return <QuestionAnswer>[];
   }
 });

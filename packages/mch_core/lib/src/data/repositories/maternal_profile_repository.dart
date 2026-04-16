@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,7 @@ class SupabaseMaternalProfileRepository {
         'hypertension': true
       }).eq('id', profileId);
     } catch (e) {
-      print('Failed to flag patient as high risk: $e');
+      debugPrint('Failed to flag patient as high risk: $e');
       // Don't re-throw, as failing to flag is not a critical error
     }
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -25,7 +26,7 @@ final vitaminARecordsByChildProvider = FutureProvider.family<List<VitaminARecord
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch Vitamin A records online: $e');
+    debugPrint('⚠️ Failed to fetch Vitamin A records online: $e');
   }
   
   return [];
@@ -177,7 +178,7 @@ final dewormingRecordsByChildProvider = FutureProvider.family<List<DewormingReco
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch deworming records online: $e');
+    debugPrint('⚠️ Failed to fetch deworming records online: $e');
   }
   
   return [];

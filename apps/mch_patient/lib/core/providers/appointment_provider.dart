@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -26,7 +27,7 @@ class AppointmentRepository {
           .map((json) => Appointment.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error fetching appointments: $e');
+      debugPrint('Error fetching appointments: $e');
       throw Exception('Failed to fetch patient appointments: $e');
     }
   }
@@ -49,7 +50,7 @@ class AppointmentRepository {
           .map((json) => Appointment.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error fetching upcoming appointments: $e');
+      debugPrint('Error fetching upcoming appointments: $e');
       throw Exception('Failed to fetch upcoming appointments: $e');
     }
   }
@@ -70,7 +71,7 @@ class AppointmentRepository {
           .map((json) => Appointment.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error fetching past appointments: $e');
+      debugPrint('Error fetching past appointments: $e');
       throw Exception('Failed to fetch past appointments: $e');
     }
   }
@@ -82,7 +83,7 @@ class AppointmentRepository {
           .from('appointments')
           .update({'appointment_status': 'confirmed'}).eq('id', appointmentId);
     } catch (e) {
-      print('Error confirming appointment: $e');
+      debugPrint('Error confirming appointment: $e');
       throw Exception('Failed to confirm appointment: $e');
     }
   }
@@ -102,18 +103,18 @@ final upcomingAppointmentsProvider =
   return maternalProfileAsync.when(
     data: (maternalProfile) async {
       if (maternalProfile == null || maternalProfile.id == null) {
-        print('📅 No maternal profile found, returning empty appointments');
+        debugPrint('📅 No maternal profile found, returning empty appointments');
         return <Appointment>[];
       }
 
-      print('📅 Fetching upcoming appointments for: ${maternalProfile.id}');
+      debugPrint('📅 Fetching upcoming appointments for: ${maternalProfile.id}');
       try {
         final appointments =
             await repository.getUpcomingAppointments(maternalProfile.id!);
-        print('📅 Found ${appointments.length} upcoming appointments');
+        debugPrint('📅 Found ${appointments.length} upcoming appointments');
         return appointments;
       } catch (e) {
-        print('📅 Error: $e');
+        debugPrint('📅 Error: $e');
         return <Appointment>[];
       }
     },
@@ -133,14 +134,14 @@ final pastAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
         return <Appointment>[];
       }
 
-      print('📅 Fetching past appointments for: ${maternalProfile.id}');
+      debugPrint('📅 Fetching past appointments for: ${maternalProfile.id}');
       try {
         final appointments =
             await repository.getPastAppointments(maternalProfile.id!);
-        print('📅 Found ${appointments.length} past appointments');
+        debugPrint('📅 Found ${appointments.length} past appointments');
         return appointments;
       } catch (e) {
-        print('📅 Error: $e');
+        debugPrint('📅 Error: $e');
         return <Appointment>[];
       }
     },
@@ -163,7 +164,7 @@ final allAppointmentsProvider = FutureProvider<List<Appointment>>((ref) async {
       try {
         return await repository.getAppointmentsByPatientId(maternalProfile.id!);
       } catch (e) {
-        print('📅 Error: $e');
+        debugPrint('📅 Error: $e');
         return <Appointment>[];
       }
     },

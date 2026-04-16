@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mch_core/mch_core.dart';
@@ -11,6 +11,7 @@ import 'core/providers/theme_provider.dart'
 import 'core/theme/app_theme.dart';
 import 'core/services/hive_service.dart';
 import 'core/services/connectivity_service.dart';
+import 'core/services/session_timeout_service.dart';
 
 // --- Feature Imports ---
 import 'features/navigation/main_navigation_scaffold.dart';
@@ -55,33 +56,25 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
 
   Future<void> _bootstrap() async {
     try {
-      // 1. Validate and Load Configuration
-      String url = _supabaseUrl;
-      String key = _supabaseAnonKey;
-
-      if (url.isEmpty || key.isEmpty) {
-        try {
-          await dotenv.load(fileName: ".env");
-          url = dotenv.env['SUPABASE_URL'] ?? '';
-          key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-        } catch (e) {
-          print('⚠️ Failed to load .env: $e');
-        }
-      }
+      // 1. Read compile-time configuration (provided via --dart-define at build)
+      final String url = _supabaseUrl;
+      final String key = _supabaseAnonKey;
 
       // 1b. Initialize Gemini AI (non-fatal — app works offline without it)
-      final geminiKey = dotenv.maybeGet('GEMINI_API_KEY') ?? '';
+      const geminiKey = String.fromEnvironment('GEMINI_API_KEY');
       if (geminiKey.isNotEmpty) {
         _geminiService.initialize(geminiKey);
-        print('✅ Gemini AI initialized');
+        debugPrint('✅ Gemini AI initialized');
       } else {
-        print('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
+        debugPrint('ℹ️ GEMINI_API_KEY not set — AI features will show offline state');
       }
 
       if (url.isEmpty || key.isEmpty) {
         throw Exception('Missing Supabase configuration. '
-            'Build with: flutter run --dart-define=SUPABASE_URL=xxx --dart-define=SUPABASE_ANON_KEY=xxx '
-            'OR ensure .env file exists with SUPABASE_URL and SUPABASE_ANON_KEY');
+            'Build with: flutter run '
+            '--dart-define=SUPABASE_URL=xxx '
+            '--dart-define=SUPABASE_ANON_KEY=xxx '
+            '--dart-define=GEMINI_API_KEY=xxx');
       }
 
       // 2. Initialize Supabase
@@ -93,9 +86,9 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
             authFlowType: AuthFlowType.pkce,
           ),
         );
-        print('✅ Supabase initialized successfully');
+        debugPrint('✅ Supabase initialized successfully');
       } catch (e) {
-        print('⚠️ Supabase initialization failed (likely offline): $e');
+        debugPrint('⚠️ Supabase initialization failed (likely offline): $e');
         // Continue anyway - app handles offline state
       }
 
@@ -122,22 +115,22 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
           }
         });
       } catch (e) {
-        print('⚠️ Auth state listener setup failed: $e');
+        debugPrint('⚠️ Auth state listener setup failed: $e');
       }
 
       // 4. Initialize Hive (Offline Storage)
-      print('🔄 Initializing Hive...');
+      debugPrint('🔄 Initializing Hive...');
       await HiveService.initAll();
-      print('✅ Hive initialized successfully');
+      debugPrint('✅ Hive initialized successfully');
 
       // Debug: Show storage stats
       final stats = HiveService.getStorageStats();
-      print(
+      debugPrint(
           '📊 Storage stats: ${stats.length} boxes, ${HiveService.getTotalCachedItems()} total items');
 
       if (mounted) setState(() => _initialized = true);
     } catch (e) {
-      print('❌ Bootstrap failed: $e');
+      debugPrint('❌ Bootstrap failed: $e');
       if (mounted) setState(() => _error = e.toString());
     }
   }
@@ -203,19 +196,24 @@ class MyApp extends ConsumerWidget {
     // Initialize connectivity monitoring
     ref.watch(connectivityServiceProvider);
 
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'Nana Health',
-      debugShowCheckedModeBanner: false,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => ref.read(sessionTimeoutProvider).resetTimer(),
+      onPanDown: (_) => ref.read(sessionTimeoutProvider).resetTimer(),
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        title: 'Nana Health',
+        debugShowCheckedModeBanner: false,
 
-      // Theme Configuration (Uses your updated AppTheme with darker blue)
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
+        // Theme Configuration (Uses your updated AppTheme with darker blue)
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
 
-      // ✅ Start directly with AuthGate (no splash screen delay)
-      home: const SyncErrorListener(
-        child: AuthGate(),
+        // ✅ Start directly with AuthGate (no splash screen delay)
+        home: const SyncErrorListener(
+          child: AuthGate(),
+        ),
       ),
     );
   }

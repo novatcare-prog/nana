@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -27,7 +28,7 @@ final childGrowthRecordsProvider = FutureProvider.family<List<GrowthRecord>, Str
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch growth records online: $e');
+    debugPrint('⚠️ Failed to fetch growth records online: $e');
   }
   
   // Fallback to cache

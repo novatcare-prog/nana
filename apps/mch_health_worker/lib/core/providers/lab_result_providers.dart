@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mch_core/mch_core.dart';
 import 'supabase_providers.dart';
@@ -32,7 +33,7 @@ final patientLabResultsProvider =
       return results;
     }
   } catch (e) {
-    print('⚠️ Failed to fetch lab results online: $e');
+    debugPrint('⚠️ Failed to fetch lab results online: $e');
   }
   
   // Fallback to cache
@@ -66,7 +67,7 @@ final visitLabResultsProvider =
       return await repository.getLabResultsByVisitId(visitId);
     }
   } catch (e) {
-    print('⚠️ Failed to fetch visit lab results online: $e');
+    debugPrint('⚠️ Failed to fetch visit lab results online: $e');
   }
   
   // For visit-specific results when offline, we'd need visit ID in cache
@@ -84,7 +85,7 @@ final recentLabResultsProvider = FutureProvider<List<LabResult>>((ref) async {
       return await repository.getRecentLabResults();
     }
   } catch (e) {
-    print('⚠️ Failed to fetch recent lab results: $e');
+    debugPrint('⚠️ Failed to fetch recent lab results: $e');
   }
   
   // When offline, return empty - recent results require server query
@@ -102,7 +103,7 @@ final labResultStatisticsProvider =
       return await repository.getLabResultStatistics();
     }
   } catch (e) {
-    print('⚠️ Failed to fetch lab result statistics: $e');
+    debugPrint('⚠️ Failed to fetch lab result statistics: $e');
   }
   
   // Return empty stats when offline
@@ -175,7 +176,7 @@ final createLabResultProvider =
         
         ref.invalidate(patientLabResultsProvider(labResult.maternalProfileId));
         
-        print('📴 Lab result queued for sync');
+        debugPrint('📴 Lab result queued for sync');
         return tempResult;
       }
     } catch (e) {
@@ -222,7 +223,7 @@ final updateLabResultProvider =
         
         ref.invalidate(patientLabResultsProvider(labResult.maternalProfileId));
         
-        print('📴 Lab result update queued for sync');
+        debugPrint('📴 Lab result update queued for sync');
         return labResult;
       }
     } catch (e) {
