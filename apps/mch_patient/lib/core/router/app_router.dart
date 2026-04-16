@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
+import '../../features/auth/presentation/screens/email_verification_screen.dart';
 import '../../features/home/presentation/screens/home_wrapper.dart';
 import '../../features/children/presentation/screens/children_list_screen.dart';
 import '../../features/children/presentation/screens/child_detail_screen.dart';
@@ -68,6 +69,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnAuth = state.matchedLocation == '/login' ||
           state.matchedLocation == '/signup' ||
           state.matchedLocation == '/forgot-password' ||
+          state.matchedLocation == '/verify-email' ||
           state.matchedLocation == '/splash';
 
       // If not authenticated and trying to access protected route, redirect to login
@@ -110,6 +112,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/forgot-password',
         name: 'forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/verify-email',
+        name: 'verify-email',
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return EmailVerificationScreen(email: email);
+        },
       ),
 
       // Main App Shell with Bottom Navigation
