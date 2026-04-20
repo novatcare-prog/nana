@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive icon foreground wrapper.
+     The 20% inset ensures the artwork doesn't bleed to the edge of any
+     launcher mask shape (circle, squircle, rounded-square, etc.).
+     Android's adaptive icon safe zone is the inner 66% of the 108dp canvas,
+     so ~17% inset on each side is the minimum; 20% gives a bit more breathing room. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_launcher_foreground_image"
+    android:insetBottom="12%"
+    android:insetLeft="12%"
+    android:insetRight="12%"
+    android:insetTop="12%" />
