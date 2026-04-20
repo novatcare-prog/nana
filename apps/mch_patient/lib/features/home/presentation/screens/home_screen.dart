@@ -264,7 +264,6 @@ class _ShaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220, // Increased height to accommodate facility
       width: double.infinity,
       decoration: BoxDecoration(
         // Official Teal Gradient
@@ -296,7 +295,7 @@ class _ShaCard extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // CARD HEADER
                 Row(
@@ -375,7 +374,7 @@ class _ShaCard extends StatelessWidget {
                     ),
                   ),
 
-                const Spacer(),
+                const SizedBox(height: 16),
 
                 // FACILITY DISPLAY
                 if (facilityName != null && facilityName!.isNotEmpty) ...[
